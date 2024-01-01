@@ -1,1 +1,57 @@
+# Byte-compiled / optimized / DLL files
 __pycache__/
+*.py[cod]
+*$py.class
+
+# バージョン管理に不要なファイル/ディレクトリ
+
+
+# パッケージングファイル
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+wheelhouse/
+
+# Jupyter Notebookのチェックポイント
+.ipynb_checkpoints
+
+# OS生成ファイル
+.DS_Store
+Thumbs.db
+
+# Node.js関連
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# ログとデータベース
+*.log
+*.sql
+*.sqlite
+
+# 環境設定ファイル
+# *.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Docker関連
+docker-compose.override.yml
+.dockerignore
+
+# その他のファイル
+*.swp
+*.swo
+*.tmp
+temp/
+tmp/

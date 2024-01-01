@@ -1,0 +1,17 @@
+{
+  "name": "frontend-market_analysis_webapp",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon -L dist/index.js",
+    "start:debug": "nodemon -L --inspect=0.0.0.0:9229 dist/index.js",
+    "build": "npx tsc",
+    "build:watch": "npx tsc --watch",
+    "dev": "npm run build:watch & npm run start",
+    "dev:debug": "npm run build:watch & npm run start:debug",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

@@ -1,0 +1,80 @@
+{
+  "name": "frontend-MarketAnalysisWebApp",
+  "dockerComposeFile": [
+    "../docker-compose.yml",
+    "../.devcontainer/docker-compose.devcontainer.yml"
+  ],
+  "remoteUser": "client",
+  "service": "frontend",
+  "workspaceFolder": "/home/client/app",
+  "shutdownAction": "none",
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.profiles.linux": {
+          "bash": {
+            "path": "/bin/bash"
+          }
+        },
+        // todo-tree settings
+        "todo-tree.general.tags": [
+          "FIXME",
+          "NOTE",
+          "TODO",
+          "CHANGED",
+          "HACK",
+          "REVIEW",
+          "WARNING"
+        ],
+        "todo-tree.highlights.defaultHighlight": {
+          "gutterIcon": true
+        },
+        "todo-tree.highlights.customHighlight": {
+          "TODO": {
+            "icon": "check-circle-fill",
+            "foreground": "#ff8800",
+            "iconColour": "#ff8800"
+          },
+          "FIXME": {
+            "icon": "flame",
+            "foreground": "#FFFF00",
+            "iconColour": "#FFFF00"
+          },
+          "NOTE": {
+            "icon": "paintbrush",
+            "foreground": "#00bfff",
+            "iconColour": "#00bfff"
+          },
+          "CHANGED": {
+            "icon": "plus-circle",
+            "foreground": "#00a01b",
+            "iconColour": "#00a01b"
+          },
+          "HACK": {
+            "icon": "issue-reopened",
+            "foreground": "#3268ff",
+            "iconColour": "#3268ff"
+          },
+          "REVIEW": {
+            "icon": "code-review",
+            "foreground": "#9dff1d",
+            "iconColour": "#9dff1d"
+          },
+          "WARNING": {
+            "icon": "alert",
+            "foreground": "#ff1d8e",
+            "iconColour": "#ff1d8e"
+          }
+        }
+      },
+      "extensions": [
+        "Gruntfuggly.todo-tree",
+        "Asuka.insertnumbers"
+      ]
+    }
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/common-utils:2": {}
+  },
+  "postStartCommand": ""
+}
