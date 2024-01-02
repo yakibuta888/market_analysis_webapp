@@ -11,9 +11,9 @@ import sys
 import time
 
 import pandas as pd
-from tools.models.database import db_session
-from tools.models.database import engine
-from tools.models.database import init_db
+from infrastructure.database import db_session
+from infrastructure.database import engine
+from infrastructure.database import init_db
 from tools.models.models import dtype
 from bs4 import BeautifulSoup
 from selenium import webdriver

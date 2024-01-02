@@ -1,29 +1,29 @@
 version: '3.8'
 
 services:
-  frontend:
-    container_name: frontend-$PROJECT_NAME
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-      args:
-        - WORKDIR=$WORK_DIR
-        - USERNAME=$USER_NAME
-        - HOMEDIR=$HOME_DIR
-        - USERID=$USER_ID
-        - GROUPID=$GROUP_ID
-    ports:
-      - $IP:3000:3000
-    tty: true
-    env_file:
-      - ./.env
-      - ./frontend/frontend.env
-    volumes:
-      - logs:$WORK_DIR/logs
-      - ./frontend:$WORK_DIR:ro
-      - $WORK_DIR/node_modules
-    depends_on:
-      - backend
+  # frontend:
+  #   container_name: frontend-$PROJECT_NAME
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #     args:
+  #       - WORKDIR=$WORK_DIR
+  #       - USERNAME=$USER_NAME
+  #       - HOMEDIR=$HOME_DIR
+  #       - USERID=$USER_ID
+  #       - GROUPID=$GROUP_ID
+  #   ports:
+  #     - $IP:3000:3000
+  #   tty: true
+  #   env_file:
+  #     - ./.env
+  #     - ./frontend/frontend.env
+  #   volumes:
+  #     - logs:$WORK_DIR/logs
+  #     - ./frontend:$WORK_DIR:ro
+  #     - $WORK_DIR/node_modules
+  #   depends_on:
+  #     - backend
 
   backend:
     container_name: backend-$PROJECT_NAME
@@ -45,9 +45,9 @@ services:
     volumes:
       - ./backend:$WORK_DIR:ro
     depends_on:
-      - mysql
+      - database
 
-  mysql:
+  database:
     image: mysql:8.0.29
     platform: linux/x86_64
     ports:
