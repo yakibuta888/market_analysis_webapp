@@ -2,7 +2,7 @@
 from sqlalchemy import Column, Integer, Float, String, Boolean, DateTime, Date
 from sqlalchemy import text
 
-from infrastructure.database import Base
+from backend.src.infrastructure.database.database import Base
 import datetime
 
 

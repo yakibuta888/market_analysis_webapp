@@ -14,7 +14,7 @@ RUN apt-get update \
 
 ARG WORKDIR
 ENV PATH=${WORKDIR}/vendor/bin:$PATH \
-	PYTHONPATH=${WORKDIR}/vendor/bin \
+	PYTHONPATH=${WORKDIR}/vendor/bin:${WORKDIR} \
 	PYTHONUSERBASE=${WORKDIR}/vendor
 
 WORKDIR ${WORKDIR}

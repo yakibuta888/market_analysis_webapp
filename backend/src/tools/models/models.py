@@ -1,7 +1,7 @@
 # coding: utf-8
 from sqlalchemy.types import Integer, Float, String, Boolean, DateTime, Date
 
-from infrastructure.database import Base
+from backend.src.infrastructure.database.database import Base
 import datetime
 
 
