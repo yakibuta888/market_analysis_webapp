@@ -14,3 +14,6 @@ class Name(DataClassBase):
     def _validate_name(name: str) -> None:
         if not name:
             raise ValueError("名前は空にできません。")
+
+    def to_primitive(self) -> str:
+        return self.name

@@ -26,3 +26,7 @@ class UserRepositoryMysql(UserRepository):
         if user_db is None:
             raise Exception(f"User with id {user_id} not found")
         return user_db
+
+    # TODO: 未実装
+    def update(self, user_entity: UserEntity) -> UserModel:
+        return super().update(user_entity)

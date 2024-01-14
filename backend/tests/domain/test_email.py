@@ -14,8 +14,9 @@ class TestEmail:
     def test_create_email_with_invalid_address_raises_error(self):
         # 無効なメールアドレスでEmailオブジェクトを作成しようとするとエラー
         invalid_email_address = "example"
-        with pytest.raises(ValueError):
+        with pytest.raises(ValueError) as exc_info:
             Email(invalid_email_address)
+        assert "無効なメールアドレスです。" in str(exc_info.value)
 
     def test_email_equality(self):
         # 同じメールアドレスのEmailオブジェクトは等価であるべき

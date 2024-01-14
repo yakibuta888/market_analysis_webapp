@@ -14,3 +14,6 @@ class Email(DataClassBase):
     def _validate_email(email: str) -> None:
         if "@" not in email:
             raise ValueError("無効なメールアドレスです。")
+
+    def to_primitive(self) -> str:
+        return self.email
