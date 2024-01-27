@@ -26,12 +26,16 @@ class MockUserRepository(UserRepository):
             raise ValueError("User not found")
         return user_db
 
+    # TODO:
+    def fetch_by_email(self, email: str) -> UserModel:
+        return super().fetch_by_email(email)
+
     def update(self, user_entity: UserEntity) -> UserModel:
         if user_entity.id in self.users:
             updated_user = self.users[user_entity.id]
             updated_user.name = user_entity.name.name
             updated_user.email = user_entity.email.email
-            updated_user.password_hash = user_entity.password_hash.hashed_password
+            updated_user.hashed_password = user_entity.password_hash.hashed_password
             return updated_user
         else:
             raise ValueError("User not found")

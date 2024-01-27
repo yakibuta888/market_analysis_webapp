@@ -1,16 +1,31 @@
 # coding: utf-8
+import os
+import re
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker, declarative_base
 
-import datetime
-import os
-import pandas as pd
+from src.settings import logger
 
 
-databese_file = os.path.join(os.path.abspath(os.path.dirname(__file__)), 'data.db')
+DATABASE_URL_BASE: str = f"{os.getenv('DIALECT')}+{os.getenv('DRIVER')}://{os.getenv('MYSQL_USER')}:{os.getenv('MYSQL_PASSWORD')}@{os.getenv('MYSQL_HOST')}:{os.getenv('MYSQL_PORT')}"
+
+if os.getenv('TEST_DATABASE') == 'True':
+    database_url: str = f"{DATABASE_URL_BASE}/test_database"
+else:
+    database_url = f"{DATABASE_URL_BASE}/{os.getenv('MYSQL_DATABASE')}"
+
+pattern = r"^\w+\+\w+://\w+:\w+@\w+(:\d+)?/\w+$"
+database_url_notice = database_url.replace(os.getenv('MYSQL_PASSWORD', ''), f"{'*' * len(os.getenv('MYSQL_PASSWORD', ''))}")
+
+if not re.match(pattern, database_url):
+    logger.error(f"Invalid database URL: {database_url_notice}")
+    raise ValueError(f"Invalid database URL: {database_url_notice}")
+
+logger.info(f"Database URL is valid: {database_url_notice}")
+
 engine = create_engine(
-    os.environ.get('DATABASE_URL') or
-    'sqlite:///' + databese_file,
+    database_url,
     connect_args={"check_same_thread": False},
     echo=True
 )
@@ -23,19 +38,3 @@ db_session = scoped_session(
 )
 Base = declarative_base()
 Base.query = db_session.query_property()
-
-
-def init_db():
-    import tools.models.models
-    Base.metadata.create_all(bind=engine)
-
-
-def read_data():
-    from tools.models import models
-    df = pd.read_csv(os.path.join('assets', 'data.csv'))
-    for index, _df in df.iterrows():
-        date = datetime.datetime.strptime(_df['date'], '%Y/%m/%d').date()
-        row = models.Data(
-            date=date, subscribers=_df['subscribers'], reviews=_df['reviews'])
-        db_session.add(row)
-    db_session.commit()

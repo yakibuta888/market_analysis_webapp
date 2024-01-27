@@ -27,6 +27,12 @@ class UserRepositoryMysql(UserRepository):
             raise Exception(f"User with id {user_id} not found")
         return user_db
 
+    def fetch_by_email(self, email: Email) -> UserModel:
+        user_db = self.session.query(UserModel).filter(UserModel.email == email.email).first()
+        if user_db is None:
+            raise Exception(f"User with email {email} not found")
+        return user_db
+
     # TODO: 未実装
     def update(self, user_entity: UserEntity) -> UserModel:
         return super().update(user_entity)

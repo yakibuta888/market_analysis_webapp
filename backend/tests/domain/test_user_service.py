@@ -37,6 +37,10 @@ def test_fetch_user_by_id(user_service: UserService):
     assert user_entity is not None
     assert user_entity.id == user_id
 
+# TODO
+def test_fetch_user_by_email(user_service: UserService):
+    pass
+
 def test_change_user_attributes(user_service: UserService):
     user_id = 1
     new_email, new_password, new_name = "new@example.com", "newpassword123", "New Name"
