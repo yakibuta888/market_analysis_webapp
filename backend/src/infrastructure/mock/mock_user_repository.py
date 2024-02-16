@@ -14,7 +14,7 @@ class MockUserRepository(UserRepository):
             id=self.next_id,
             name=user_entity.name.name,  # Value Objectから値を抽出
             email=user_entity.email.email,  # 同上
-            password_hash=user_entity.password_hash.hashed_password  # 同上
+            hashed_password=user_entity.password_hash.hashed_password  # 同上
         )
         self.users[self.next_id] = user_db
         self.next_id += 1

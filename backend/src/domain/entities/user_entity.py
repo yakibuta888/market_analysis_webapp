@@ -24,7 +24,7 @@ class UserEntity(DataClassBase):
         return cls(
             id=user_db.id,
             email=Email(user_db.email),
-            password_hash=Password(user_db.password_hash),
+            password_hash=Password(user_db.hashed_password),
             name=Name(user_db.name)
         )
 

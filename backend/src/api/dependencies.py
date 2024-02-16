@@ -1,3 +1,5 @@
+# src/api/dependencies.py
+
 import os
 
 from sqlalchemy.orm import Session
@@ -13,13 +15,9 @@ from src.infrastructure.database.database import db_session
 
 
 def get_user_repository() -> UserRepository:
-    if os.environ.get('TEST_ENVIRONMENT') == 'True':
-        logger.info("Fetching MockUserRepository")
-        return MockUserRepository()
-    else:
-        logger.info("Fetching UserRepositoryMysql")
-        session = get_db()  # Create a session
-        return UserRepositoryMysql(session)  # Pass the session parameter
+    logger.info("Fetching UserRepositoryMysql")
+    session = get_db()  # Create a session
+    return UserRepositoryMysql(session)  # Pass the session parameter
 
 def get_user_service():
     user_repository = get_user_repository()

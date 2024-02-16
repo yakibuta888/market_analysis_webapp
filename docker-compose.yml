@@ -57,6 +57,7 @@ services:
     volumes:
       - db-store:/var/lib/mysql
       - ./mysql/logs:/var/log/mysql
+      - ./mysql/initdb.d:/docker-entrypoint-initdb.d:ro
 
 volumes:
   logs:
