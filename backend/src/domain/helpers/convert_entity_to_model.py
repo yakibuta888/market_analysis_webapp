@@ -1,3 +1,4 @@
+#src/domain/helpers/convert_entity_to_model.py
 from dataclasses import asdict
 from typing import Any, Type
 from pydantic import BaseModel

@@ -11,9 +11,9 @@ LOG_CONFIG_PATH: str = os.path.normpath(os.path.join(CWD, "log/log_config.yaml")
 
 
 def setup_logging() -> None:
-    with open(LOG_CONFIG_PATH, encoding='utf-8') as f:
+    with open(LOG_CONFIG_PATH, 'r', encoding='utf-8') as f:
         log_config = yaml.safe_load(f)
-    logging.config.dictConfig(log_config)  # type: ignore
+        logging.config.dictConfig(log_config)  # type: ignore
 
 
 setup_logging()

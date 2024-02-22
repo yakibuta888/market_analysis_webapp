@@ -30,13 +30,19 @@ def check_database_url(database_url: str) -> None:
 
     logger.info(f"Database URL is valid: {database_url_notice}")
 
+def get_database_url(testing: bool = False) -> str:
+    """
+    Get the database URL
+    """
+    database_url = TEST_DATABASE_URL if testing else DATABASE_URL
+    check_database_url(database_url)
+    return database_url
 
 def get_engine(testing: bool = False):
     """
     Get the database engine
     """
-    database_url = TEST_DATABASE_URL if testing else DATABASE_URL
-    check_database_url(database_url)
+    database_url = get_database_url(testing)
     return create_engine(
         database_url,
         echo=True

@@ -16,7 +16,7 @@ def user_service() -> UserService:
     user_repository.create(UserEntity(
         id=1,
         email=Email("existing@example.com"),
-        password_hash=Password.create("strongpassword123"),
+        hashed_password=Password.create("strongpassword123"),
         name=Name("Existing User")
     ))
     return UserService(user_repository)
@@ -28,7 +28,7 @@ def test_create_user(user_service: UserService):
     assert user_entity.email.email == email
     assert user_entity.name.name == name
     # ここでは、パスワードのハッシュ値のみを確認します（平文のパスワードは返されません）
-    assert user_entity.password_hash.hashed_password is not None
+    assert user_entity.hashed_password.hashed_password is not None
 
 def test_fetch_user_by_id(user_service: UserService):
     user_id = 1
@@ -49,7 +49,7 @@ def test_change_user_attributes(user_service: UserService):
     assert updated_user.email.email == new_email
     assert updated_user.name.name == new_name
     # 新しいパスワードのハッシュが更新されたことを確認
-    assert updated_user.password_hash.hashed_password is not None
+    assert updated_user.hashed_password.hashed_password is not None
 
 def test_user_creation_and_retrieval(user_service: UserService):
     email, password, name = "test@example.com", "strongpassword123", "Test User"
@@ -89,7 +89,7 @@ def test_persistence_of_data_in_mock_repository():
     user_entity = UserEntity(
         id=None,
         email=Email("test@example.com"),
-        password_hash=Password.create("strongpassword123"),
+        hashed_password=Password.create("strongpassword123"),
         name=Name("Test User")
     )
     created_user = mock_repo.create(user_entity)

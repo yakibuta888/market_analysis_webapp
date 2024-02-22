@@ -4,10 +4,9 @@ import os
 import pytest
 from alembic.config import Config
 from alembic import command
-from sqlalchemy import create_engine, Engine
+from sqlalchemy import Engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 
-from ..alembic.config import generate_alembic_config
 from src.domain.helpers.path import get_project_root
 from src.domain.entities.user_entity import UserEntity
 from src.domain.value_objects.email import Email
@@ -23,7 +22,7 @@ def mock_user_repository():
     test_user = UserEntity(
         id=1,
         email=Email("test@example.com"),
-        password_hash=Password("hashed_password123"),
+        hashed_password=Password("hashed_password123"),
         name=Name("Test User")
     )
     user_repository.create(test_user)
@@ -35,13 +34,7 @@ def mock_user_service():
     return MockUserService(user_repository)
 
 @pytest.fixture(scope="session", autouse=True)
-def setup_alembic_config():
-    # テスト用のAlembic設定ファイルを生成
-    generate_alembic_config(testing=True)
-    yield
-
-@pytest.fixture(scope="session", autouse=True)
-def apply_migrations(setup_alembic_config: None):
+def apply_migrations():
     project_root = get_project_root()
     alembic_cfg = Config(os.path.join(project_root, "alembic.ini"))
     # テスト用のデータベース接続情報をAlembic設定にセット

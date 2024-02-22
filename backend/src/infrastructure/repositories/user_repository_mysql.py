@@ -1,3 +1,4 @@
+# src/infrastructure/repositories/user_repository_mysql.py
 from sqlalchemy.orm import Session
 
 from src.domain.repositories.user_repository import UserRepository
@@ -12,9 +13,9 @@ class UserRepositoryMysql(UserRepository):
 
     def create(self, user_entity: UserEntity) -> UserModel:
         user_db = UserModel(
-            email=user_entity.email,
-            password_hash=user_entity.password_hash,
-            name=user_entity.name,
+            email=user_entity.email.email,
+            hashed_password=user_entity.hashed_password.hashed_password,
+            name=user_entity.name.name,
         )
         self.session.add(user_db)
         self.session.commit()
@@ -30,7 +31,7 @@ class UserRepositoryMysql(UserRepository):
     def fetch_by_email(self, email: Email) -> UserModel:
         user_db = self.session.query(UserModel).filter(UserModel.email == email.email).first()
         if user_db is None:
-            raise Exception(f"User with email {email} not found")
+            raise Exception(f"User with email {email.email} not found")
         return user_db
 
     # TODO: 未実装

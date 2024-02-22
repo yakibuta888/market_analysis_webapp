@@ -1,10 +1,10 @@
 # run_alembic.py
 import os
 import subprocess
-from config import generate_alembic_config
 
 
-COMMAND = ["alembic", "revision", "--autogenerate", "-m", "Initial database setup"]
+# COMMAND = ["alembic", "revision", "--autogenerate", "-m", "Initial database setup"]
+COMMAND = ["alembic", "revision", "-m", "Add initial data"]
 
 
 def run_command_with_progress(command: list[str]):
@@ -38,15 +38,6 @@ def run_command_with_progress(command: list[str]):
 
 
 def main():
-    # 環境変数から実行環境を取得（デフォルトは開発環境）
-    env = os.getenv('APP_ENV', 'development')
-
-    # テスト環境の場合はtestingフラグをTrueに
-    testing = env == 'test'
-
-    # Alembic設定ファイルを生成
-    generate_alembic_config(testing=testing)
-
     # Alembicコマンドを実行
     run_command_with_progress(COMMAND)
 
