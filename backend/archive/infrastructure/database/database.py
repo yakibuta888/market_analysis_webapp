@@ -25,12 +25,12 @@ Base.query = db_session.query_property()
 
 
 def init_db():
-    import tools.models.models
+    import archive.models.models
     Base.metadata.create_all(bind=engine)
 
 
 def read_data():
-    from tools.models import models
+    from archive.infrastructure.database.models import models
     df = pd.read_csv(os.path.join('assets', 'data.csv'))
     for index, _df in df.iterrows():
         date = datetime.datetime.strptime(_df['date'], '%Y/%m/%d').date()

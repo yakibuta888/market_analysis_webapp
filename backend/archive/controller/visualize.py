@@ -1,7 +1,7 @@
 """"""
 
 
-from tools.models import scraping
+from archive.models import scraping
 
 
 def make_graph():

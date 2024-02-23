@@ -11,10 +11,10 @@ import sys
 import time
 
 import pandas as pd
-from backend.src.infrastructure.database.database import db_session
-from backend.src.infrastructure.database.database import engine
-from backend.src.infrastructure.database.database import init_db
-from tools.models.models import dtype
+from archive.infrastructure.database.database import db_session
+from archive.infrastructure.database.database import engine
+from archive.infrastructure.database.database import init_db
+from archive.models.models import dtype
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium.common.exceptions import TimeoutException

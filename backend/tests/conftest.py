@@ -6,6 +6,7 @@ from alembic.config import Config
 from alembic import command
 from sqlalchemy import Engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
+from typing import Callable
 
 from src.domain.helpers.path import get_project_root
 from src.domain.entities.user_entity import UserEntity
@@ -16,6 +17,14 @@ from src.infrastructure.mock.mock_user_repository import MockUserRepository
 from src.infrastructure.mock.mock_service import MockUserService
 from src.infrastructure.database.database import get_engine, Base
 
+
+@pytest.fixture(scope='session', autouse=True)
+def set_env_vars():
+    original_database = os.getenv("MYSQL_DATABASE")
+    os.environ["MYSQL_DATABASE"] = "test_database"
+    yield
+    # テスト終了後に元の環境変数に戻す
+    os.environ["MYSQL_DATABASE"] = original_database if original_database is not None else ''
 
 def mock_user_repository():
     user_repository = MockUserRepository()
@@ -34,21 +43,20 @@ def mock_user_service():
     return MockUserService(user_repository)
 
 @pytest.fixture(scope="session", autouse=True)
-def apply_migrations():
+def apply_test_migrations(set_env_vars: Callable[[], None]):
     project_root = get_project_root()
-    alembic_cfg = Config(os.path.join(project_root, "alembic.ini"))
-    # テスト用のデータベース接続情報をAlembic設定にセット
-    alembic_cfg.set_main_option("sqlalchemy.url", str(get_engine(testing=True).url))
+    alembic_cfg = Config(os.path.join(project_root, "alembic_test.ini"))
     command.upgrade(alembic_cfg, "head")  # マイグレーションの適用
     yield
     command.downgrade(alembic_cfg, "base")  # テスト完了後にマイグレーションをロールバック
 
 @pytest.fixture(scope="session")
-def test_engine(apply_migrations: None):
-    engine = get_engine(testing=True)  # テスト用エンジンの取得
+def test_engine(apply_test_migrations: None):
+    engine = get_engine()  # テスト用エンジンの取得
     Base.metadata.create_all(engine)  # テスト用データベーススキーマの作成
     yield engine
-    Base.metadata.drop_all(engine)  # テスト完了後にスキーマを削除
+    # NOTE: alembicのdowngradeでスキーマを削除するため、drop_allを行うとテーブルの削除が重複するため、エラーが発生する。alembicを利用しない時はコメントアウトを外す。
+    # Base.metadata.drop_all(engine)  # テスト完了後にスキーマを削除
 
 @pytest.fixture(scope="session")
 def test_session_factory(test_engine: Engine):
@@ -58,12 +66,9 @@ def test_session_factory(test_engine: Engine):
 @pytest.fixture(scope="function")
 def db_session(test_session_factory: sessionmaker[Session]):
     SessionLocal = scoped_session(test_session_factory)
-    # Base.metadata.create_all(bind=test_session_factory().bind)  # bindの指定を修正
     session = SessionLocal()
     try:
         yield session
     finally:
         session.rollback()
         SessionLocal.remove()
-        # テスト用エンジンに基づいてテーブルを削除
-        # Base.metadata.drop_all(bind=test_session_factory().bind)

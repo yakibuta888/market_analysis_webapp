@@ -6,7 +6,7 @@
             "type": "python",
             "request": "launch",
             "module": "pytest",
-            "args": ["-s", "tests/"],
+            "args": ["-s", "tests/infrastructure/"],
             "console": "integratedTerminal",
             "justMyCode": false
         }
