@@ -1,7 +1,7 @@
 #src/main.py
 from fastapi import FastAPI
 
-from src.api.routers.user_router import user_router
+from src.application.web.api.routers.user_router import user_router
 # from tools.controller import visualize
 
 

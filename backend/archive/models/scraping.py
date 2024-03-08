@@ -24,12 +24,13 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import WebDriverWait
 from webdriver_manager.chrome import ChromeDriverManager
+from typing import Generator, Dict
 
 
 logging.basicConfig(level=logging.INFO)
 
 
-def get_element(driver, css_selector=None, xpath=None, wait_second=20, retries_count=3):
+def get_element(driver: webdriver.Chrome, css_selector: str | None = None, xpath: str | None = None, wait_second: int = 20, retries_count: int = 3):
     """
     cssセレクタ、もしくはxpathで要素を指定する。
     リトライして失敗したらエラーメッセージを通知する。成功したらelementを返す。
@@ -99,7 +100,7 @@ def get_element(driver, css_selector=None, xpath=None, wait_second=20, retries_c
     for _ in range(retries_count):
         try:
             element = WebDriverWait(driver, wait_second).until(
-                EC.presence_of_element_located((method, selector))
+                EC.presence_of_element_located((method, selector or ''))
             )
         # エラーメッセージを格納する
         except TimeoutException as e:
@@ -141,7 +142,7 @@ class GetTables(object):
 
         logging.info(self.urls)
 
-    def parse(self, soup):
+    def parse(self, soup: BeautifulSoup) -> Generator[Dict[str, str], None, None]:
         trs = soup.select('.main-table-wrapper tbody > tr')
         for tr in trs:
             yield {

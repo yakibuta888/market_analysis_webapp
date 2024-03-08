@@ -2,12 +2,12 @@ from fastapi import APIRouter, Depends, HTTPException
 from dataclasses import asdict
 
 from src.settings import logger
-from src.api.dependencies import get_user_service
+from src.application.web.api.dependencies import get_user_service
 from src.domain.helpers.convert_entity_to_model import convert_entity_to_model
 from src.domain.services.user_service import UserService
 from src.domain.entities.user_entity import UserEntity
-from src.api.models.user_api_model import UserCreateModel, UserReadModel
-from src.api.error_response import ErrorResponse
+from src.application.web.api.models.user_api_model import UserCreateModel, UserReadModel
+from src.application.web.api.error_response import ErrorResponse
 from src.domain.exceptions.user_not_found_error import UserNotFoundError
 from src.domain.exceptions.invalid_user_input_error import InvalidUserInputError
 

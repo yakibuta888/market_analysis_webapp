@@ -1,10 +1,10 @@
-# run_alembic.py
-import os
+# scripts/run_alembic.py
 import subprocess
 
 
-# COMMAND = ["alembic", "revision", "--autogenerate", "-m", "Initial database setup"]
-COMMAND = ["alembic", "revision", "-m", "Add initial data"]
+# COMMAND = ["alembic", "revision", "--autogenerate", "-m", "Add asset, settlement, and volume_oi tables"]
+# COMMAND = ["alembic", "revision", "-m", "Add initial data"]
+COMMAND = ["alembic", "upgrade", "head"]
 
 
 def run_command_with_progress(command: list[str]):

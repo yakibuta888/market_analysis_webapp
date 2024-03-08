@@ -30,7 +30,7 @@ def init_db():
 
 
 def read_data():
-    from archive.infrastructure.database.models import models
+    from archive.infrastructure.database import models
     df = pd.read_csv(os.path.join('assets', 'data.csv'))
     for index, _df in df.iterrows():
         date = datetime.datetime.strptime(_df['date'], '%Y/%m/%d').date()

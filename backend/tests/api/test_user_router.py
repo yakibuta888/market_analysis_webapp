@@ -9,7 +9,7 @@ from src.domain.value_objects.name import Name
 from src.infrastructure.mock.mock_user_repository import MockUserRepository
 from src.infrastructure.mock.mock_service import MockUserService
 from tests.conftest import mock_user_service
-from src.api.dependencies import get_user_service
+from src.application.web.api.dependencies import get_user_service
 from src.infrastructure.mock.mock_user_repository import MockUserRepository
 from src.main import app  # FastAPIアプリケーションインスタンスをインポート
 

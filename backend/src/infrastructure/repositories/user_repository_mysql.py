@@ -1,8 +1,8 @@
 # src/infrastructure/repositories/user_repository_mysql.py
 from sqlalchemy.orm import Session
 
-from src.domain.repositories.user_repository import UserRepository
 from src.domain.entities.user_entity import UserEntity
+from src.domain.repositories.user_repository import UserRepository
 from src.domain.value_objects.name import Name
 from src.domain.value_objects.email import Email
 from src.infrastructure.database.models import User as UserModel
