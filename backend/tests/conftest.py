@@ -4,7 +4,7 @@ import os
 import pytest
 from alembic.config import Config
 from alembic import command
-from sqlalchemy import Engine
+from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from typing import Callable
 
@@ -67,8 +67,26 @@ def test_session_factory(test_engine: Engine):
 def db_session(test_session_factory: sessionmaker[Session]):
     SessionLocal = scoped_session(test_session_factory)
     session = SessionLocal()
+    # テスト前にデータベース内のデータをクリアする
+    for table in reversed(Base.metadata.sorted_tables):
+        session.execute(table.delete())
+    session.commit()
     try:
         yield session
     finally:
         session.rollback()
+        session.close()
         SessionLocal.remove()
+
+@pytest.fixture(scope="function")
+def test_session():
+    # インメモリSQLiteデータベースを作成
+    engine = create_engine('sqlite:///:memory:')
+    Base.metadata.create_all(engine)  # データベーススキーマを作成
+    SessionLocal = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
+    session = SessionLocal()
+    try:
+        yield session
+    finally:
+        session.close()
+        Base.metadata.drop_all(bind=engine)

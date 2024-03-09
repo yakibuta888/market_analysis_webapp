@@ -2,6 +2,7 @@
 from sqlalchemy.orm import Session
 
 from src.domain.entities.asset_entity import AssetEntity
+from src.domain.exceptions.asset_not_found_error import AssetNotFoundError
 from src.domain.repositories.asset_repository import AssetRepository
 from src.domain.value_objects.name import Name
 from src.infrastructure.database.models import Asset as AssetModel
@@ -12,11 +13,12 @@ class AssetRepositoryMysql(AssetRepository):
     def __init__(self, session: Session):
         self.session = session
 
+# HACK: session.bigin()を利用すると、'A transaction is already begun on this Session.'エラーが発生するため、try/exceptブロックでcommit/rollbackを実行しています。
     def create(self, asset_entity: AssetEntity) -> AssetModel:
         try:
-            with self.session.begin():
-                asset_db = AssetModel(name=asset_entity.name.name)
-                self.session.add(asset_db)
+            asset_db = AssetModel(name=asset_entity.name.name)
+            self.session.add(asset_db)
+            self.session.commit()
             return asset_db
         except Exception as e:
             self.session.rollback()
@@ -26,7 +28,7 @@ class AssetRepositoryMysql(AssetRepository):
     def fetch_by_name(self, name: Name) -> AssetModel:
         asset_db = self.session.query(AssetModel).filter(AssetModel.name == name.name).first()
         if asset_db is None:
-            raise Exception(f"Asset with name {name.name} not found")
+            raise AssetNotFoundError(f"Asset with name {name.name} not found")
         return asset_db
 
     def exists_by_name(self, name: Name) -> bool:
@@ -43,9 +45,9 @@ class AssetRepositoryMysql(AssetRepository):
 
     def delete(self, name: Name) -> None:
         try:
-            with self.session.begin():
-                asset_db = self.fetch_by_name(name)
-                self.session.delete(asset_db)
+            asset_db = self.fetch_by_name(name)
+            self.session.delete(asset_db)
+            self.session.commit()
         except Exception as e:
             self.session.rollback()
             logger.error(f"データベースエラー: {e}")
