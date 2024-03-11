@@ -1,11 +1,7 @@
-import logging
+from src.domain.value_objects.trade_date import TradeDate
 
-# ログレベル、フォーマット、ファイル名などを直接指定
-logging.basicConfig(level=logging.INFO,
-                    filename='/home/client/app/src/log/app.log',
-                    filemode='a',
-                    format='%(name)s - %(levelname)s - %(message)s')
 
-# ロガーを取得してログメッセージを出力
-logger = logging.getLogger(__name__)
-logger.info('これはテストメッセージです。')
+if __name__ == "__main__":
+    change = float("-.92")
+    change = float("+.00035")
+    print(change)
