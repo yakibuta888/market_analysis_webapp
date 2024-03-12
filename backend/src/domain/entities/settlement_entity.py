@@ -50,8 +50,9 @@ class SettlementEntity(DataClassBase):
             last=last,
             change=float(change) if change else None,
             settle=float(settle),
-            est_volume=int(est_volume),
-            prior_day_oi=int(prior_day_oi))
+            est_volume=int(est_volume.replace(",", "")),
+            prior_day_oi=int(prior_day_oi.replace(",", ""))
+        )
 
     @classmethod
     def from_db(cls, asset_id: int, trade_date: date, month: str, open: str | None, high: str | None, low: str | None, last: str | None, change: float | None, settle: float, est_volume: int, prior_day_oi: int) -> SettlementEntity:
@@ -67,4 +68,5 @@ class SettlementEntity(DataClassBase):
             change=change,
             settle=settle,
             est_volume=est_volume,
-            prior_day_oi=prior_day_oi)
+            prior_day_oi=prior_day_oi
+        )
