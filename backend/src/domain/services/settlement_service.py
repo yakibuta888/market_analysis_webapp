@@ -33,4 +33,4 @@ class SettlementService:
             except Exception as e:
                 logger.error(f"Error saving settlement for row {row}: {e}")
                 raise e
-        logger.info(f"Settlements for asset {asset_id} - {row.trade_date} saved successfully.")
+        logger.info(f"Settlements for asset {asset_id} - {settlement_entity.trade_date} saved successfully.")

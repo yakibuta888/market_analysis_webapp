@@ -6,6 +6,7 @@ from datetime import date
 from src.domain.helpers.dataclass import DataClassBase
 from src.domain.value_objects.trade_date import TradeDate
 from src.domain.value_objects.year_month import YearMonth
+from src.infrastructure.database.models import Settlement as SettlementModel
 
 
 @dataclass(frozen=True, eq=True)
@@ -54,19 +55,20 @@ class SettlementEntity(DataClassBase):
             prior_day_oi=int(prior_day_oi.replace(",", ""))
         )
 
+# NOTE: settlementテーブルを単独で取得するケースが今のところないため、from_dbメソッドは実装していません。利用する場合はservice, repositoryも合わせて実装する必要があります。
     @classmethod
-    def from_db(cls, asset_id: int, trade_date: date, month: str, open: str | None, high: str | None, low: str | None, last: str | None, change: float | None, settle: float, est_volume: int, prior_day_oi: int) -> SettlementEntity:
+    def from_db(cls, db_row: SettlementModel) -> SettlementEntity:
         return cls(
-            id=None,
-            asset_id=asset_id,
-            trade_date=TradeDate(trade_date),
-            month=YearMonth.from_db_format(month),
-            open=open,
-            high=high,
-            low=low,
-            last=last,
-            change=change,
-            settle=settle,
-            est_volume=est_volume,
-            prior_day_oi=prior_day_oi
+            id=db_row.id,
+            asset_id=db_row.asset_id,
+            trade_date=TradeDate(db_row.trade_date),
+            month=YearMonth.from_db_format(db_row.month),
+            open=db_row.open,
+            high=db_row.high,
+            low=db_row.low,
+            last=db_row.last,
+            change=db_row.change,
+            settle=db_row.settle,
+            est_volume=db_row.est_volume,
+            prior_day_oi=db_row.prior_day_oi
         )
