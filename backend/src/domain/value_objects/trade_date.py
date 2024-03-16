@@ -31,7 +31,7 @@ class TradeDate(DataClassBase):
                 return TradeDate(trade_date)
             else:
                 raise ValueError(f"Invalid date format: {date_str}")
-        except Exception as e:
+        except ValueError as e:
             raise ValueError(f"Invalid date format: {date_str}") from e
 
     def to_date(self) -> date:

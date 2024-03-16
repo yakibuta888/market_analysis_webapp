@@ -17,8 +17,8 @@ class YearMonth(DataClassBase):
         try:
             parsed_date = datetime.strptime(month_str, "%b %y")
             return YearMonth(year=parsed_date.year, month=parsed_date.month)
-        except ValueError:
-            raise ValueError(f"Invalid month format: {month_str}")
+        except ValueError as e:
+            raise ValueError(f"Invalid month format: {month_str}") from e
 
     def to_db_format(self) -> str:
         """DBに保存するための文字列形式 'YYYY-MM' に変換する"""

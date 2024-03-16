@@ -48,7 +48,7 @@ class VolumeOIService:
     def _transform_dataframe_types(self, df: pd.DataFrame) -> pd.DataFrame:
         numeric_columns = ['globex', 'open_outcry', 'clear_port', 'total_volume', 'block_trades', 'efp', 'efr', 'tas', 'deliveries', 'at_close', 'change']
         for col in numeric_columns:
-            df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
+            df[col] = df[col].apply(lambda x: int(x.replace(',', '').replace('+', '')))
         return df
 
     def _row_to_entity(self, row: _VOINamedTuple , asset_id: int) -> VolumeOIEntity:
