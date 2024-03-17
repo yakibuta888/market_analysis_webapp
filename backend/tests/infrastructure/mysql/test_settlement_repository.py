@@ -6,7 +6,7 @@ from sqlalchemy.orm import Session
 from src.domain.entities.settlement_entity import SettlementEntity
 from src.domain.value_objects.trade_date import TradeDate
 from src.domain.value_objects.year_month import YearMonth
-from src.infrastructure.repositories.settlement_repository_mysql import SettlementRepositoryMysql
+from src.infrastructure.mysql.settlement_repository_mysql import SettlementRepositoryMysql
 from src.infrastructure.database.models import Asset as AssetModel
 from src.infrastructure.database.models import Settlement as SettlementModel
 

@@ -2,7 +2,7 @@
 import pytest
 from sqlalchemy.orm import Session
 
-from src.infrastructure.repositories.asset_repository_mysql import AssetRepositoryMysql
+from src.infrastructure.mysql.asset_repository_mysql import AssetRepositoryMysql
 from src.infrastructure.database.models import Asset
 from src.domain.entities.asset_entity import AssetEntity
 from src.domain.value_objects.name import Name

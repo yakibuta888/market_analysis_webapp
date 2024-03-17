@@ -6,7 +6,7 @@ from typing import Generator, Any
 
 from src.domain.services.asset_service import AssetService
 from src.infrastructure.database.database import db_session
-from src.infrastructure.repositories.asset_repository_mysql import AssetRepositoryMysql
+from src.infrastructure.mysql.asset_repository_mysql import AssetRepositoryMysql
 
 
 

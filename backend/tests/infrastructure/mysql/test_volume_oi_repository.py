@@ -5,7 +5,7 @@ from sqlalchemy.orm import Session
 
 from src.infrastructure.database.models import Asset as AssetModel
 from src.infrastructure.database.models import VolumeOI as VolumeOIModel
-from src.infrastructure.repositories.volume_oi_repository_mysql import VolumeOIRepositoryMysql
+from src.infrastructure.mysql.volume_oi_repository_mysql import VolumeOIRepositoryMysql
 from src.domain.entities.volume_oi_entity import VolumeOIEntity
 from src.domain.value_objects.trade_date import TradeDate
 from src.domain.value_objects.year_month import YearMonth

@@ -10,7 +10,7 @@ from typing import Any
 from src.settings import logger
 from src.domain.services.user_service import UserService
 from src.domain.repositories.user_repository import UserRepository
-from src.infrastructure.repositories.user_repository_mysql import UserRepositoryMysql
+from src.infrastructure.mysql.user_repository_mysql import UserRepositoryMysql
 from src.infrastructure.mock.mock_user_repository import MockUserRepository
 from src.infrastructure.database.database import db_session
 

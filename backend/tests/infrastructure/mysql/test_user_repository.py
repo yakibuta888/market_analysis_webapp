@@ -3,7 +3,7 @@
 from sqlalchemy.orm import Session
 
 from src.settings import logger
-from src.infrastructure.repositories.user_repository_mysql import UserRepositoryMysql
+from src.infrastructure.mysql.user_repository_mysql import UserRepositoryMysql
 from src.infrastructure.database.models import User as UserModel
 from src.domain.entities.user_entity import UserEntity
 from src.domain.value_objects.name import Name
