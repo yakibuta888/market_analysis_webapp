@@ -26,7 +26,8 @@ class VolumeOIRepositoryMysql(VolumeOIRepository):
                 tas=volume_oi_entity.tas,
                 deliveries=volume_oi_entity.deliveries,
                 at_close=volume_oi_entity.at_close,
-                change=volume_oi_entity.change
+                change=volume_oi_entity.change,
+                is_final=volume_oi_entity.is_final
             )
             self.session.add(volume_oi_model)
             self.session.commit()

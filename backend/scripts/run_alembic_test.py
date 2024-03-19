@@ -3,7 +3,7 @@ import subprocess
 
 
 # COMMAND = ["alembic", "-c", "alembic_test.ini", "revision", "--autogenerate", "-m", "Add test schema"]
-COMMAND = ["alembic", "-c", "alembic_test.ini", "revision", "-m", "Add test asset, settlement, and volume_oi tables"]
+COMMAND = ["alembic", "-c", "alembic_test.ini", "revision", "-m", "Add is_final column to settlements table"]
 
 
 def run_command_with_progress(command: list[str]):

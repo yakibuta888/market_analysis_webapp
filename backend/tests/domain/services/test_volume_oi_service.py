@@ -37,8 +37,8 @@ def volume_oi_df():
 def test_save_volume_oi_from_dataframe(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
-
-    service.save_volume_oi_from_dataframe(volume_oi_df, asset_id)
+    is_final = True
+    service.save_volume_oi_from_dataframe(volume_oi_df, asset_id, is_final)
 
     # 確認：createメソッドが適切なエンティティで呼び出されているか
     expected_call = call(VolumeOIEntity(
@@ -56,30 +56,33 @@ def test_save_volume_oi_from_dataframe(mock_volume_oi_repository: Mock, volume_o
         tas=3,
         deliveries=1,
         at_close=2150,
-        change=1020
+        change=1020,
+        is_final=is_final
     ))
     mock_volume_oi_repository.create.assert_has_calls([expected_call])
 
 def test_save_volume_oi_from_dataframe_with_error(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
+    is_final = True
     # mock_volume_oi_repository.create.side_effect = Exception("Save error")
     invalid_df = volume_oi_df.copy()
     invalid_df['trade_date'] = 'invalid date'
 
     # エラーが発生した場合、適切に処理されるかテスト
     with pytest.raises(ValueError) as excinfo:
-        service.save_volume_oi_from_dataframe(invalid_df, asset_id)
+        service.save_volume_oi_from_dataframe(invalid_df, asset_id, is_final)
     assert "Invalid date format" in str(excinfo.value)
 
 def test_save_volume_oi_from_dataframe_with_error_negative_close(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
+    is_final = True
     # mock_volume_oi_repository.create.side_effect = Exception("Save error")
     invalid_df = volume_oi_df.copy()
     invalid_df['at_close'] = '-100'
 
     # エラーが発生した場合、適切に処理されるかテスト
     with pytest.raises(ValueError) as excinfo:
-        service.save_volume_oi_from_dataframe(invalid_df, asset_id)
+        service.save_volume_oi_from_dataframe(invalid_df, asset_id, is_final)
     assert "must be greater than or equal to 0" in str(excinfo.value)

@@ -34,7 +34,8 @@ def volume_oi_entity(asset: AssetModel):
         tas=3,
         deliveries=1,
         at_close=150,
-        change=20
+        change=20,
+        is_final=True
     )
 
 @pytest.fixture
@@ -54,7 +55,8 @@ def invalid_volume_oi_entity():
         tas=3,
         deliveries=1,
         at_close=150,
-        change=20
+        change=20,
+        is_final=True
     )
 
 def test_create_volume_oi(db_session: Session, volume_oi_entity: VolumeOIEntity):
@@ -66,6 +68,9 @@ def test_create_volume_oi(db_session: Session, volume_oi_entity: VolumeOIEntity)
     assert saved_volume_oi.asset_id == volume_oi_entity.asset_id
     assert saved_volume_oi.trade_date == volume_oi_entity.trade_date.to_date()
     assert saved_volume_oi.month == volume_oi_entity.month.to_db_format()
+    assert saved_volume_oi.total_volume == volume_oi_entity.total_volume
+    assert saved_volume_oi.at_close == volume_oi_entity.at_close
+    assert saved_volume_oi.is_final == volume_oi_entity.is_final
 
 def test_create_volume_oi_with_invalid_asset(db_session: Session, invalid_volume_oi_entity: VolumeOIEntity):
     repository = VolumeOIRepositoryMysql(db_session)

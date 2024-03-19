@@ -1,6 +1,6 @@
 # src/infrastructure/database/models.py
 
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, UniqueConstraint, Boolean
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -37,6 +37,7 @@ class Settlement(Base):
     settle = Column(Float(precision=2), nullable=False)
     est_volume = Column(Integer, nullable=False)
     prior_day_oi = Column(Integer, nullable=False)
+    is_final = Column(Boolean, nullable=False)
 
     asset = relationship("Asset", back_populates="settlements")
 
@@ -60,6 +61,7 @@ class VolumeOI(Base):
     deliveries = Column(Integer)
     at_close = Column(Integer, nullable=False)
     change = Column(Integer)
+    is_final = Column(Boolean, nullable=False)
 
     asset = relationship("Asset", back_populates="volume_oi_data")
 

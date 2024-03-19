@@ -32,7 +32,8 @@ def settlement_entity(asset: AssetModel):
         change=2.0,
         settle=12.0,
         est_volume=100,
-        prior_day_oi=200
+        prior_day_oi=200,
+        is_final=True
     )
 
 def test_create_settlement(db_session: Session, asset: AssetModel, settlement_entity: SettlementEntity):
@@ -44,3 +45,5 @@ def test_create_settlement(db_session: Session, asset: AssetModel, settlement_en
     assert saved_settlement.asset_id == asset.id
     assert saved_settlement.trade_date == settlement_entity.trade_date.to_date()
     assert saved_settlement.month == settlement_entity.month.to_db_format()
+    assert saved_settlement.settle == settlement_entity.settle
+    assert saved_settlement.is_final == settlement_entity.is_final

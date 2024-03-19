@@ -28,13 +28,13 @@ class VolumeOIService:
     def __init__(self, volume_oi_repository: VolumeOIRepository):
         self.volume_oi_repository = volume_oi_repository
 
-    def save_volume_oi_from_dataframe(self, df: pd.DataFrame, asset_id: int):
+    def save_volume_oi_from_dataframe(self, df: pd.DataFrame, asset_id: int, is_final: bool):
         # DataFrameの各列の型を変換する
         df = self._transform_dataframe_types(df)
 
         for row in df.itertuples(index=False):
             try:
-                volume_oi_entity = self._row_to_entity(row, asset_id)
+                volume_oi_entity = self._row_to_entity(row, asset_id, is_final)
                 self.volume_oi_repository.create(volume_oi_entity)
             except ValueError as e:
                 logger.error(f"Validation error for row {row}: {e}")
@@ -42,8 +42,8 @@ class VolumeOIService:
             except Exception as e:
                 logger.error(f"Error saving volume and open interest data for row {row}: {e}")
                 raise e
-
-        logger.info(f"Volume and open interest data for asset {asset_id} - {volume_oi_entity.trade_date} saved successfully.")
+        else:
+            logger.info(f"Volume and open interest data for asset {asset_id} - {volume_oi_entity.trade_date} saved successfully.")
 
     def _transform_dataframe_types(self, df: pd.DataFrame) -> pd.DataFrame:
         numeric_columns = ['globex', 'open_outcry', 'clear_port', 'total_volume', 'block_trades', 'efp', 'efr', 'tas', 'deliveries', 'at_close', 'change']
@@ -51,7 +51,7 @@ class VolumeOIService:
             df[col] = df[col].apply(lambda x: int(x.replace(',', '').replace('+', '')))
         return df
 
-    def _row_to_entity(self, row: _VOINamedTuple , asset_id: int) -> VolumeOIEntity:
+    def _row_to_entity(self, row: _VOINamedTuple , asset_id: int, is_final: bool) -> VolumeOIEntity:
         # DataFrameの行からEntityを生成
         return VolumeOIEntity.new_entity(
             asset_id=asset_id,
@@ -67,5 +67,6 @@ class VolumeOIService:
             tas=row.tas,
             deliveries=row.deliveries,
             at_close=row.at_close,
-            change=row.change
+            change=row.change,
+            is_final=is_final
         )

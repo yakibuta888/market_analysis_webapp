@@ -33,10 +33,13 @@ def settlement_df():
 def test_save_settlements_from_dataframe(settlement_df: pd.DataFrame, mock_settlement_repository: MagicMock):
     service = SettlementService(settlement_repository=mock_settlement_repository)
     asset_id = 1
-    service.save_settlements_from_dataframe(df=settlement_df, asset_id=asset_id)
+    is_final = True
+    service.save_settlements_from_dataframe(df=settlement_df, asset_id=asset_id, is_final=is_final)
 
     assert mock_settlement_repository.create.called
     create_call_args = mock_settlement_repository.create.call_args[0][0]
     assert create_call_args.asset_id == asset_id
     assert create_call_args.trade_date == TradeDate(date(2024, 3, 8))
     assert create_call_args.month == YearMonth(2024, 4)
+    assert create_call_args.settle == 12.0
+    assert create_call_args.is_final == is_final

@@ -10,7 +10,7 @@ class SettlementService:
     def __init__(self, settlement_repository: SettlementRepository):
         self.settlement_repository = settlement_repository
 
-    def save_settlements_from_dataframe(self, df: pd.DataFrame, asset_id: int):
+    def save_settlements_from_dataframe(self, df: pd.DataFrame, asset_id: int, is_final: bool):
         for row in df.itertuples():
             try:
                 settlement_entity = SettlementEntity.new_entity_by_scraping(
@@ -24,7 +24,8 @@ class SettlementService:
                     change=str(row.change),
                     settle=str(row.settle),
                     est_volume=str(row.est_volume),
-                    prior_day_oi=str(row.prior_day_oi)
+                    prior_day_oi=str(row.prior_day_oi),
+                    is_final=is_final
                 )
                 self.settlement_repository.create(settlement_entity)
             except ValueError as e:

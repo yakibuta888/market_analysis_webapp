@@ -24,7 +24,8 @@ class SettlementRepositoryMysql(SettlementRepository):
                 change=settlement_entity.change,
                 settle=settlement_entity.settle,
                 est_volume=settlement_entity.est_volume,
-                prior_day_oi=settlement_entity.prior_day_oi
+                prior_day_oi=settlement_entity.prior_day_oi,
+                is_final=settlement_entity.is_final
             )
             self.session.add(settlement_model)
             self.session.commit()

@@ -26,6 +26,7 @@ class VolumeOIEntity(DataClassBase):
     deliveries: int | None
     at_close: int
     change: int | None
+    is_final: bool
 
     def __post_init__(self):
         self._validate_positive_integers()
@@ -37,13 +38,17 @@ class VolumeOIEntity(DataClassBase):
                 raise ValueError(f"{field} must be greater than or equal to 0.")
 
     @classmethod
-    def new_entity(cls, asset_id: int, trade_date: str, month: str, **kwargs: int) -> VolumeOIEntity:
+    def new_entity(cls, asset_id: int, trade_date: str, month: str, **kwargs: int | bool) -> VolumeOIEntity:
         # ここで、文字列からTradeDateやYearMonthオブジェクトを作成する処理を実装
+        is_final = kwargs.pop('is_final', False)
+        if not isinstance(is_final, bool):
+            raise TypeError("is_final must be a boolean value.")
         return cls(
             id=None,
             asset_id=asset_id,
             trade_date=TradeDate.from_string(trade_date),
             month=YearMonth.from_string(month),
+            is_final=is_final,
             **kwargs
         )
 
@@ -67,4 +72,5 @@ class VolumeOIEntity(DataClassBase):
             deliveries=db_row.deliveries,
             at_close=db_row.at_close,
             change=db_row.change,
+            is_final=db_row.is_final
         )

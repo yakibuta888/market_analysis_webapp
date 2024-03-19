@@ -23,6 +23,7 @@ class SettlementEntity(DataClassBase):
     settle: float
     est_volume: int
     prior_day_oi: int
+    is_final: bool
 
     def __post_init__(self):
         self._validate_volume(self.est_volume)
@@ -39,7 +40,7 @@ class SettlementEntity(DataClassBase):
             raise ValueError("OI must be greater than or equal to 0.")
 
     @classmethod
-    def new_entity_by_scraping(cls, asset_id: int, trade_date: str, month: str, open: str | None, high: str | None, low: str | None, last: str | None, change: str | None, settle: str, est_volume: str, prior_day_oi: str) -> SettlementEntity:
+    def new_entity_by_scraping(cls, asset_id: int, trade_date: str, month: str, open: str | None, high: str | None, low: str | None, last: str | None, change: str | None, settle: str, est_volume: str, prior_day_oi: str, is_final: bool) -> SettlementEntity:
         return cls(
             id=None,
             asset_id=asset_id,
@@ -52,7 +53,8 @@ class SettlementEntity(DataClassBase):
             change=float(change) if change else None,
             settle=float(settle),
             est_volume=int(est_volume.replace(",", "")),
-            prior_day_oi=int(prior_day_oi.replace(",", ""))
+            prior_day_oi=int(prior_day_oi.replace(",", "")),
+            is_final=is_final
         )
 
 # NOTE: settlementテーブルを単独で取得するケースが今のところないため、from_dbメソッドは実装していません。利用する場合はservice, repositoryも合わせて実装する必要があります。
@@ -70,5 +72,6 @@ class SettlementEntity(DataClassBase):
             change=db_row.change,
             settle=db_row.settle,
             est_volume=db_row.est_volume,
-            prior_day_oi=db_row.prior_day_oi
+            prior_day_oi=db_row.prior_day_oi,
+            is_final=db_row.is_final
         )
