@@ -8,4 +8,7 @@ from src.infrastructure.database.models import VolumeOI as VolumeOIModel
 class VolumeOIRepository(ABC):
     @abstractmethod
     def create(self, volume_oi_entity: VolumeOIEntity) -> VolumeOIModel:
-        pass
+        raise NotImplementedError
+
+    def update(self, volume_oi_entity: VolumeOIEntity) -> VolumeOIModel:
+        raise NotImplementedError

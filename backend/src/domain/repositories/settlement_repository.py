@@ -8,4 +8,7 @@ from src.infrastructure.database.models import Settlement as SettlementModel
 class SettlementRepository(ABC):
     @abstractmethod
     def create(self, settlement_entity: SettlementEntity) -> SettlementModel:
-        pass
+        raise NotImplementedError
+
+    def update(self, settlement_entity: SettlementEntity) -> SettlementModel:
+        raise NotImplementedError
