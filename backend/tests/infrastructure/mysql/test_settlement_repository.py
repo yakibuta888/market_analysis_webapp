@@ -2,6 +2,7 @@
 import pytest
 from datetime import date
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 
 from src.domain.entities.settlement_entity import SettlementEntity
 from src.domain.value_objects.trade_date import TradeDate
@@ -36,6 +37,25 @@ def settlement_entity(asset: AssetModel):
         is_final=False
     )
 
+@pytest.fixture
+def invalid_settlement_entity():
+    return SettlementEntity(
+        id=None,
+        asset_id=-1,    # 存在しないasset_idを指定
+        trade_date=TradeDate(date(2024, 3, 8)),
+        month=YearMonth(2024, 4),
+        open="10.0",
+        high="15.0",
+        low="8.0",
+        last="12.0",
+        change=2.0,
+        settle=12.0,
+        est_volume=100,
+        prior_day_oi=200,
+        is_final=True
+    )
+
+
 def test_create_settlement(db_session: Session, asset: AssetModel, settlement_entity: SettlementEntity):
     repository = SettlementRepositoryMysql(session=db_session)
     repository.create(settlement_entity)
@@ -47,6 +67,17 @@ def test_create_settlement(db_session: Session, asset: AssetModel, settlement_en
     assert saved_settlement.month == settlement_entity.month.to_db_format()
     assert saved_settlement.settle == settlement_entity.settle
     assert saved_settlement.is_final == settlement_entity.is_final
+
+
+def test_create_settlement_invalid_asset_id(db_session: Session, invalid_settlement_entity: SettlementEntity):
+    repository = SettlementRepositoryMysql(session=db_session)
+
+    # 存在しないasset_idを指定してエンティティを作成しようとすると、例外が発生することを確認
+    with pytest.raises(IntegrityError) as excinfo:
+        repository.create(invalid_settlement_entity)
+
+    assert "foreign key constraint fails" in str(excinfo.value)
+
 
 def test_update_settlement(db_session: Session, asset: AssetModel, settlement_entity: SettlementEntity):
     # まず、SettlementEntityを作成してDBに保存
@@ -74,7 +105,11 @@ def test_update_settlement(db_session: Session, asset: AssetModel, settlement_en
     repository.update(updated_entity)
 
     # 更新されたデータをDBから取得して検証
-    updated_settlement = db_session.query(SettlementModel).filter_by(asset_id=updated_entity.asset_id, trade_date=updated_entity.trade_date.to_date(), month=updated_entity.month.to_db_format()).one()
+    updated_settlement = db_session.query(SettlementModel).filter_by(
+        asset_id=updated_entity.asset_id,
+        trade_date=updated_entity.trade_date.to_date(),
+        month=updated_entity.month.to_db_format()
+    ).one()
 
     assert updated_settlement.open == updated_entity.open
     assert updated_settlement.high == updated_entity.high
@@ -85,6 +120,7 @@ def test_update_settlement(db_session: Session, asset: AssetModel, settlement_en
     assert updated_settlement.est_volume == updated_entity.est_volume
     assert updated_settlement.prior_day_oi == updated_entity.prior_day_oi
     assert updated_settlement.is_final == updated_entity.is_final
+
 
 def test_update_settlement_not_found(db_session: Session, asset: AssetModel):
     repository = SettlementRepositoryMysql(session=db_session)
@@ -110,6 +146,7 @@ def test_update_settlement_not_found(db_session: Session, asset: AssetModel):
     with pytest.raises(ValueError) as excinfo:
         repository.update(non_existing_entity)
     assert "Settlement not found" in str(excinfo.value)
+
 
 def test_update_settlement_db_error(db_session: Session, asset: AssetModel, settlement_entity: SettlementEntity, mocker):
     repository = SettlementRepositoryMysql(session=db_session)

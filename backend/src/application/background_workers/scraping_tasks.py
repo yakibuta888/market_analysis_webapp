@@ -1,21 +1,33 @@
+import json
 from apscheduler.schedulers.background import BackgroundScheduler
-from src.infrastructure.scraping.scraper import scrape_website
-from datetime import datetime
 
-def my_job():
-    print("Running scheduled task:", datetime.now())
-    data = scrape_website()
-    # 永続化ロジックをここで呼び出す
-    print("Scraped data:", data)
+from database import get_asset_id  # 仮の関数; 実際にはDBからアセットIDを取得するロジックを実装する
+from src.infrastructure.scraping.cme_scraper import scrape_settlements, scrape_volume_and_open_interest
+
+
+def schedule_scraping_tasks():
+    with open('config/urls.json') as f:
+        urls_config = json.load(f)
+
+    for asset, urls in urls_config.items():
+        asset_id = get_asset_id(asset)  # アセット名に基づいてDBからIDを取得
+        settlements_url = urls["settlements"]
+        volume_oi_url = urls["volume_and_open_interest"]
+
+        # Settlementsのスクレイピングタスクをスケジュール
+        scheduler.add_job(scrape_settlements, 'cron', [settlements_url, asset_id], hour=23, minute=30)
+
+        # Volume and Open Interestのスクレイピングタスクをスケジュール
+        scheduler.add_job(scrape_volume_and_open_interest, 'cron', [volume_oi_url, asset_id], hour=23, minute=45)
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(my_job, 'cron', hour=23, minute=30)  # 毎日23:30に実行
+scheduler.start()
 
-if __name__ == "__main__":
-    scheduler.start()
-    try:
-        # これはスケジューラが中断されないようにするための無限ループです。
-        while True:
-            pass
-    except (KeyboardInterrupt, SystemExit):
-        scheduler.shutdown()
+schedule_scraping_tasks()
+
+try:
+    # スケジューラが中断されないようにする無限ループ
+    while True:
+        pass
+except (KeyboardInterrupt, SystemExit):
+    scheduler.shutdown()

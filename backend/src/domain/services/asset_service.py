@@ -60,3 +60,7 @@ class AssetService:
             except Exception as e:
                 logger.error(f"資産 '{asset_name}' の追加中にエラーが発生しました: {e}")
                 raise e
+
+    def fetch_asset_id(self, name: str):
+        asset_db = self.asset_repository.fetch_by_name(Name(name))
+        return asset_db.id
