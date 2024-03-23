@@ -1,0 +1,25 @@
+Message: 
+Stacktrace:
+#0 0x5f6030525993 <unknown>
+#1 0x5f6030220136 <unknown>
+#2 0x5f603026ad48 <unknown>
+#3 0x5f603026ae01 <unknown>
+#4 0x5f60302ade44 <unknown>
+#5 0x5f603028ccfd <unknown>
+#6 0x5f60302ab319 <unknown>
+#7 0x5f603028ca73 <unknown>
+#8 0x5f603025dc93 <unknown>
+#9 0x5f603025e65e <unknown>
+#10 0x5f60304ea08b <unknown>
+#11 0x5f60304ee005 <unknown>
+#12 0x5f60304d8491 <unknown>
+#13 0x5f60304eeb92 <unknown>
+#14 0x5f60304bd9ef <unknown>
+#15 0x5f6030514df8 <unknown>
+#16 0x5f6030514fcb <unknown>
+#17 0x5f6030524ae4 <unknown>
+#18 0x70f93841c134 <unknown>
+
+time:2024年03月23日 05:51:56
+url:https://www.cmegroup.com/markets/energy/crude-oil/light-sweet-crude.settlements.html
+selector://button[contains(@class, "load-all")]

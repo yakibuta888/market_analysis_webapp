@@ -3,11 +3,16 @@ import json
 import os
 import pandas as pd
 import requests
-from bs4 import BeautifulSoup
+import time
 from typing import Generator
+
+from bs4 import BeautifulSoup
 
 from src.domain.helpers.path import get_project_root
 from src.domain.services.asset_service import AssetService
+from src.infrastructure.scraping.get_element import GetElement
+from src.infrastructure.scraping.web_driver_setup import WebDriverSetup
+from src.settings import logger
 
 
 def _parse_settlements_table(soup: BeautifulSoup) -> Generator[dict[str, str], None, None]:
@@ -60,10 +65,39 @@ def _fetch_asset_ids_urls(table_name: str, asset_service: AssetService) -> dict[
     return id_url_dict
 
 
-def scrape_settlements(url, asset_id):
+def scrape_settlements(asset_service: AssetService):
     # `settlements` ページからデータをスクレイピングし、DataFrameに格納するロジック
     # ここでDataFrameを作成し、データを永続化するサービスに渡す
-    pass
+    webdriver_setup = WebDriverSetup(headless=False)
+    driver = webdriver_setup.get_driver()
+    get_element = GetElement(driver)
+
+    asset_ids_urls = _fetch_asset_ids_urls('settlements', asset_service)
+    try:
+        for asset_id, url in asset_ids_urls.items():
+            driver.get(url)
+            time.sleep(3)
+
+            trade_date_button = get_element.xpath('//label[contains(text(), "Trade date")]/parent::div/div/button')
+            driver.execute_script("arguments[0].click();", trade_date_button) # type: ignore
+            date_lists = get_element.css_all_elements('.trade-date-row .simplebar-content .link')
+            downloadable_dates = [date.text for date in date_lists]
+            logger.info(downloadable_dates)
+
+
+            load_all_button = get_element.xpath('//button[contains(@class, "load-all")]')
+            driver.execute_script("arguments[0].click();", load_all_button)  # type: ignore
+
+            html = driver.page_source
+            soup = BeautifulSoup(html, 'lxml')
+            df = pd.DataFrame(list(_parse_settlements_table(soup)))
+            # TODO: ここでデータを永続化するサービスに渡す
+            logger.info(df)
+            # TODO: breakは開発中のみ。全てのアセットを取得する場合はコメントアウトする。
+            break
+    finally:
+        driver.quit()
+
 
 def scrape_volume_and_open_interest(url, asset_id):
     # `volume_and_open_interest` ページからデータをスクレイピングし、DataFrameに格納するロジック

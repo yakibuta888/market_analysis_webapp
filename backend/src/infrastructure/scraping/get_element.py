@@ -1,4 +1,4 @@
-# src/domain/logics/scraping/get_element.py
+# src/infrastructure/scraping/get_element.py
 import os
 from datetime import datetime
 
@@ -75,10 +75,10 @@ class GetElement:
 
     >>> driver = webdriver.Chrome()
     >>> get_element = GetElement(driver)
-    >>> element = get_element('h1.classname')
+    >>> element = get_element.css('h1.classname')
     >>> print(element.text)
     text
-    >>> element = get_element.xpath(xpath='//div[@id="id"]/a)
+    >>> element = get_element.xpath('//div[@id="id"]/a')
     >>> print(element.get_attribute('href'))
     https://www.example.com
 
@@ -119,6 +119,24 @@ class GetElement:
         return self._get_element(method, selector)
 
 
+    def css_all_elements(self, selector: str) -> list[WebElement]:
+        """
+        Find and return a web elements using CSS selector.
+
+        Parameters
+        ----------
+        selector : str
+            The CSS selector used to locate the web elements.
+
+        Returns
+        -------
+        list[WebElement]
+            The web elements found using the CSS selector.
+        """
+        method = By.CSS_SELECTOR
+        return self._get_elements(method, selector)
+
+
     def xpath(self, selector: str) -> WebElement:
         """
         Find and return a web element using XPath.
@@ -135,6 +153,24 @@ class GetElement:
         """
         method = By.XPATH
         return self._get_element(method, selector)
+
+
+    def xpath_all_elements(self, selector: str) -> list[WebElement]:
+        """
+        Find and return a web elements using XPath.
+
+        Parameters
+        ----------
+        selector : str
+            The XPath used to locate the web elements.
+
+        Returns
+        -------
+        list[WebElement]
+            The web elements found using the XPath.
+        """
+        method = By.XPATH
+        return self._get_elements(method, selector)
 
 
     def _logging_error(self, error: TimeoutException | Literal[''], selector: str):
@@ -217,3 +253,51 @@ class GetElement:
                 logger.error(f'強制終了エラー:get_element\n{e}')
                 raise e
         return element
+
+
+    def _get_elements(self, method: str, selector: str):
+        """
+        Get the elements using the specified method and selector.
+
+        Parameters
+        ----------
+        method : str
+            The method to locate the elements (e.g., 'css selector', 'xpath').
+        selector : str
+            The selector used to locate the elements.
+
+        Returns
+        -------
+        elements : list[WebElement]
+            The located elements.
+
+        Raises
+        ------
+        TimeoutException
+            If the element cannot be located within the specified time.
+        SystemExit
+            If all retry attempts fail and the program needs to be forcefully terminated.
+
+        """
+        error = ''
+        for _ in range(self.retries_count):
+            try:
+                elements = WebDriverWait(self.driver, self.wait_second).until(
+                    EC.presence_of_all_elements_located((method, selector or ''))
+                )
+            except TimeoutException as e:
+                error = e
+            # 失敗しなかった場合は、ループを抜ける
+            else:
+                break
+        # リトライが全部失敗したときの処理
+        else:
+            self._logging_error(error, selector)
+            try:
+                self.driver.quit()
+                logger.error('プログラムを強制終了しました')
+                raise SystemExit(1)
+            except Exception as e:
+                logger.error(f'強制終了エラー:get_element\n{e}')
+                raise e
+        return elements

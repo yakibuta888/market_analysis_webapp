@@ -15,6 +15,8 @@ services:
   #   command: npm run dev:debug
 
   backend:
+    build:
+      shm_size: 1gb
     volumes:
       - ./backend:$WORK_DIR:cached
       - pip-volume:$WORK_DIR/vendor
@@ -24,6 +26,8 @@ services:
     entrypoint:
       - bash
       - $HOME_DIR/etc/devcontainer-entrypoint.sh
+    ports:
+      - $IP:6080:80
     command: sleep infinity
 
 volumes:

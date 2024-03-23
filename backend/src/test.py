@@ -1,7 +1,9 @@
-from src.domain.value_objects.trade_date import TradeDate
+from src.domain.services.asset_service import AssetService
+from src.infrastructure.mysql.asset_repository_mysql import AssetRepositoryMysql
+from src.infrastructure.database.database import db_session
+from src.infrastructure.scraping import cme_scraper
 
 
 if __name__ == "__main__":
-    change = float("-.92")
-    change = float("+.00035")
-    print(change)
+    asset_service = AssetService(AssetRepositoryMysql(db_session))
+    cme_scraper.scrape_settlements(asset_service)
