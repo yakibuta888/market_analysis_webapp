@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.domain.entities.volume_oi_entity import VolumeOIEntity
 from src.domain.repositories.volume_oi_repository import VolumeOIRepository
+from src.domain.value_objects.trade_date import TradeDate
 from src.infrastructure.database.models import VolumeOI as VolumeOIModel
 from src.settings import logger
 
@@ -67,3 +68,13 @@ class VolumeOIRepositoryMysql(VolumeOIRepository):
             self.session.rollback()
             logger.error(f"Error updating volume and open interest data: {e}")
             raise e
+
+    def check_data_is_final_or_none(self, asset_id: int, trade_date: TradeDate) -> bool | None:
+        volume_oi_model = self.session.query(VolumeOIModel).filter(
+            VolumeOIModel.asset_id == asset_id,
+            VolumeOIModel.trade_date == trade_date.to_date()
+        ).first()
+        if volume_oi_model:
+            return volume_oi_model.is_final
+        else:
+            return None

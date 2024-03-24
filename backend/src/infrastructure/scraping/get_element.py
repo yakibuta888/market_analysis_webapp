@@ -1,5 +1,6 @@
 # src/infrastructure/scraping/get_element.py
 import os
+import traceback
 from datetime import datetime
 
 from selenium import webdriver
@@ -27,13 +28,19 @@ class GetElement:
         指定の要素が表示されるまでの待機時間。
     retries_count : int, default 3
         待機時間経過後も要素が表示されない場合のリトライ回数。
+    error_handling : bool, default True
+        エラー処理を行うかどうか。
 
     Methods
     -------
     css(selector: str) -> WebElement
         cssセレクタで要素を指定する。
+    css_all_elements(selector: str) -> list[WebElement]
+        cssセレクタで複数の要素を指定する。
     xpath(selector: str) -> WebElement
         xpathで要素を指定する。
+    xpath_all_elements(selector: str) -> list[WebElement]
+        xpathで複数の要素を指定する。
     _logging_error(error: TimeoutException | Literal[''], selector: str)
         エラーメッセージを記録する。
     _get_element(method: str, selector: str) -> WebElement
@@ -83,7 +90,7 @@ class GetElement:
     https://www.example.com
 
     """
-    def __init__(self, driver: webdriver.Chrome, wait_second: int = 20, retries_count: int = 3):
+    def __init__(self, driver: webdriver.Chrome, wait_second: int = 20, retries_count: int = 3, error_handling: bool = True):
         """
         Initialize the GetElement class.
 
@@ -95,10 +102,13 @@ class GetElement:
             The number of seconds to wait for an element to be found.
         retries_count : int, default 3
             The number of times to retry finding an element.
+        error_handling : bool, default True
+            Whether to handle errors or not.
         """
         self.driver = driver
         self.wait_second = wait_second
         self.retries_count = retries_count
+        self.error_handling = error_handling
 
 
     def css(self, selector: str) -> WebElement:
@@ -173,13 +183,13 @@ class GetElement:
         return self._get_elements(method, selector)
 
 
-    def _logging_error(self, error: TimeoutException | Literal[''], selector: str):
+    def _logging_error(self, error: TimeoutException | Exception, selector: str):
         """
         Log the error details and save a screenshot.
 
         Parameters
         ----------
-        error : TimeoutException | Literal['']
+        error : TimeoutException | Exception
             The error that occurred during scraping.
         selector : str
             The selector used for scraping.
@@ -196,14 +206,21 @@ class GetElement:
         entry_time = datetime.now().strftime("%Y%m%d_%H%M%S")
         log_file = os.path.join(log_dir, f'log{entry_time}.txt')
         screenshot_file = os.path.join(log_dir, f'screenshot{entry_time}.png')
+
+        error_type = type(error).__name__
+        error_message = f"message: {str(error)}"
+        stack_trace = traceback.format_exc()
+
         with open(log_file, 'w', encoding='utf-8') as f:
             f.write(
-                f'{error}\n'
-                f'time:{datetime.now().strftime("%Y年%m月%d日 %H:%M:%S")}\n'
-                f'url:{self.driver.current_url}\n'
-                f'selector:{selector}\n'
+                f'Error Type: {error_type}\n'
+                f'{error_message}\n'
+                f'Stack Trace:\n{stack_trace}\n'
+                f'time: {datetime.now().strftime("%Y年%m月%d日 %H:%M:%S")}\n'
+                f'url: {self.driver.current_url}\n'
+                f'selector: {selector}\n'
             )
-        self.driver.save_screenshot(screenshot_file)
+        self.driver.save_screenshot(screenshot_file) # type: ignore
         logger.error(f'error_logを参照してください\n{error}')
 
 
@@ -231,27 +248,36 @@ class GetElement:
             If all retry attempts fail and the program needs to be forcefully terminated.
 
         """
-        error = ''
-        for _ in range(self.retries_count):
+        error = Exception('')
+        element = None
+        for _ in range(self.retries_count + 1):
             try:
                 element = WebDriverWait(self.driver, self.wait_second).until(
                     EC.presence_of_element_located((method, selector or ''))
                 )
+                # 要素が見つかった場合は、ループを抜ける
+                break
             except TimeoutException as e:
                 error = e
-            # 失敗しなかった場合は、ループを抜ける
-            else:
-                break
-        # リトライが全部失敗したときの処理
-        else:
-            self._logging_error(error, selector)
-            try:
-                self.driver.quit()
-                logger.error('プログラムを強制終了しました')
-                raise SystemExit(1)
+                continue # タイムアウトした場合は、リトライする
             except Exception as e:
-                logger.error(f'強制終了エラー:get_element\n{e}')
-                raise e
+                # タイムアウト以外のエラーの場合はループを抜けてエラー処理
+                error = e
+                break
+
+        if element is None: # 要素が取得できなかった場合
+            if self.error_handling:
+                self._logging_error(error, selector)
+                try:
+                    self.driver.quit()
+                    logger.error('プログラムを強制終了しました')
+                    raise SystemExit(1)
+                except Exception as e:
+                    logger.error(f'強制終了エラー:get_element\n{e}')
+                    raise e
+            else:
+                raise error
+
         return element
 
 
@@ -279,25 +305,34 @@ class GetElement:
             If all retry attempts fail and the program needs to be forcefully terminated.
 
         """
-        error = ''
-        for _ in range(self.retries_count):
+        error = Exception('')
+        elements = None
+        for _ in range(self.retries_count + 1):
             try:
                 elements = WebDriverWait(self.driver, self.wait_second).until(
                     EC.presence_of_all_elements_located((method, selector or ''))
                 )
+                # 要素が見つかった場合は、ループを抜ける
+                break
             except TimeoutException as e:
                 error = e
-            # 失敗しなかった場合は、ループを抜ける
-            else:
-                break
-        # リトライが全部失敗したときの処理
-        else:
-            self._logging_error(error, selector)
-            try:
-                self.driver.quit()
-                logger.error('プログラムを強制終了しました')
-                raise SystemExit(1)
+                continue # タイムアウトした場合は、リトライする
             except Exception as e:
-                logger.error(f'強制終了エラー:get_element\n{e}')
-                raise e
+                # タイムアウト以外のエラーの場合はループを抜けてエラー処理
+                error = e
+                break
+
+        if elements is None: # 要素が取得できなかった場合
+            if self.error_handling:
+                self._logging_error(error, selector)
+                try:
+                    self.driver.quit()
+                    logger.error('プログラムを強制終了しました')
+                    raise SystemExit(1)
+                except Exception as e:
+                    logger.error(f'強制終了エラー:get_element\n{e}')
+                    raise e
+            else:
+                raise error
+
         return elements

@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 
 from src.domain.entities.settlement_entity import SettlementEntity
 from src.domain.repositories.settlement_repository import SettlementRepository
+from src.domain.value_objects.trade_date import TradeDate
 from src.infrastructure.database.models import Settlement as SettlementModel
 from src.settings import logger
 
@@ -62,3 +63,13 @@ class SettlementRepositoryMysql(SettlementRepository):
             self.session.rollback()
             logger.error(f"Error updating settlement: {e}")
             raise e
+
+    def check_data_is_final_or_none(self, asset_id: int, trade_date: TradeDate) -> bool | None:
+        settlement_model = self.session.query(SettlementModel).filter(
+            SettlementModel.asset_id == asset_id,
+            SettlementModel.trade_date == trade_date.to_date()
+        ).first()
+        if settlement_model:
+            return settlement_model.is_final
+        else:
+            return None

@@ -34,6 +34,7 @@ def volume_oi_df():
     }
     return pd.DataFrame(data)
 
+
 def test_save_volume_oi_from_dataframe(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
@@ -61,6 +62,7 @@ def test_save_volume_oi_from_dataframe(mock_volume_oi_repository: Mock, volume_o
     ))
     mock_volume_oi_repository.create.assert_has_calls([expected_call])
 
+
 def test_save_volume_oi_from_dataframe_with_error(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
@@ -74,6 +76,7 @@ def test_save_volume_oi_from_dataframe_with_error(mock_volume_oi_repository: Moc
         service.save_volume_oi_from_dataframe(invalid_df, asset_id, is_final)
     assert "Invalid date format" in str(excinfo.value)
 
+
 def test_save_volume_oi_from_dataframe_with_error_negative_close(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
@@ -86,3 +89,73 @@ def test_save_volume_oi_from_dataframe_with_error_negative_close(mock_volume_oi_
     with pytest.raises(ValueError) as excinfo:
         service.save_volume_oi_from_dataframe(invalid_df, asset_id, is_final)
     assert "must be greater than or equal to 0" in str(excinfo.value)
+
+
+def test_update_volume_oi_from_dataframe_success(volume_oi_df: pd.DataFrame, mock_volume_oi_repository: Mock):
+    service = VolumeOIService(mock_volume_oi_repository)
+    asset_id = 2
+    is_final = False
+    service.update_volume_oi_from_dataframe(volume_oi_df, asset_id, is_final)
+
+    expected_call = call(VolumeOIEntity(
+        id=None,
+        asset_id=asset_id,
+        trade_date=TradeDate(date(2024, 3, 8)),
+        month=YearMonth(2024, 4),
+        globex=1500,
+        open_outcry=0,
+        clear_port=25,
+        total_volume=17275,
+        block_trades=10,
+        efp=5,
+        efr=0,
+        tas=3,
+        deliveries=1,
+        at_close=2150,
+        change=1020,
+        is_final=is_final
+    ))
+    mock_volume_oi_repository.update.assert_has_calls([expected_call])
+
+
+def test_update_volume_oi_from_dataframe_with_invalid_data(volume_oi_df: pd.DataFrame, mock_volume_oi_repository: Mock):
+    volume_oi_df.at[0, 'trade_date'] = 'Invalid Date'
+    service = VolumeOIService(mock_volume_oi_repository)
+    asset_id = 3
+    is_final = True
+
+    with pytest.raises(ValueError):
+        service.update_volume_oi_from_dataframe(volume_oi_df, asset_id, is_final)
+
+
+def test_update_volume_oi_from_dataframe_repository_exception(volume_oi_df: pd.DataFrame, mock_volume_oi_repository: Mock):
+    mock_volume_oi_repository.update.side_effect = Exception("Update error")
+    service = VolumeOIService(mock_volume_oi_repository)
+    asset_id = 4
+    is_final = True
+
+    with pytest.raises(Exception) as excinfo:
+        service.update_volume_oi_from_dataframe(volume_oi_df, asset_id, is_final)
+    assert "Update error" in str(excinfo.value)
+
+
+def test_check_data_is_final_or_none_with_valid_date(mock_volume_oi_repository: Mock):
+    service = VolumeOIService(mock_volume_oi_repository)
+    asset_id = 1
+    trade_date = "Fridey, 08 Mar 2024"
+    mock_volume_oi_repository.check_data_is_final_or_none.return_value = True
+
+    is_final = service.check_data_is_final(asset_id, trade_date)
+
+    mock_volume_oi_repository.check_data_is_final_or_none.assert_called_once_with(asset_id, TradeDate(date(2024, 3, 8)))
+    assert is_final is True
+
+
+def test_check_data_is_final_or_none_with_invalid_date(mock_volume_oi_repository: Mock):
+    service = VolumeOIService(mock_volume_oi_repository)
+    asset_id = 2
+    trade_date = "Invalid Date"
+
+    with pytest.raises(ValueError) as excinfo:
+        service.check_data_is_final(asset_id, trade_date)
+    assert "Invalid date format" in str(excinfo.value)
