@@ -11,12 +11,12 @@ class SettlementService:
     def __init__(self, settlement_repository: SettlementRepository):
         self.settlement_repository = settlement_repository
 
-    def save_settlements_from_dataframe(self, df: pd.DataFrame, asset_id: int, is_final: bool):
+    def save_settlements_from_dataframe(self, asset_id: int, trade_date: str, df: pd.DataFrame, is_final: bool):
         for row in df.itertuples():
             try:
                 settlement_entity = SettlementEntity.new_entity_by_scraping(
                     asset_id=asset_id,
-                    trade_date=str(row.trade_date),
+                    trade_date=trade_date,
                     month=str(row.month),
                     open=str(row.open),
                     high=str(row.high),
@@ -35,14 +35,14 @@ class SettlementService:
             except Exception as e:
                 logger.error(f"Error saving settlement for row {row}: {e}")
                 raise e
-        logger.info(f"Settlements for asset {asset_id} - {settlement_entity.trade_date} saved successfully.")
+        logger.info(f"Settlements for asset {asset_id} - {trade_date} saved successfully.")
 
-    def update_settlements_from_dataframe(self, df: pd.DataFrame, asset_id: int, is_final: bool):
+    def update_settlements_from_dataframe(self, asset_id: int, trade_date: str, df: pd.DataFrame, is_final: bool):
         for row in df.itertuples():
             try:
                 settlement_entity = SettlementEntity.new_entity_by_scraping(
                     asset_id=asset_id,
-                    trade_date=str(row.trade_date),
+                    trade_date=trade_date,
                     month=str(row.month),
                     open=str(row.open),
                     high=str(row.high),
@@ -61,7 +61,7 @@ class SettlementService:
             except Exception as e:
                 logger.error(f"Error updating settlement for row {row}: {e}")
                 raise e
-        logger.info(f"Settlements for asset {asset_id} - {settlement_entity.trade_date} updated successfully.")
+        logger.info(f"Settlements for asset {asset_id} - {trade_date} updated successfully.")
 
     def check_data_is_final(self, asset_id: int, trade_date: str) -> bool | None:
         try:

@@ -34,7 +34,7 @@ class Settlement(Base):
     low = Column(String(16))
     last = Column(String(16))
     change = Column(Float(precision=2))
-    settle = Column(Float(precision=2), nullable=False)
+    settle = Column(Float(precision=2), nullable=True)
     est_volume = Column(Integer, nullable=False)
     prior_day_oi = Column(Integer, nullable=False)
     is_final = Column(Boolean, nullable=False)

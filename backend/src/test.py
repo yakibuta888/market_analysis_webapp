@@ -13,4 +13,4 @@ if __name__ == "__main__":
     settlement_service = SettlementService(SettlementRepositoryMysql(db_session()))
     volume_oi_service = VolumeOIService(VolumeOIRepositoryMysql(db_session()))
     cme_scraper.scrape_settlements(asset_service, settlement_service)
-    # cme_scraper.scrape_volume_and_open_interest(asset_service, volume_oi_service)
+    cme_scraper.scrape_volume_and_open_interest(asset_service, volume_oi_service)

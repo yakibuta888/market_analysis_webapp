@@ -11,6 +11,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.remote.webelement import WebElement
 from typing import Literal
 
+from src.domain.exceptions.element_not_found_error import ElementNotFoundError
 from src.domain.helpers.path import get_project_root
 from src.settings import logger
 
@@ -268,13 +269,9 @@ class GetElement:
         if element is None: # 要素が取得できなかった場合
             if self.error_handling:
                 self._logging_error(error, selector)
-                try:
-                    self.driver.quit()
-                    logger.error('プログラムを強制終了しました')
-                    raise SystemExit(1)
-                except Exception as e:
-                    logger.error(f'強制終了エラー:get_element\n{e}')
-                    raise e
+                self.driver.quit()
+                logger.error('要素が見つかりませんでした。')
+                raise ElementNotFoundError(f'要素が見つかりませんでした: {selector}')
             else:
                 raise error
 
@@ -325,13 +322,9 @@ class GetElement:
         if elements is None: # 要素が取得できなかった場合
             if self.error_handling:
                 self._logging_error(error, selector)
-                try:
-                    self.driver.quit()
-                    logger.error('プログラムを強制終了しました')
-                    raise SystemExit(1)
-                except Exception as e:
-                    logger.error(f'強制終了エラー:get_element\n{e}')
-                    raise e
+                self.driver.quit()
+                logger.error('要素が見つかりませんでした。')
+                raise ElementNotFoundError(f'要素が見つかりませんでした: {selector}')
             else:
                 raise error
 

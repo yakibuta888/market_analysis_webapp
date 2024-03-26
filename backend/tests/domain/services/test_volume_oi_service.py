@@ -18,7 +18,6 @@ def mock_volume_oi_repository():
 def volume_oi_df():
     # テスト用のDataFrameを作成
     data = {
-        'trade_date': ['Friday, 08 Mar 2024'],
         'month': ['APR 24'],
         'globex': ["1,500"],
         'open_outcry': ["0"],
@@ -38,8 +37,9 @@ def volume_oi_df():
 def test_save_volume_oi_from_dataframe(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
+    trade_date = "Friday, 08 Mar 2024"
     is_final = True
-    service.save_volume_oi_from_dataframe(volume_oi_df, asset_id, is_final)
+    service.save_volume_oi_from_dataframe(asset_id, trade_date, volume_oi_df, is_final)
 
     # 確認：createメソッドが適切なエンティティで呼び出されているか
     expected_call = call(VolumeOIEntity(
@@ -66,20 +66,22 @@ def test_save_volume_oi_from_dataframe(mock_volume_oi_repository: Mock, volume_o
 def test_save_volume_oi_from_dataframe_with_error(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
+    trade_date = "Friday, 08 Mar 2024"
     is_final = True
     # mock_volume_oi_repository.create.side_effect = Exception("Save error")
     invalid_df = volume_oi_df.copy()
-    invalid_df['trade_date'] = 'invalid date'
+    invalid_df['month'] = 'invalid month'
 
     # エラーが発生した場合、適切に処理されるかテスト
     with pytest.raises(ValueError) as excinfo:
-        service.save_volume_oi_from_dataframe(invalid_df, asset_id, is_final)
-    assert "Invalid date format" in str(excinfo.value)
+        service.save_volume_oi_from_dataframe(asset_id, trade_date, invalid_df, is_final)
+    assert "Invalid month format" in str(excinfo.value)
 
 
 def test_save_volume_oi_from_dataframe_with_error_negative_close(mock_volume_oi_repository: Mock, volume_oi_df: pd.DataFrame):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 1
+    trade_date = "Friday, 08 Mar 2024"
     is_final = True
     # mock_volume_oi_repository.create.side_effect = Exception("Save error")
     invalid_df = volume_oi_df.copy()
@@ -87,15 +89,16 @@ def test_save_volume_oi_from_dataframe_with_error_negative_close(mock_volume_oi_
 
     # エラーが発生した場合、適切に処理されるかテスト
     with pytest.raises(ValueError) as excinfo:
-        service.save_volume_oi_from_dataframe(invalid_df, asset_id, is_final)
+        service.save_volume_oi_from_dataframe(asset_id, trade_date, invalid_df, is_final)
     assert "must be greater than or equal to 0" in str(excinfo.value)
 
 
 def test_update_volume_oi_from_dataframe_success(volume_oi_df: pd.DataFrame, mock_volume_oi_repository: Mock):
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 2
+    trade_date = "Friday, 08 Mar 2024"
     is_final = False
-    service.update_volume_oi_from_dataframe(volume_oi_df, asset_id, is_final)
+    service.update_volume_oi_from_dataframe(asset_id, trade_date, volume_oi_df, is_final)
 
     expected_call = call(VolumeOIEntity(
         id=None,
@@ -119,23 +122,25 @@ def test_update_volume_oi_from_dataframe_success(volume_oi_df: pd.DataFrame, moc
 
 
 def test_update_volume_oi_from_dataframe_with_invalid_data(volume_oi_df: pd.DataFrame, mock_volume_oi_repository: Mock):
-    volume_oi_df.at[0, 'trade_date'] = 'Invalid Date'
+    volume_oi_df.at[0, 'month'] = 'Invalid month'
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 3
+    trade_date = "Friday, 08 Mar 2024"
     is_final = True
 
     with pytest.raises(ValueError):
-        service.update_volume_oi_from_dataframe(volume_oi_df, asset_id, is_final)
+        service.update_volume_oi_from_dataframe(asset_id, trade_date, volume_oi_df, is_final)
 
 
 def test_update_volume_oi_from_dataframe_repository_exception(volume_oi_df: pd.DataFrame, mock_volume_oi_repository: Mock):
     mock_volume_oi_repository.update.side_effect = Exception("Update error")
     service = VolumeOIService(mock_volume_oi_repository)
     asset_id = 4
+    trade_date = "Friday, 08 Mar 2024"
     is_final = True
 
     with pytest.raises(Exception) as excinfo:
-        service.update_volume_oi_from_dataframe(volume_oi_df, asset_id, is_final)
+        service.update_volume_oi_from_dataframe(asset_id, trade_date, volume_oi_df, is_final)
     assert "Update error" in str(excinfo.value)
 
 

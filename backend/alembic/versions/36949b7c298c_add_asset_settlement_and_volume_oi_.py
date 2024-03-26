@@ -33,7 +33,7 @@ def upgrade() -> None:
         sa.Column('low', sa.String(length=16)),
         sa.Column('last', sa.String(length=16)),
         sa.Column('change', sa.Float(precision=2)),
-        sa.Column('settle', sa.Float(precision=2), nullable=False),
+        sa.Column('settle', sa.Float(precision=2), nullable=True),
         sa.Column('est_volume', sa.Integer(), nullable=False),
         sa.Column('prior_day_oi', sa.Integer(), nullable=False),
         sa.UniqueConstraint('asset_id', 'trade_date', 'month', name='_asset_date_month_uc')

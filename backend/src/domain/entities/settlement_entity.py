@@ -20,7 +20,7 @@ class SettlementEntity(DataClassBase):
     low: str | None
     last: str | None
     change: float | None
-    settle: float
+    settle: float | None
     est_volume: int
     prior_day_oi: int
     is_final: bool
@@ -40,7 +40,7 @@ class SettlementEntity(DataClassBase):
             raise ValueError("OI must be greater than or equal to 0.")
 
     @classmethod
-    def new_entity_by_scraping(cls, asset_id: int, trade_date: str, month: str, open: str | None, high: str | None, low: str | None, last: str | None, change: str | None, settle: str, est_volume: str, prior_day_oi: str, is_final: bool) -> SettlementEntity:
+    def new_entity_by_scraping(cls, asset_id: int, trade_date: str, month: str, open: str, high: str, low: str, last: str, change: str, settle: str, est_volume: str, prior_day_oi: str, is_final: bool) -> SettlementEntity:
         return cls(
             id=None,
             asset_id=asset_id,
@@ -50,8 +50,8 @@ class SettlementEntity(DataClassBase):
             high=high,
             low=low,
             last=last,
-            change=float(change) if change else None,
-            settle=float(settle),
+            change=float(change),
+            settle=float(settle) if settle != "-" else None,
             est_volume=int(est_volume.replace(",", "")),
             prior_day_oi=int(prior_day_oi.replace(",", "")),
             is_final=is_final

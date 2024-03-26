@@ -17,7 +17,6 @@ def mock_settlement_repository() -> SettlementRepository:
 @pytest.fixture
 def settlement_df():
     data = {
-        'trade_date': ['Friday, 08 Mar 2024'],
         'month': ['APR 24'],
         'open': ["10.0"],
         'high': ["15.0"],
@@ -34,8 +33,9 @@ def settlement_df():
 def test_save_settlements_from_dataframe(settlement_df: pd.DataFrame, mock_settlement_repository: MagicMock):
     service = SettlementService(settlement_repository=mock_settlement_repository)
     asset_id = 1
+    trade_date = "Friday, 08 Mar 2024"
     is_final = True
-    service.save_settlements_from_dataframe(df=settlement_df, asset_id=asset_id, is_final=is_final)
+    service.save_settlements_from_dataframe(asset_id=asset_id, trade_date=trade_date, df=settlement_df, is_final=is_final)
 
     assert mock_settlement_repository.create.called
     create_call_args = mock_settlement_repository.create.call_args[0][0]
@@ -49,8 +49,9 @@ def test_save_settlements_from_dataframe(settlement_df: pd.DataFrame, mock_settl
 def test_update_settlements_from_dataframe_success(settlement_df: pd.DataFrame, mock_settlement_repository: MagicMock):
     service = SettlementService(settlement_repository=mock_settlement_repository)
     asset_id = 2
+    trade_date = "Friday, 08 Mar 2024"
     is_final = False
-    service.update_settlements_from_dataframe(df=settlement_df, asset_id=asset_id, is_final=is_final)
+    service.update_settlements_from_dataframe(asset_id=asset_id, trade_date=trade_date, df=settlement_df, is_final=is_final)
 
     assert mock_settlement_repository.update.called
     update_call_args = mock_settlement_repository.update.call_args[0][0]
@@ -62,23 +63,26 @@ def test_update_settlements_from_dataframe_success(settlement_df: pd.DataFrame, 
 
 
 def test_update_settlements_from_dataframe_with_invalid_data(settlement_df: pd.DataFrame, mock_settlement_repository: MagicMock):
-    settlement_df.at[0, 'trade_date'] = 'Invalid Date'
+    settlement_df.at[0, 'month'] = "Invalid Month"
     service = SettlementService(settlement_repository=mock_settlement_repository)
     asset_id = 3
+    trade_date = "Friday, 08 Mar 2024"
     is_final = True
 
-    with pytest.raises(ValueError):
-        service.update_settlements_from_dataframe(df=settlement_df, asset_id=asset_id, is_final=is_final)
+    with pytest.raises(ValueError) as excinfo:
+        service.update_settlements_from_dataframe(asset_id=asset_id, trade_date=trade_date, df=settlement_df, is_final=is_final)
+    assert "Invalid month format" in str(excinfo.value)
 
 
 def test_update_settlements_from_dataframe_repository_exception(settlement_df: pd.DataFrame, mock_settlement_repository: MagicMock):
     mock_settlement_repository.update.side_effect = Exception("Update error")
     service = SettlementService(settlement_repository=mock_settlement_repository)
     asset_id = 4
+    trade_date = "Friday, 08 Mar 2024"
     is_final = True
 
     with pytest.raises(Exception) as excinfo:
-        service.update_settlements_from_dataframe(df=settlement_df, asset_id=asset_id, is_final=is_final)
+        service.update_settlements_from_dataframe(asset_id=asset_id, trade_date=trade_date, df=settlement_df, is_final=is_final)
     assert "Update error" in str(excinfo.value)
 
 
