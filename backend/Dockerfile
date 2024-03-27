@@ -42,7 +42,7 @@ EOF
 USER ${USERNAME}
 
 # ビルドステージからコピーした依存関係とアプリケーションのソースコードをコピー
-COPY --from=builder /app /app
+COPY --from=builder ${WORKDIR} ${WORKDIR}
 COPY --from=builder /root/.cache /root/.cache
 
 # 環境変数の設定
