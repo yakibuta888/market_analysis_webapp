@@ -26,11 +26,28 @@ jobs:
     - name: Build and push Docker image
       uses: docker/build-push-action@v2
       with:
-        context: .
-        file: ./Dockerfile
+        context: ./backend
+        file: ./backend/Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository }}/app-name:latest
+        tags: |
+          ghcr.io/${{ github.repository }}/backend:latest
+          ghcr.io/${{ github.repository }}/backend:${{ github.sha }}
 
     - name: Verify Published Image
       run: |
+        docker pull ghcr.io/${{ github.repository }}/backend:latest
+        docker image inspect ghcr.io/${{ github.repository }}/backend:latest
         echo "The Docker image has been pushed to GHCR successfully."
+
+    - name: Scan image for vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'ghcr.io/${{ github.repository }}/backend:latest'
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+
+    - name: Run tests with pytest
+      run: |
+        pip install -r requirements.txt
+        pytest
