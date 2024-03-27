@@ -95,7 +95,5 @@ jobs:
         MYSQL_USER: root
         MYSQL_PASSWORD: root
         MYSQL_DB: testdb
-      run: |
-        cd backend
-        pytest
+      run: pytest
       working-directory: ./backend
