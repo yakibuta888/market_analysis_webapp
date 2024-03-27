@@ -98,3 +98,4 @@ jobs:
       run: |
         cd backend
         pytest
+      working-directory: ./backend
