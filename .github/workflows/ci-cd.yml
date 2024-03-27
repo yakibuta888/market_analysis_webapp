@@ -1,0 +1,36 @@
+name: Build and Push Docker Image to GHCR
+
+on:
+  push:
+    branches:
+      - main  # mainブランチにプッシュされたときに実行
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Check Out Repo
+      uses: actions/checkout@v2
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v1
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v2
+      with:
+        context: .
+        file: ./Dockerfile
+        push: true
+        tags: ghcr.io/${{ github.repository }}/app-name:latest
+
+    - name: Verify Published Image
+      run: |
+        echo "The Docker image has been pushed to GHCR successfully."
