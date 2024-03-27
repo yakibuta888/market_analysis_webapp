@@ -95,5 +95,6 @@ jobs:
         MYSQL_USER: root
         MYSQL_PASSWORD: root
         MYSQL_DB: testdb
+        PYTHONPATH: ${{ github.workspace }}/backend
       run: pytest
       working-directory: ./backend
