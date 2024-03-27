@@ -94,7 +94,10 @@ jobs:
         MYSQL_HOST: 127.0.0.1
         MYSQL_USER: root
         MYSQL_PASSWORD: root
-        MYSQL_DB: testdb
+        MYSQL_DATABASE: testdb
+        DIALECT: mysql
+        DRIVER: pymysql
+        MYSQL_PORT: 3306
         PYTHONPATH: ${{ github.workspace }}/backend
       run: pytest
       working-directory: ./backend
