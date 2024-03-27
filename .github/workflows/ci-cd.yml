@@ -39,8 +39,8 @@ jobs:
           USERNAME=${{ secrets.USER_NAME }}
           USERID=${{ secrets.USER_ID }}
           GROUPID=${{ secrets.GROUP_ID }}
-          HOME_DIR=${{ secrets.HOME_DIR }}
-          WORK_DIR=${{ secrets.WORK_DIR }}
+          HOMEDIR=${{ secrets.HOME_DIR }}
+          WORKDIR=${{ secrets.WORK_DIR }}
 
     - name: Verify Published Image
       run: |
