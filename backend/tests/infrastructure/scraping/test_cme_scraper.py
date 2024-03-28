@@ -31,7 +31,7 @@ def test_parse_settlements_table(settlements_html: str):
     results = list(_parse_settlements_table(soup))
     expected = [{
         'month': 'Jan', 'open': '1', 'high': '2', 'low': '3', 'last': '4',
-        'change': '+1', 'settle': '5', 'est_volume': '100', 'prior_day_OI': '200'
+        'change': '+1', 'settle': '5', 'est_volume': '100', 'prior_day_oi': '200'
     }]
     assert results == expected, "Parsed data does not match expected output."
 

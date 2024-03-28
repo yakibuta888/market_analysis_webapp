@@ -55,7 +55,8 @@ def _parse_volume_oi_table(soup: BeautifulSoup) -> Generator[dict[str, str], Non
 
 
 def _fetch_asset_ids_urls(table_name: str, asset_service: AssetService) -> dict[int, str]:
-    config_path = os.path.join(get_project_root(), 'config', 'urls.json')
+    config_filename = os.getenv('URLS_CONFIG', 'urls.json')
+    config_path = os.path.join(get_project_root(), 'config', config_filename)
     with open(config_path) as f:
         urls_config = json.load(f)
 

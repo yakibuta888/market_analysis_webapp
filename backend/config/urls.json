@@ -1,12 +1,246 @@
+// TODO: アセットとURLの対応を追加する
 {
+  "gold":
+  {
+    "settlements": "https://www.cmegroup.com/markets/metals/precious/gold.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/precious/gold.volume.html"
+  },
+  "silver":
+  {
+    "settlements": "https://www.cmegroup.com/markets/metals/precious/silver.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/precious/silver.volume.html"
+  },
+  "copper":
+  {
+    "settlements": "https://www.cmegroup.com/markets/metals/base/copper.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/base/copper.volume.html"
+  },
+  "platinum":
+  {
+    "settlements": "https://www.cmegroup.com/markets/metals/precious/platinum.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/precious/platinum.volume.html"
+  },
+  "palladium":
+  {
+    "settlements": "https://www.cmegroup.com/markets/metals/precious/palladium.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/precious/palladium.volume.html"
+  },
+  "aluminum":
+  {
+    "settlements": "https://www.cmegroup.com/markets/metals/base/aluminum.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/base/aluminum.volume.html"
+  },
   "crude_oil":
   {
     "settlements": "https://www.cmegroup.com/markets/energy/crude-oil/light-sweet-crude.settlements.html",
     "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/crude-oil/light-sweet-crude.volume.html"
   },
-  "gold":
-  {
-    "settlements": "https://www.cmegroup.com/markets/metals/precious/gold.settlements.html",
-    "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/precious/gold.volume.html"
+  "ultra_t_bond": {
+    "settlements": "https://www.cmegroup.com/markets/interest-rates/us-treasury/ultra-t-bond.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/interest-rates/us-treasury/ultra-t-bond.volume.html"
+  },
+  "5_year_us_treasury_note": {
+    "settlements": "https://www.cmegroup.com/markets/interest-rates/us-treasury/5-year-us-treasury-note.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/interest-rates/us-treasury/5-year-us-treasury-note.volume.html"
+  },
+  "3_year_us_treasury_note": {
+    "settlements": "https://www.cmegroup.com/markets/interest-rates/us-treasury/3-year-us-treasury-note.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/interest-rates/us-treasury/3-year-us-treasury-note.volume.html"
+  },
+  "30_year_us_treasury_bond": {
+    "settlements": "https://www.cmegroup.com/markets/interest-rates/us-treasury/30-year-us-treasury-bond.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/interest-rates/us-treasury/30-year-us-treasury-bond.volume.html"
+  },
+  "2_year_us_treasury_note": {
+    "settlements": "https://www.cmegroup.com/markets/interest-rates/us-treasury/2-year-us-treasury-note.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/interest-rates/us-treasury/2-year-us-treasury-note.volume.html"
+  },
+  "10_year_us_treasury_note": {
+    "settlements": "https://www.cmegroup.com/markets/interest-rates/us-treasury/10-year-us-treasury-note.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/interest-rates/us-treasury/10-year-us-treasury-note.volume.html"
+  },
+  "three_month_sofr": {
+    "settlements": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/interest-rates/stirs/three-month-sofr.volume.html"
+  },
+  "30_day_federal_fund": {
+    "settlements": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/interest-rates/stirs/30-day-federal-fund.volume.html"
+  },
+  "swiss_franc": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/swiss-franc.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/swiss-franc.volume.html"
+  },
+  "swedish_krona": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/swedish-krona.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/swedish-krona.volume.html"
+  },
+  "norwegian_krone": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/norwegian-krone.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/norwegian-krone.volume.html"
+  },
+  "new_zealand_dollar": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/new-zealand-dollar.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/new-zealand-dollar.volume.html"
+  },
+  "japanese_yen": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/japanese-yen.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/japanese-yen.volume.html"
+  },
+  "euro_fx": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/euro-fx.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/euro-fx.volume.html"
+  },
+  "canadian_dollar": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/canadian-dollar.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/canadian-dollar.volume.html"
+  },
+  "british_pound": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/british-pound.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/british-pound.volume.html"
+  },
+  "australian_dollar": {
+    "settlements": "https://www.cmegroup.com/markets/fx/g10/australian-dollar.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/g10/australian-dollar.volume.html"
+  },
+  "turkish_lira_us_dollar_try_usd": {
+    "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/turkish-lira-us-dollar-try-usd.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/turkish-lira-us-dollar-try-usd.volume.html"
+  },
+  "south_african_rand": {
+    "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/south-african-rand.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/south-african-rand.volume.html"
+  },
+  "russian_ruble": {
+    "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/russian-ruble.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/russian-ruble.volume.html"
+  },
+  "mexican_peso": {
+    "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/mexican-peso.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/mexican-peso.volume.html"
+  },
+  "brazilian_real": {
+    "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/brazilian-real.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/brazilian-real.volume.html"
+  },
+  "usd_cnh": {
+    "settlements": "https://www.cmegroup.com/markets/fx/cross-rates/usd-cnh.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/cross-rates/usd-cnh.volume.html"
+  },
+  "e_mini_sandp500": {
+    "settlements": "https://www.cmegroup.com/markets/equities/sp/e-mini-sandp500.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/sp/e-mini-sandp500.volume.html"
+  },
+  "e_mini_technology_select_sector": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-technology-select-sector.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-technology-select-sector.volume.html"
+  },
+  "e_mini_sp_real_estate_select_sector_index": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-sp-real-estate-select-sector-index.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-sp-real-estate-select-sector-index.volume.html"
+  },
+  "e_mini_materials_select_sector": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-materials-select-sector.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-materials-select-sector.volume.html"
+  },
+  "e_mini_industrial_select_sector": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-industrial-select-sector.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-industrial-select-sector.volume.html"
+  },
+  "e_mini_health_care_select_sector": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-health-care-select-sector.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-health-care-select-sector.volume.html"
+  },
+  "e_mini_financial_select_sector": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-financial-select-sector.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-financial-select-sector.volume.html"
+  },
+  "e_mini_energy_select_sector": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-energy-select-sector.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-energy-select-sector.volume.html"
+  },
+  "e_mini_consumer_staples_select_sector": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-consumer-staples-select-sector.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-consumer-staples-select-sector.volume.html"
+  },
+  "e_mini_russell_2000": {
+    "settlements": "https://www.cmegroup.com/markets/equities/russell/e-mini-russell-2000.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/russell/e-mini-russell-2000.volume.html"
+  },
+  "e_mini_nasdaq_100": {
+    "settlements": "https://www.cmegroup.com/markets/equities/nasdaq/e-mini-nasdaq-100.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/nasdaq/e-mini-nasdaq-100.volume.html"
+  },
+  "nikkei_225_yen": {
+    "settlements": "https://www.cmegroup.com/markets/equities/international-indices/nikkei-225-yen.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/international-indices/nikkei-225-yen.volume.html"
+  },
+  "nikkei_225_dollar": {
+    "settlements": "https://www.cmegroup.com/markets/equities/international-indices/nikkei-225-dollar.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/international-indices/nikkei-225-dollar.volume.html"
+  },
+  "e_mini_dow": {
+    "settlements": "https://www.cmegroup.com/markets/equities/dow-jones/e-mini-dow.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/dow-jones/e-mini-dow.volume.html"
+  },
+  "dow_jones_rei": {
+    "settlements": "https://www.cmegroup.com/markets/equities/dow-jones/dow-jones-rei.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/dow-jones/dow-jones-rei.volume.html"
+  },
+  "rbob_gasoline": {
+    "settlements": "https://www.cmegroup.com/markets/energy/refined-products/rbob-gasoline.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/refined-products/rbob-gasoline.volume.html"
+  },
+  "heating_oil": {
+    "settlements": "https://www.cmegroup.com/markets/energy/refined-products/heating-oil.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/refined-products/heating-oil.volume.html"
+  },
+  "natural_gas": {
+    "settlements": "https://www.cmegroup.com/markets/energy/natural-gas/natural-gas.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/natural-gas/natural-gas.volume.html"
+  },
+  "wti_brent_ice_calendar_swap_futures": {
+    "settlements": "https://www.cmegroup.com/markets/energy/crude-oil/wti-brent-ice-calendar-swap-futures.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/crude-oil/wti-brent-ice-calendar-swap-futures.volume.html"
+  },
+  "west_texas_intermediate_wti_crude_oil_calendar_swap_futures": {
+    "settlements": "https://www.cmegroup.com/markets/energy/crude-oil/west-texas-intermediate-wti-crude-oil-calendar-swap-futures.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/crude-oil/west-texas-intermediate-wti-crude-oil-calendar-swap-futures.volume.html"
+  },
+  "brent_crude_oil_last_day": {
+    "settlements": "https://www.cmegroup.com/markets/energy/crude-oil/brent-crude-oil-last-day.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/crude-oil/brent-crude-oil-last-day.volume.html"
+  },
+  "chicago_ethanol_platts_swap": {
+    "settlements": "https://www.cmegroup.com/markets/energy/biofuels/chicago-ethanol-platts-swap.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/biofuels/chicago-ethanol-platts-swap.volume.html"
+  },
+  "ether": {
+    "settlements": "https://www.cmegroup.com/markets/cryptocurrencies/ether/ether.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/cryptocurrencies/ether/ether.volume.html"
+  },
+  "micro_bitcoin": {
+    "settlements": "https://www.cmegroup.com/markets/cryptocurrencies/bitcoin/micro-bitcoin.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/cryptocurrencies/bitcoin/micro-bitcoin.volume.html"
+  },
+  "bitcoin": {
+    "settlements": "https://www.cmegroup.com/markets/cryptocurrencies/bitcoin/bitcoin.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/cryptocurrencies/bitcoin/bitcoin.volume.html"
+  },
+  "soybean_oil": {
+    "settlements": "https://www.cmegroup.com/markets/agriculture/oilseeds/soybean-oil.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/agriculture/oilseeds/soybean-oil.volume.html"
+  },
+  "soybean": {
+    "settlements": "https://www.cmegroup.com/markets/agriculture/oilseeds/soybean.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/agriculture/oilseeds/soybean.volume.html"
+  },
+  "wheat": {
+    "settlements": "https://www.cmegroup.com/markets/agriculture/grains/wheat.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/agriculture/grains/wheat.volume.html"
+  },
+  "corn": {
+    "settlements": "https://www.cmegroup.com/markets/agriculture/grains/corn.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/agriculture/grains/corn.volume.html"
   }
 }

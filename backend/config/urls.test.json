@@ -1,0 +1,12 @@
+{
+  "crude_oil":
+  {
+    "settlements": "https://www.cmegroup.com/markets/energy/crude-oil/light-sweet-crude.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/energy/crude-oil/light-sweet-crude.volume.html"
+  },
+  "gold":
+  {
+    "settlements": "https://www.cmegroup.com/markets/metals/precious/gold.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/precious/gold.volume.html"
+  }
+}

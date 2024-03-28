@@ -6,6 +6,7 @@ from alembic import command
 from sqlalchemy import Engine, create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session, Session
 from typing import Callable
+from _pytest.monkeypatch import MonkeyPatch
 
 from src.domain.helpers.path import get_project_root
 from src.domain.entities.user_entity import UserEntity
@@ -24,6 +25,11 @@ def set_env_vars():
     yield
     # テスト終了後に元の環境変数に戻す
     os.environ["MYSQL_DATABASE"] = original_database if original_database is not None else ''
+
+@pytest.fixture(scope='function', autouse=True)
+def setup_urls_config(monkeypatch: MonkeyPatch):
+    monkeypatch.setenv('URLS_CONFIG', 'urls.test.json')
+    yield
 
 def mock_user_repository():
     user_repository = MockUserRepository()
