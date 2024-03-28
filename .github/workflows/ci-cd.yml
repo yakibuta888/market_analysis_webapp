@@ -17,7 +17,7 @@ jobs:
         image: mysql:5.7
         env:
           MYSQL_ROOT_PASSWORD: root
-          MYSQL_DATABASE: testdb
+          MYSQL_DATABASE: test_database
         ports:
           - 3306:3306
         options: >-
@@ -94,7 +94,7 @@ jobs:
         MYSQL_HOST: 127.0.0.1
         MYSQL_USER: root
         MYSQL_PASSWORD: root
-        MYSQL_DATABASE: testdb
+        MYSQL_DATABASE: test_database
         DIALECT: mysql
         DRIVER: pymysql
         MYSQL_PORT: 3306
