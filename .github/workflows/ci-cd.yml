@@ -107,5 +107,13 @@ jobs:
         curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar xvz
         sudo mv kubeval /usr/local/bin
 
-    - name: Validate Kubernetes manifests
-      run: find k8s -name '*.yaml' | xargs kubeval
+    - name: Download Kubernetes JSON Schemas
+      run: |
+        mkdir -p k8s-schema
+        # ここで必要なKubernetesバージョンに応じたスキーマをダウンロードします
+        # 以下は一例です
+        curl -L https://github.com/instrumenta/kubernetes-json-schema/archive/master.tar.gz | tar xz --strip-components=1 -C k8s-schema
+
+    - name: Validate Kubernetes YAML files using kubeval
+      run: |
+        find k8s -name '*.yaml' | xargs kubeval --schema-location file://${PWD}/k8s-schema
