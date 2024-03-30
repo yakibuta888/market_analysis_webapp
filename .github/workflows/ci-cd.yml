@@ -113,6 +113,7 @@ jobs:
         # ここで必要なKubernetesバージョンに応じたスキーマをダウンロードします
         # 以下は一例です
         curl -L https://github.com/instrumenta/kubernetes-json-schema/archive/master.tar.gz | tar xz --strip-components=1 -C k8s-schema
+        curl -sSL -o k8s-schema/cronjob-batch-v1.json https://kubernetesjsonschema.dev/v1.20.0-standalone/cronjob-batch-v1.json
 
     - name: Validate Kubernetes YAML files using kubeval
       run: |
