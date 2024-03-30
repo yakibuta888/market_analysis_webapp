@@ -101,3 +101,12 @@ jobs:
         PYTHONPATH: ${{ github.workspace }}/backend
       run: pytest
       working-directory: ./backend
+
+    - name: Set up Kubernetes kubectl
+      uses: azure/setup-kubectl@v1
+      with:
+        version: 'latest'
+
+    - name: Validate Kubernetes manifests
+      run: |
+        find k8s -name '*.yaml' | xargs -I {} kubectl apply --dry-run=client -f {}

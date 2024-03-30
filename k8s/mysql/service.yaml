@@ -1,0 +1,16 @@
+# k8s/mysql/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  labels:
+    app: market-analysis-webapp
+    type: mysql
+spec:
+  ports:
+  - port: 3306
+    targetPort: 3306
+  clusterIP: None
+  selector:
+    app: market-analysis-webapp
+    type: mysql

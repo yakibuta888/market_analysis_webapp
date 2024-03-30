@@ -1,5 +1,6 @@
 fastapi==0.108.0
 uvicorn==0.25.0
+gunicorn==21.2.0
 requests==2.31.0
 streamlit==1.29.0
 sqlalchemy==2.0.24

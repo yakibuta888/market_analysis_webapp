@@ -1,0 +1,11 @@
+# k8s/backend/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+data:
+  DIALECT: "mysql"
+  DRIVER: "pymysql"
+  MYSQL_DATABASE: "market_analysis_webapp_db"
+  MYSQL_HOST: database
+  MYSQL_PORT: "3306"

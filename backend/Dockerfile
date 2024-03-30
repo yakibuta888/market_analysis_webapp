@@ -52,4 +52,4 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # アプリケーションの起動コマンド
-CMD ["gunicorn", "-w", "4", "-b", "0.0.0.0:8000", "your_app_module:app"]
+CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "src.main:app", "--bind", "0.0.0.0:8000", "--workers", "4"]

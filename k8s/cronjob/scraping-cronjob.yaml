@@ -1,0 +1,87 @@
+# k8s/cronjob/scraping-cronjob.yaml
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: settlement-preliminary-scraping-cronjob
+spec:
+  schedule: "0 9 * * *"  # AM3時台(CT)、UTCでAM8時台に設定
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: settlement-scraping
+            image: ghcr.io/yakibuta888/market_anarysis_webapp/backend:latest
+            command: ["python", "run_scrapig_tasks.py", "settlement"]
+            envFrom:
+            - secretRef:
+                name: backend-secrets
+            - configMapRef:
+                name: backend-config
+          restartPolicy: OnFailure
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: settlement-final-scraping-cronjob
+spec:
+  schedule: "0 16 * * *"  # PM10時台(CT)、UTCでPM15時台に設定
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: settlement-scraping
+            image: ghcr.io/yakibuta888/market_anarysis_webapp/backend:latest
+            command: ["python", "run_scrapig_tasks.py", "settlement"]
+            envFrom:
+            - secretRef:
+                name: backend-secrets
+            - configMapRef:
+                name: backend-config
+          restartPolicy: OnFailure
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: volume-oi-preliminary-scraping-cronjob
+spec:
+  schedule: "0 10 * * *"  # AM4時台(CT)、UTCでAM9時台に設定
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: volume-oi-scraping
+            image: ghcr.io/yakibuta888/market_anarysis_webapp/backend:latest
+            command: ["python", "run_scrapig_tasks.py", "volume_oi"]
+            envFrom:
+            - secretRef:
+                name: backend-secrets
+            - configMapRef:
+                name: backend-config
+          restartPolicy: OnFailure
+
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: volume-oi-final-scraping-cronjob
+spec:
+  schedule: "0 15 * * *"  # PM9時台(CT)、UTCでPM14時台に設定
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: volume-oi-scraping
+            image: ghcr.io/yakibuta888/market_anarysis_webapp/backend:latest
+            command: ["python", "run_scrapig_tasks.py", "volume_oi"]
+            envFrom:
+            - secretRef:
+                name: backend-secrets
+            - configMapRef:
+                name: backend-config
+          restartPolicy: OnFailure

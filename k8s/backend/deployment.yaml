@@ -1,0 +1,61 @@
+# k8s/backend/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend-deployment
+  labels:
+    app: market-analysis-webapp
+    type: backend
+spec:
+  replicas: 2  # 必要に応じてレプリカ数を調整
+  selector:
+    matchLabels:
+      app: market-analysis-webapp
+      type: backend
+  template:
+    metadata:
+      labels:
+        app: market-analysis-webapp
+        type: backend
+    spec:
+      containers:
+      - name: backend-container
+        image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
+        ports:
+        - containerPort: 8000
+        env:
+        - name: MYSQL_USER
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: MYSQL_USER
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: backend-secrets
+              key: MYSQL_PASSWORD
+        - name: DIALECT
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: DIALECT
+        - name: DRIVER
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: DRIVER
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: MYSQL_DATABASE
+        - name: MYSQL_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: MYSQL_HOST
+        - name: MYSQL_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: MYSQL_PORT
