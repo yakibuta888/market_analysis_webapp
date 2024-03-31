@@ -110,13 +110,9 @@ jobs:
     - name: Download Kubernetes JSON Schemas
       run: |
         mkdir -p k8s-schema
-        # 自動的に Kubernetes バージョンを取得
-        kubernetes_version="${{ env.RUNNER_KUBERNETES_VERSION }}"
-        # バージョンに対応するスキーマをダウンロード
-        curl -sSL https://github.com/kubernetes/kubernetes/raw/release-${kubernetes_version}/api/openapi-spec/swagger.json -o k8s-schema/swagger.json
-        # kubeval が swagger.json から必要なスキーマを取り出せるようにする
-        curl -sSL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar xz
+        kubernetes_version="1.20.0" # 例として1.20.0を使用
+        curl -sSL "https://github.com/instrumenta/kubernetes-json-schema/archive/v${kubernetes_version}.tar.gz" | tar xz --strip-components=1 -C k8s-schema
 
-    - name: Validate Kubernetes Manifests
+    - name: Validate Kubernetes YAML files using kubeval
       run: |
-        find k8s -name '*.yaml' | xargs kubeval --kubernetes-version "${{ env.RUNNER_KUBERNETES_VERSION }}" --schema-location file://${PWD}/k8s-schema
+        find k8s -name '*.yaml' | xargs kubeval --schema-location file://${PWD}/k8s-schema
