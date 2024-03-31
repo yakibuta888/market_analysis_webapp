@@ -109,10 +109,11 @@ jobs:
 
     - name: Download Kubernetes JSON Schemas
       run: |
-        mkdir -p k8s-schema
-        kubernetes_version="1.20.0" # 例として1.20.0を使用
-        curl -sSL "https://github.com/instrumenta/kubernetes-json-schema/archive/v${kubernetes_version}.tar.gz" | tar xz --strip-components=1 -C k8s-schema
+        KUBERNETES_VERSION="1.20.0" # ここでKubernetesのバージョンを指定
+        SCHEMA_LOCATION="https://raw.githubusercontent.com/yannh/kubernetes-json-schema/master"
+        mkdir -p k8s-schema/$KUBERNETES_VERSION
+        curl -L $SCHEMA_LOCATION/v$KUBERNETES_VERSION-standalone-strict/all.json -o k8s-schema/$KUBERNETES_VERSION/all.json
 
-    - name: Validate Kubernetes YAML files using kubeval
+    - name: Validate Kubernetes YAML files
       run: |
-        find k8s -name '*.yaml' | xargs kubeval --schema-location file://${PWD}/k8s-schema
+        find k8s -name '*.yaml' | xargs kubeval --schema-location file://${PWD}/k8s-schema/ --kubernetes-version "1.20.0"
