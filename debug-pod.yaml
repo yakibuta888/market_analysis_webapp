@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: debug-container
+spec:
+  containers:
+  - name: debug-container
+    image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
+    command: ["/bin/sh"]
+    args: ["-c", "while true; do sleep 30; done"]
+  imagePullSecrets:
+  - name: ghcr-credentials
