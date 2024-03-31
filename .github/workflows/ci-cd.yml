@@ -119,4 +119,4 @@ jobs:
 
     - name: Validate Kubernetes Manifests
       run: |
-        ./kubeval --kubernetes-version "${{ env.RUNNER_KUBERNETES_VERSION }}" --schema-location file://k8s-schema k8s/*.yaml
+        find k8s -name '*.yaml' | xargs kubeval --kubernetes-version "${{ env.RUNNER_KUBERNETES_VERSION }}" --schema-location file://${PWD}/k8s-schema

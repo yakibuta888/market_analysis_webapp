@@ -3,6 +3,8 @@ kind: Application
 metadata:
   name: market-analysis-webapp
   namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
 spec:
   project: market-analysis-project
   source:
