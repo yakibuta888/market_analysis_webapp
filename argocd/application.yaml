@@ -1,0 +1,18 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: market-analysis-webapp
+  namespace: argocd
+spec:
+  project: market-analysis-project
+  source:
+    repoURL: 'https://github.com/yakibuta888/market_analysis_webapp.git'
+    path: k8s
+    targetRevision: HEAD
+  destination:
+    server: 'https://kubernetes.default.svc'
+    namespace: default
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
