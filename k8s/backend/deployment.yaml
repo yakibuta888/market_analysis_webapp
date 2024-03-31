@@ -61,3 +61,5 @@ spec:
             configMapKeyRef:
               name: backend-config
               key: MYSQL_PORT
+      imagePullSecrets:
+      - name: ghcr-credentials
