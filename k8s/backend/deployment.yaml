@@ -6,6 +6,8 @@ metadata:
   labels:
     app: market-analysis-webapp
     type: backend
+  annotations:
+    argocd.argoproj.io/sync-wave: "2"
 spec:
   replicas: 2  # 必要に応じてレプリカ数を調整
   selector:

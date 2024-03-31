@@ -6,6 +6,8 @@ metadata:
   labels:
     app: market-analysis-webapp
     type: mysql
+  annotations:
+    argocd.argoproj.io/sync-wave: "1"
 spec:
   replicas: 1
   selector:
