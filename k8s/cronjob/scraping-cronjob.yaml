@@ -19,6 +19,8 @@ spec:
             - configMapRef:
                 name: backend-config
           restartPolicy: OnFailure
+          imagePullSecrets:
+          - name: ghcr-credentials
 
 ---
 apiVersion: batch/v1
@@ -41,6 +43,8 @@ spec:
             - configMapRef:
                 name: backend-config
           restartPolicy: OnFailure
+          imagePullSecrets:
+          - name: ghcr-credentials
 
 ---
 apiVersion: batch/v1
@@ -63,6 +67,8 @@ spec:
             - configMapRef:
                 name: backend-config
           restartPolicy: OnFailure
+          imagePullSecrets:
+          - name: ghcr-credentials
 
 ---
 apiVersion: batch/v1
@@ -85,3 +91,5 @@ spec:
             - configMapRef:
                 name: backend-config
           restartPolicy: OnFailure
+          imagePullSecrets:
+          - name: ghcr-credentials
