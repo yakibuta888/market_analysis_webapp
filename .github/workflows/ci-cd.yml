@@ -105,9 +105,15 @@ jobs:
     - name: Set up Kubeconfig
       uses: azure/setup-kubectl@v1
 
-    - name: Create Image Pull Secret
+    - name: Setup SSH Agent
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+        ssh-passphrase: ${{ secrets.SSH_PASSPHRASE }}
+
+    - name: Create Kubernetes Secret
       run: |
-        kubectl create secret docker-registry ghcr-credentials \
+        ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_SERVER }} kubectl create secret docker-registry ghcr-credentials \
           --docker-server=ghcr.io \
           --docker-username=${{ secrets.DOCKER_USERNAME }} \
           --docker-password=${{ secrets.DOCKER_PASSWORD }} \
