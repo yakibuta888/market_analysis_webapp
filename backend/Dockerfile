@@ -2,6 +2,9 @@
 FROM python:3.11-slim as builder
 
 ARG WORKDIR
+ENV PATH=${WORKDIR}/vendor/bin:$PATH \
+	PYTHONPATH=${WORKDIR}/vendor:${WORKDIR} \
+	PYTHONUSERBASE=${WORKDIR}/vendor
 WORKDIR ${WORKDIR}
 
 COPY requirements.txt .
@@ -26,7 +29,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ARG WORKDIR
 ENV PATH=${WORKDIR}/vendor/bin:$PATH \
-	PYTHONPATH=${WORKDIR}/vendor/bin:${WORKDIR} \
+	PYTHONPATH=${WORKDIR}/vendor:${WORKDIR} \
 	PYTHONUSERBASE=${WORKDIR}/vendor
 WORKDIR ${WORKDIR}
 
