@@ -102,6 +102,20 @@ jobs:
       run: pytest
       working-directory: ./backend
 
+    - name: Set up Kubeconfig
+      uses: azure/setup-kubectl@v1
+      with:
+        version: '1.20.0'
+
+    - name: Create Image Pull Secret
+      run: |
+        kubectl create secret docker-registry ghcr-credentials \
+          --docker-server=ghcr.io \
+          --docker-username=${{ secrets.DOCKER_USERNAME }} \
+          --docker-password=${{ secrets.DOCKER_PASSWORD }} \
+          --docker-email="yakibuta888@gmail.com" \
+          --namespace=default
+
     - name: Install kubeval
       run: |
         curl -sL https://github.com/instrumenta/kubeval/releases/latest/download/kubeval-linux-amd64.tar.gz | tar xvz
