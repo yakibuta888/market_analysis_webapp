@@ -112,14 +112,14 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
 
-    - name: Create Kubernetes Secret
+    - name: Create Kubernetes Secret via SSH
       run: |
-        ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "kubectl create secret docker-registry ghcr-credentials \
+        ssh -p ${{ secrets.SSH_PORT }} -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '${{ secrets.KUBECTL_PATH }} create secret docker-registry ghcr-credentials \
           --docker-server=ghcr.io \
           --docker-username=${{ secrets.DOCKER_USERNAME }} \
           --docker-password=${{ secrets.DOCKER_PASSWORD }} \
-          --docker-email='yakibuta888@gmail.com' \
-          --namespace=default"
+          --docker-email="${{ secrets.DOCKER_EMAIL }}" \
+          --namespace=default'
 
     - name: Install kubeval
       run: |
