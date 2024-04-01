@@ -1,0 +1,31 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: market-analysis-webapp-set
+  namespace: argocd
+spec:
+  generators:
+    - list:
+        elements:
+          - name: backend
+            path: k8s/backend
+          - name: mysql
+            path: k8s/mysql
+          - name: cronjob
+            path: k8s/cronjob
+  template:
+    metadata:
+      name: '{{name}}-application'
+    spec:
+      project: market-analysis-project
+      source:
+        repoURL: 'https://github.com/yakibuta888/market_analysis_webapp.git'
+        targetRevision: main
+        path: '{{path}}'
+      destination:
+        server: 'https://kubernetes.default.svc'
+        namespace: default
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
