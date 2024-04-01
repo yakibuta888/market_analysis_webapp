@@ -2,14 +2,11 @@
 FROM python:3.11-slim as builder
 
 ARG WORKDIR
-ENV PATH=${WORKDIR}/vendor/bin:$PATH \
-	PYTHONPATH=${WORKDIR}/vendor/bin:${WORKDIR} \
-	PYTHONUSERBASE=${WORKDIR}/vendor
 WORKDIR ${WORKDIR}
 
 COPY requirements.txt .
 RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install --no-cache-dir -r requirements.txt --target=${WORKDIR}/vendor
 
 COPY . .
 
@@ -29,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ARG WORKDIR
 ENV PATH=${WORKDIR}/vendor/bin:$PATH \
-	PYTHONPATH=${WORKDIR}/vendor/bin:${WORKDIR} \
+	PYTHONPATH=${WORKDIR}/vendor:${WORKDIR} \
 	PYTHONUSERBASE=${WORKDIR}/vendor
 WORKDIR ${WORKDIR}
 
@@ -50,7 +47,6 @@ USER ${USERNAME}
 
 # ビルドステージからコピーした依存関係とアプリケーションのソースコードをコピー
 COPY --from=builder ${WORKDIR} ${WORKDIR}
-COPY --from=builder /root/.cache /root/.cache
 
 # 環境変数の設定
 # Pythonがpycファイルとdiscへの書き込みを行わないようにする
