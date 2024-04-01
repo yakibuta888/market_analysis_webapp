@@ -105,10 +105,12 @@ jobs:
     - name: Set up Kubeconfig
       uses: azure/setup-kubectl@v1
 
-    - name: Setup SSH Agent
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Setup SSH connection
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_SERVER }} >> ~/.ssh/known_hosts
 
     - name: Create Kubernetes Secret
       run: |
