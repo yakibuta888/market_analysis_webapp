@@ -26,7 +26,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 ARG WORKDIR
 ENV PATH=${WORKDIR}/vendor/bin:$PATH \
-	PYTHONPATH=${WORKDIR}/vendor:${WORKDIR} \
+	PYTHONPATH=${WORKDIR}/vendor/bin:${WORKDIR} \
 	PYTHONUSERBASE=${WORKDIR}/vendor
 WORKDIR ${WORKDIR}
 
