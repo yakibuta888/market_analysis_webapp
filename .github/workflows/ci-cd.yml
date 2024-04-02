@@ -123,14 +123,12 @@ jobs:
           echo "シークレット '$SECRET_NAME' が存在しません。作成します。"
 
           # シークレットが存在しない場合に作成
-          ssh -p ${{ secrets.SSH_PORT }} -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} <<EOF
-          ${{ secrets.KUBECTL_PATH }} create secret docker-registry "$SECRET_NAME" \
+          ssh -p ${{ secrets.SSH_PORT }} -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "${{ secrets.KUBECTL_PATH }} create secret docker-registry \"$SECRET_NAME\" \
             --docker-server=ghcr.io \
             --docker-username=${{ secrets.DOCKER_USERNAME }} \
             --docker-password=${{ secrets.DOCKER_PASSWORD }} \
-            --docker-email="${{ secrets.DOCKER_EMAIL }}" \
-            --namespace="$NAMESPACE"
-          EOF
+            --docker-email=${{ secrets.DOCKER_EMAIL }} \
+            --namespace=\"$NAMESPACE\""
         else
           echo "シークレット '$SECRET_NAME' は既に存在します。"
         fi
