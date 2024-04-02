@@ -11,7 +11,7 @@ spec:
         spec:
           containers:
           - name: settlement-scraping
-            image: ghcr.io/yakibuta888/market_anarysis_webapp/backend:latest
+            image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
             command: ["python", "run_scrapig_tasks.py", "settlement"]
             envFrom:
             - secretRef:
@@ -35,7 +35,7 @@ spec:
         spec:
           containers:
           - name: settlement-scraping
-            image: ghcr.io/yakibuta888/market_anarysis_webapp/backend:latest
+            image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
             command: ["python", "run_scrapig_tasks.py", "settlement"]
             envFrom:
             - secretRef:
@@ -59,7 +59,7 @@ spec:
         spec:
           containers:
           - name: volume-oi-scraping
-            image: ghcr.io/yakibuta888/market_anarysis_webapp/backend:latest
+            image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
             command: ["python", "run_scrapig_tasks.py", "volume_oi"]
             envFrom:
             - secretRef:
@@ -83,7 +83,7 @@ spec:
         spec:
           containers:
           - name: volume-oi-scraping
-            image: ghcr.io/yakibuta888/market_anarysis_webapp/backend:latest
+            image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
             command: ["python", "run_scrapig_tasks.py", "volume_oi"]
             envFrom:
             - secretRef:
