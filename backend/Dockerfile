@@ -3,13 +3,13 @@ FROM python:3.11-slim as builder
 
 ARG WORKDIR
 ENV PATH=${WORKDIR}/vendor/bin:$PATH \
-	PYTHONPATH=${WORKDIR}/vendor/bin:${WORKDIR} \
+	PYTHONPATH=${WORKDIR}/vendor:${WORKDIR} \
 	PYTHONUSERBASE=${WORKDIR}/vendor
 WORKDIR ${WORKDIR}
 
 COPY requirements.txt .
 RUN pip install --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+    && pip install --no-cache-dir --target=${WORKDIR}/vendor -r requirements.txt
 
 COPY . .
 
@@ -27,9 +27,19 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
+# セキュリティアップデートの適用
+RUN apt-get update && apt-get upgrade -y \
+	&& apt-get install -y --no-install-recommends \
+		sudo \
+		bsdutils \
+		util-linux \
+	&& apt-get autoremove -y \
+	&& apt-get clean \
+	&& rm -rf /var/lib/apt/lists/*
+
 ARG WORKDIR
 ENV PATH=${WORKDIR}/vendor/bin:$PATH \
-	PYTHONPATH=${WORKDIR}/vendor/bin:${WORKDIR} \
+	PYTHONPATH=${WORKDIR}/vendor:${WORKDIR} \
 	PYTHONUSERBASE=${WORKDIR}/vendor
 WORKDIR ${WORKDIR}
 
