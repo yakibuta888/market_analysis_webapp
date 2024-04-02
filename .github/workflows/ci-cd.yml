@@ -118,20 +118,19 @@ jobs:
         NAMESPACE=default
 
         # 指定したシークレットが存在するか確認
-        kubectl get secret "$SECRET_NAME" --namespace "$NAMESPACE" &> /dev/null
+        if ! ssh -p ${{ secrets.SSH_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '${{ secrets.KUBECTL_PATH }} get secret "$SECRET_NAME" --namespace "$NAMESPACE" &> /dev/null'; then
 
-        if [ $? -ne 0 ]; then
-            echo "シークレット '$SECRET_NAME' が存在しません。作成します。"
+          echo "シークレット '$SECRET_NAME' が存在しません。作成します。"
 
-            # シークレットが存在しない場合に作成
-            ssh -p ${{ secrets.SSH_PORT }} -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '${{ secrets.KUBECTL_PATH }} create secret docker-registry $SECRET_NAME \
-              --docker-server=ghcr.io \
-              --docker-username=${{ secrets.DOCKER_USERNAME }} \
-              --docker-password=${{ secrets.DOCKER_PASSWORD }} \
-              --docker-email="${{ secrets.DOCKER_EMAIL }}" \
-              --namespace=$NAMESPACE'
+          # シークレットが存在しない場合に作成
+          ssh -p ${{ secrets.SSH_PORT }} -t ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} '${{ secrets.KUBECTL_PATH }} create secret docker-registry "$SECRET_NAME" \
+            --docker-server=ghcr.io \
+            --docker-username=${{ secrets.DOCKER_USERNAME }} \
+            --docker-password=${{ secrets.DOCKER_PASSWORD }} \
+            --docker-email="${{ secrets.DOCKER_EMAIL }}" \
+            --namespace="$NAMESPACE"'
         else
-            echo "シークレット '$SECRET_NAME' は既に存在します。"
+          echo "シークレット '$SECRET_NAME' は既に存在します。"
         fi
 
     - name: Install kubeval
