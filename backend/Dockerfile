@@ -61,6 +61,9 @@ USER ${USERNAME}
 # ビルドステージからコピーした依存関係とアプリケーションのソースコードをコピー
 COPY --from=builder ${WORKDIR} ${WORKDIR}
 
+# ログディレクトリの権限変更
+RUN sudo chown -R ${USERID}:${GROUPID} ${WORKDIR}/src/log
+
 # 環境変数の設定
 # Pythonがpycファイルとdiscへの書き込みを行わないようにする
 ENV PYTHONDONTWRITEBYTECODE 1
