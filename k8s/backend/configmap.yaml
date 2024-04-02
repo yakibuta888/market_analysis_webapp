@@ -7,5 +7,5 @@ data:
   DIALECT: "mysql"
   DRIVER: "pymysql"
   MYSQL_DATABASE: "market_analysis_webapp_db"
-  MYSQL_HOST: database
+  MYSQL_HOST: mysql-service
   MYSQL_PORT: "3306"
