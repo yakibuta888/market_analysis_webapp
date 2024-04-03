@@ -18,7 +18,7 @@ def get_engine():
     database_url: str = f"{os.getenv('DIALECT')}+{os.getenv('DRIVER')}://{os.getenv('MYSQL_USER')}:{encoded_password}@{os.getenv('MYSQL_HOST')}:{os.getenv('MYSQL_PORT')}/{os.getenv('MYSQL_DATABASE')}"
 
     # Check if the database URL is valid
-    pattern = r"^\w+\+\w+://\w+:.*@[\w\.]+(:\d+)?/[\w-]+$"
+    pattern = r"^\w+\+\w+://\w+:.*@[\w\-\.]+(:\d+)?/[\w-]+$"
     database_url_notice = database_url.replace(encoded_password, f"{'*' * 5}")
 
     if not re.match(pattern, database_url):
