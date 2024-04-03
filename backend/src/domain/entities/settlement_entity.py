@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from datetime import date
 
 from src.domain.helpers.dataclass import DataClassBase
+from src.domain.logics.convert_price_format import convert_price_format
 from src.domain.value_objects.trade_date import TradeDate
 from src.domain.value_objects.year_month import YearMonth
 from src.infrastructure.database.models import Settlement as SettlementModel
@@ -50,8 +51,8 @@ class SettlementEntity(DataClassBase):
             high=high,
             low=low,
             last=last,
-            change=float(change),
-            settle=float(settle) if settle != "-" else None,
+            change=convert_price_format(change),
+            settle=convert_price_format(settle),
             est_volume=int(est_volume.replace(",", "")),
             prior_day_oi=int(prior_day_oi.replace(",", "")),
             is_final=is_final

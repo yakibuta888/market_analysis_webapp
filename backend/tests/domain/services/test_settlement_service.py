@@ -105,3 +105,34 @@ def test_check_data_is_final_or_none_with_invalid_date(mock_settlement_repositor
     with pytest.raises(ValueError) as excinfo:
         service.check_data_is_final(asset_id, trade_date)
     assert "Invalid date format" in str(excinfo.value)
+
+def test_new_entity_by_scraping_with_fractional_changes(settlement_df: pd.DataFrame, mock_settlement_repository: MagicMock):
+    # 分数形式のchangeとsettleをテストデータに追加
+    settlement_df.at[0, 'change'] = "-'27"
+    settlement_df.at[0, 'settle'] = "+'010"
+
+    service = SettlementService(settlement_repository=mock_settlement_repository)
+    asset_id = 1
+    trade_date = "Friday, 08 Mar 2024"
+    is_final = True
+
+    # 分数形式の値が正しく変換されるかをテスト
+    service.save_settlements_from_dataframe(asset_id=asset_id, trade_date=trade_date, df=settlement_df, is_final=is_final)
+
+    create_call_args = mock_settlement_repository.create.call_args[0][0]
+    assert create_call_args.change == -0.84375  # -'27' が正しく変換された値
+    assert create_call_args.settle == 0.0003125  # +'010' が正しく変換された値
+
+def test_new_entity_by_scraping_with_invalid_format(settlement_df: pd.DataFrame, mock_settlement_repository: MagicMock):
+    # 無効な形式の値をテストデータに設定
+    settlement_df.at[0, 'change'] = "invalid"
+    settlement_df.at[0, 'settle'] = "also invalid"
+
+    service = SettlementService(settlement_repository=mock_settlement_repository)
+    asset_id = 1
+    trade_date = "Friday, 08 Mar 2024"
+    is_final = True
+
+    # 無効な形式の値が適切に処理される（例えばNoneになる）ことをテスト
+    with pytest.raises(ValueError):
+        service.save_settlements_from_dataframe(asset_id=asset_id, trade_date=trade_date, df=settlement_df, is_final=is_final)
