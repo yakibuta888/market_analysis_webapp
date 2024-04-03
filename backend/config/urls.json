@@ -131,6 +131,10 @@
     "settlements": "https://www.cmegroup.com/markets/equities/sp/e-mini-sandp500.settlements.html",
     "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/sp/e-mini-sandp500.volume.html"
   },
+  "e-mini-utilities-select-sector": {
+    "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-utilities-select-sector.settlements.html",
+    "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-utilities-select-sector.volume.html"
+  },
   "e_mini_technology_select_sector": {
     "settlements": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-technology-select-sector.settlements.html",
     "volume_and_open_interest": "https://www.cmegroup.com/markets/equities/select-sectors/e-mini-technology-select-sector.volume.html"
