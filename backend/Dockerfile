@@ -62,7 +62,7 @@ USER ${USERNAME}
 COPY --from=builder ${WORKDIR} ${WORKDIR}
 
 # ログディレクトリの権限変更
-RUN sudo chown -R ${USERID}:${GROUPID} ${WORKDIR}/src/log
+RUN sudo chown -R ${USERID}:${GROUPID} ${HOMEDIR}
 
 # 環境変数の設定
 # Pythonがpycファイルとdiscへの書き込みを行わないようにする

@@ -1,12 +1,13 @@
 #src/domain/entities/futures_data_entity.py
 from __future__ import annotations
 from dataclasses import dataclass
-from datetime import date
 
 from src.domain.helpers.dataclass import DataClassBase
 from src.domain.value_objects.name import Name
 from src.domain.value_objects.email import Email
 from src.domain.value_objects.password import Password
+from src.domain.value_objects.trade_date import TradeDate
+from src.domain.value_objects.year_month import YearMonth
 from src.infrastructure.database.models import User as UserModel
 
 
@@ -14,8 +15,8 @@ from src.infrastructure.database.models import User as UserModel
 class FuturesDataEntity(DataClassBase):
     asset_id: int
     asset_name: str
-    trade_date: date
-    month: str
+    trade_date: TradeDate
+    month: YearMonth
     settle: float
     volume: int
     open_interest: int
