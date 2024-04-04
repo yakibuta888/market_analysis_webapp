@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import date
 
 from src.domain.helpers.dataclass import DataClassBase
-from src.domain.logics.convert_price_format import convert_price_format
+from src.domain.logics.validate_price_format import validate_price_format
 from src.domain.value_objects.trade_date import TradeDate
 from src.domain.value_objects.year_month import YearMonth
 from src.infrastructure.database.models import Settlement as SettlementModel
@@ -20,8 +20,8 @@ class SettlementEntity(DataClassBase):
     high: str | None
     low: str | None
     last: str | None
-    change: float | None
-    settle: float | None
+    change: str | None
+    settle: str | None
     est_volume: int
     prior_day_oi: int
     is_final: bool
@@ -29,6 +29,7 @@ class SettlementEntity(DataClassBase):
     def __post_init__(self):
         self._validate_volume(self.est_volume)
         self._validate_oi(self.prior_day_oi)
+        self._validate_price_format()
 
     @staticmethod
     def _validate_volume(est_volume: int) -> None:
@@ -39,6 +40,13 @@ class SettlementEntity(DataClassBase):
     def _validate_oi(prior_day_oi: int) -> None:
         if prior_day_oi < 0:
             raise ValueError("OI must be greater than or equal to 0.")
+
+    def _validate_price_format(self):
+        # 価格関連の属性が適切なフォーマットであるか検証
+        for field in ['open', 'high', 'low', 'last', 'change', 'settle']:
+            value = getattr(self, field)
+            if value is not None and not validate_price_format(value):
+                raise ValueError(f"Invalid price format for {field}: {value}")
 
     @classmethod
     def new_entity_by_scraping(cls, asset_id: int, trade_date: str, month: str, open: str, high: str, low: str, last: str, change: str, settle: str, est_volume: str, prior_day_oi: str, is_final: bool) -> SettlementEntity:
@@ -51,8 +59,8 @@ class SettlementEntity(DataClassBase):
             high=high,
             low=low,
             last=last,
-            change=convert_price_format(change),
-            settle=convert_price_format(settle),
+            change=change,
+            settle=settle,
             est_volume=int(est_volume.replace(",", "")),
             prior_day_oi=int(prior_day_oi.replace(",", "")),
             is_final=is_final

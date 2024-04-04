@@ -1,5 +1,6 @@
 # src/domain/repositories/settlement_repository.py
 from abc import ABC, abstractmethod
+from datetime import date
 
 from src.domain.entities.settlement_entity import SettlementEntity
 from src.domain.value_objects.trade_date import TradeDate
@@ -15,4 +16,7 @@ class SettlementRepository(ABC):
         raise NotImplementedError
 
     def check_data_is_final_or_none(self, asset_id: int, trade_date: TradeDate) -> bool | None:
+        raise NotImplementedError
+
+    def fetch_settlements_by_name_and_date(self, asset_name: str, trade_date: date) -> list[SettlementEntity]:
         raise NotImplementedError

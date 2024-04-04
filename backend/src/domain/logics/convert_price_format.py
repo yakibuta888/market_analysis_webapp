@@ -2,13 +2,14 @@
 from src.settings import logger
 
 
-def convert_price_format(value: str) -> float | None:
-    if value == "-":
+def convert_price_format(value: str | None) -> float | None:
+    if not value or value == "-":
         return None
     value = value.strip("AB")  # AまたはBが末尾にある場合に除去
     try:
         if "'" in value:
             whole, fraction = value.split("'")
+            whole = whole.replace(",", "")
             if fraction.startswith("0"):
                 float_fraction = float(f"0.{fraction}") / 32
             else:
@@ -21,6 +22,7 @@ def convert_price_format(value: str) -> float | None:
                 return float(whole) - float_fraction
             else:
                 return float(whole) + float_fraction
+        value = value.replace(",", "")
         return float(value)
     except ValueError as e:
         logger.error(f"Failed to convert price format: {value}\n{e}")

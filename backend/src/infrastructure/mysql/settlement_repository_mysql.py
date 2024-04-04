@@ -1,9 +1,11 @@
 # src/infrastructure/repositories/settlement_repository_mysql.py
 from sqlalchemy.orm import Session
+from datetime import date
 
 from src.domain.entities.settlement_entity import SettlementEntity
 from src.domain.repositories.settlement_repository import SettlementRepository
 from src.domain.value_objects.trade_date import TradeDate
+from src.infrastructure.database.models import Asset as AssetModel
 from src.infrastructure.database.models import Settlement as SettlementModel
 from src.settings import logger
 
@@ -36,6 +38,7 @@ class SettlementRepositoryMysql(SettlementRepository):
             logger.error(f"Error saving settlement: {e}")
             raise e
 
+
     def update(self, settlement_entity: SettlementEntity) -> SettlementModel:
         try:
             settlement_model = self.session.query(SettlementModel).filter(
@@ -64,6 +67,7 @@ class SettlementRepositoryMysql(SettlementRepository):
             logger.error(f"Error updating settlement: {e}")
             raise e
 
+
     def check_data_is_final_or_none(self, asset_id: int, trade_date: TradeDate) -> bool | None:
         settlement_model = self.session.query(SettlementModel).filter(
             SettlementModel.asset_id == asset_id,
@@ -73,3 +77,12 @@ class SettlementRepositoryMysql(SettlementRepository):
             return settlement_model.is_final
         else:
             return None
+
+
+    def fetch_settlements_by_name_and_date(self, asset_name: str, trade_date: date) -> list[SettlementEntity]:
+        """指定されたasset_nameとtrade_dateに一致する決済データを取得する"""
+        settlements = self.session.query(SettlementModel) \
+            .join(AssetModel, AssetModel.id == SettlementModel.asset_id) \
+            .filter(AssetModel.name == asset_name, SettlementModel.trade_date == trade_date) \
+            .all()
+        return [SettlementEntity.from_db(row) for row in settlements]

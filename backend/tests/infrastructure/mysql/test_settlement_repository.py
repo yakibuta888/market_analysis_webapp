@@ -30,8 +30,8 @@ def settlement_entity(asset: AssetModel):
         high="15.0",
         low="8.0",
         last="12.0",
-        change=2.0,
-        settle=12.0,
+        change="+2.0",
+        settle="12.0",
         est_volume=100,
         prior_day_oi=200,
         is_final=False
@@ -48,8 +48,8 @@ def invalid_settlement_entity():
         high="15.0",
         low="8.0",
         last="12.0",
-        change=2.0,
-        settle=12.0,
+        change="+2.0",
+        settle="12.0",
         est_volume=100,
         prior_day_oi=200,
         is_final=True
@@ -57,24 +57,40 @@ def invalid_settlement_entity():
 
 
 @pytest.fixture
-def db_settlement(db_session: Session, asset: AssetModel):
-    settlement = SettlementModel(
-        asset_id=asset.id,
-        trade_date=date(2024, 3, 11),
-        month="2024-06",
-        open="9.0",
-        high="16.3",
-        low="7.0",
-        last="12.3",
-        change=-2.0,
-        settle=12.0,
-        est_volume=110,
-        prior_day_oi=250,
-        is_final=False
-    )
-    db_session.add(settlement)
+def db_settlements(db_session: Session, asset: AssetModel):
+    settlements = [
+        SettlementModel(
+            asset_id=asset.id,
+            trade_date=date(2024, 3, 11),
+            month="2024-06",
+            open="9.0",
+            high="16.3",
+            low="7.0",
+            last="12.3",
+            change="-'2",
+            settle="12.0",
+            est_volume=110,
+            prior_day_oi=250,
+            is_final=False
+        ),
+        SettlementModel(
+            asset_id=asset.id,
+            trade_date=date(2024, 3, 11),
+            month="2024-07",
+            open="11.0",
+            high="16.0A",
+            low="9'05",
+            last="1300.0B",
+            change="+3.0",
+            settle="13.0",
+            est_volume=200,
+            prior_day_oi=300,
+            is_final=False
+        )
+    ]
+    db_session.bulk_save_objects(settlements)
     db_session.commit()
-    return settlement
+    return settlements
 
 
 def test_create_settlement(db_session: Session, asset: AssetModel, settlement_entity: SettlementEntity):
@@ -115,8 +131,8 @@ def test_update_settlement(db_session: Session, asset: AssetModel, settlement_en
         high="16.0",
         low="9.0",
         last="13.0",
-        change=3.0,
-        settle=13.0,
+        change="+3.0",
+        settle="13.0",
         est_volume=200,
         prior_day_oi=300,
         is_final=True
@@ -156,8 +172,8 @@ def test_update_settlement_not_found(db_session: Session, asset: AssetModel):
         high="25.0",
         low="18.0",
         last="23.0",
-        change=2.5,
-        settle=23.5,
+        change="+2.5",
+        settle="23.5",
         est_volume=150,
         prior_day_oi=250,
         is_final=True
@@ -182,7 +198,7 @@ def test_update_settlement_db_error(db_session: Session, asset: AssetModel, sett
     assert "Database error" in str(excinfo.value)
 
 
-def test_check_data_is_final_with_existing_data(db_session: Session, asset: AssetModel, db_settlement: SettlementModel):
+def test_check_data_is_final_with_existing_data(db_session: Session, asset: AssetModel, db_settlements: list[SettlementModel]):
     repository = SettlementRepositoryMysql(session=db_session)
 
     # Finalでないデータの確認
@@ -191,8 +207,10 @@ def test_check_data_is_final_with_existing_data(db_session: Session, asset: Asse
     assert is_final == False
 
     # データをFinalに更新して再テスト
-    db_settlement.is_final = True
-    db_session.commit()
+    db_session.query(SettlementModel).filter_by(
+        asset_id=asset.id,
+        trade_date=date(2024, 3, 11),
+    ).update({"is_final": True})
 
     is_final_updated = repository.check_data_is_final_or_none(asset.id, trade_date)
     assert is_final_updated == True
@@ -205,3 +223,56 @@ def test_check_data_is_final_with_non_existing_data(db_session: Session):
     trade_date = TradeDate.from_string("Saturday, 09 Mar 2024")
     is_final = repository.check_data_is_final_or_none(999, trade_date)  # 存在しないasset_idとtrade_date
     assert is_final is None
+
+def test_fetch_settlements_by_name_and_date(db_session: Session, db_settlements: list[SettlementModel], asset: AssetModel):
+    repository = SettlementRepositoryMysql(db_session)
+    asset_name = asset.name
+    trade_date = date(2024, 3, 11)
+
+    # メソッドを実行
+    settlements = repository.fetch_settlements_by_name_and_date(asset_name, trade_date)
+
+    expected_values = [
+        {
+            'month': YearMonth(2024, 6),
+            'open': "9.0",
+            'high': "16.3",
+            'low': "7.0",
+            'last': "12.3",
+            'change': "-'2",
+            'settle': "12.0",
+            'est_volume': 110,
+            'prior_day_oi': 250,
+            'is_final': False
+        },
+        {
+            'month': YearMonth(2024, 7),
+            'open': "11.0",
+            'high': "16.0A",
+            'low': "9'05",
+            'last': "1300.0B",
+            'change': "+3.0",
+            'settle': "13.0",
+            'est_volume': 200,
+            'prior_day_oi': 300,
+            'is_final': False
+        }
+    ]
+
+    # 検証: 取得された決済データが期待通りであることを確認
+    assert len(settlements) == len(expected_values)
+    assert all(isinstance(settlement, SettlementEntity) for settlement in settlements)
+    assert all(settlement.asset_id == asset.id for settlement in settlements)
+    assert all(settlement.trade_date == TradeDate(trade_date) for settlement in settlements)
+
+    for settlement, expected in zip(settlements, expected_values):
+        assert settlement.month == expected['month']
+        assert settlement.open == expected['open']
+        assert settlement.high == expected['high']
+        assert settlement.low == expected['low']
+        assert settlement.last == expected['last']
+        assert settlement.change == expected['change']
+        assert settlement.settle == expected['settle']
+        assert settlement.est_volume == expected['est_volume']
+        assert settlement.prior_day_oi == expected['prior_day_oi']
+        assert settlement.is_final == expected['is_final']

@@ -1,7 +1,9 @@
 # src/domain/services/settlement_service.py
 import pandas as pd
+from datetime import date
 
 from src.domain.entities.settlement_entity import SettlementEntity
+from src.domain.logics.convert_price_format import convert_price_format
 from src.domain.repositories.settlement_repository import SettlementRepository
 from src.domain.value_objects.trade_date import TradeDate
 from src.settings import logger
@@ -70,3 +72,25 @@ class SettlementService:
             logger.error(f"Invalid date format: {trade_date}")
             raise e
         return self.settlement_repository.check_data_is_final_or_none(asset_id, trade_date_obj)
+
+    def make_settlements_dataframe_by_name_and_date(self, asset_name: str, trade_date: date) -> pd.DataFrame:
+        """指定されたasset_nameとtrade_dateに基づいて決済データを取得し、DataFrameを作成する"""
+        settlements = self.settlement_repository.fetch_settlements_by_name_and_date(asset_name, trade_date)
+
+        # DataFrameの作成
+        df = pd.DataFrame([{
+            'trade_date': settlement.trade_date.value,
+            'month': str(settlement.month),
+            'open': convert_price_format(settlement.open),
+            'high': convert_price_format(settlement.high),
+            'low': convert_price_format(settlement.low),
+            'last': convert_price_format(settlement.last),
+            'change': convert_price_format(settlement.change),
+            'settle': convert_price_format(settlement.settle),
+            'est_volume': settlement.est_volume,
+            'prior_day_oi': settlement.prior_day_oi,
+            'is_final': settlement.is_final
+        } for settlement in settlements])
+
+        # 数値型に変換できなかったデータはNaNになるため、必要に応じて処理を行う
+        return df
