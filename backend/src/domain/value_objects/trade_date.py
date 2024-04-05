@@ -39,3 +39,10 @@ class TradeDate(DataClassBase):
         TradeDateオブジェクトをdate型に変換します。
         """
         return self.value
+
+    def to_string(self, format: str = "%Y-%m-%d") -> str:
+        """
+        TradeDateオブジェクトを指定されたフォーマットの文字列に変換します。
+        デフォルトのフォーマットはISO 8601 (YYYY-MM-DD) です。
+        """
+        return self.value.strftime(format)

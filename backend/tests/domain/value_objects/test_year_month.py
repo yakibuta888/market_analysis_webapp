@@ -2,6 +2,7 @@ import pytest
 from datetime import datetime
 from src.domain.value_objects.year_month import YearMonth
 
+
 @pytest.mark.parametrize("input_string, expected_year, expected_month", [
     ("APR 24", 2024, 4),
     ("APR 2024", 2024, 4),
@@ -13,6 +14,7 @@ def test_year_month_from_string(input_string: str, expected_year: int, expected_
     assert year_month.year == expected_year
     assert year_month.month == expected_month
 
+
 @pytest.mark.parametrize("year, month, expected_string", [
     (2024, 4, "2024-04"),
     (2023, 12, "2023-12"),
@@ -20,6 +22,7 @@ def test_year_month_from_string(input_string: str, expected_year: int, expected_
 def test_year_month_to_db_format(year: int, month: int, expected_string: str):
     year_month = YearMonth(year, month)
     assert year_month.to_db_format() == expected_string
+
 
 # NOTE: 以下のテストは、YearMonth.from_date() メソッドが実装された場合に有効です。
 # @pytest.mark.parametrize("input_date, expected_year, expected_month", [
@@ -30,6 +33,7 @@ def test_year_month_to_db_format(year: int, month: int, expected_string: str):
 #     year_month = YearMonth.from_date(input_date)
 #     assert year_month.year == expected_year
 #     assert year_month.month == expected_month
+
 
 @pytest.mark.parametrize("input_string, expected_year, expected_month", [
     ("2024-04", 2024, 4),
@@ -52,6 +56,7 @@ def test_from_string_with_various_inputs(input_str: str, expected_result: dateti
     result = YearMonth.from_string(input_str)
     assert result.year == expected_result.year and result.month == expected_result.month, f"Test failed for input: {input_str}"
 
+
 # 不正なフォーマットに対する例外が投げられるかテスト
 @pytest.mark.parametrize("invalid_input", [
     "ABC 24",
@@ -63,3 +68,21 @@ def test_from_string_with_invalid_input(invalid_input: str):
     with pytest.raises(ValueError) as exc_info:
         YearMonth.from_string(invalid_input)
     assert "Invalid month format" in str(exc_info.value), f"Test failed for input: {invalid_input}"
+
+
+# YearMonthのto_datetimeメソッドのテストケース
+@pytest.mark.parametrize("year, month, expected_datetime", [
+    (2024, 4, datetime(2024, 4, 1)),  # 標準的なケース
+    (2020, 12, datetime(2020, 12, 1)),  # 年末のケース
+    (2022, 1, datetime(2022, 1, 1)),  # 年始のケース
+])
+def test_year_month_to_datetime(year: int, month: int, expected_datetime: datetime):
+    # YearMonth オブジェクトを初期化
+    ym = YearMonth(year, month)
+
+    # to_datetime メソッドを呼び出し
+    result_datetime = ym.to_datetime()
+
+    # 結果の検証
+    assert result_datetime == expected_datetime
+    assert result_datetime.day == 1  # 月の最初の日であることを確認

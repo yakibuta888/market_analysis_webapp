@@ -27,3 +27,16 @@ def test_trade_date_initialization_with_non_date_type():
     with pytest.raises(ValueError) as excinfo:
         TradeDate("2024-03-08") # type: ignore
     assert "TradeDate must be a date instance." in str(excinfo.value), "TradeDate initialization should raise ValueError for non-date types."
+
+def test_trade_date_to_string_with_default_format():
+    # デフォルトフォーマットでのテスト
+    trade_date = TradeDate(date(2024, 4, 2))
+    expected_date_str = "2024-04-02"
+    assert trade_date.to_string() == expected_date_str, "TradeDate should convert to string in YYYY-MM-DD format"
+
+def test_trade_date_to_string_with_custom_format():
+    # カスタムフォーマットでのテスト
+    trade_date = TradeDate(date(2024, 3, 8))
+    expected_date_str = "08-Mar-2024"
+    # カスタムフォーマット指定
+    assert trade_date.to_string("%d-%b-%Y") == expected_date_str, "TradeDate should convert to string in DD-MMM-YYYY format"

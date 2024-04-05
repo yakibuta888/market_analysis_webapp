@@ -66,7 +66,6 @@ class SettlementEntity(DataClassBase):
             is_final=is_final
         )
 
-# NOTE: settlementテーブルを単独で取得するケースが今のところないため、from_dbメソッドは実装していません。利用する場合はservice, repositoryも合わせて実装する必要があります。
     @classmethod
     def from_db(cls, db_row: SettlementModel) -> SettlementEntity:
         return cls(

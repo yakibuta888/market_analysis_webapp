@@ -1,3 +1,4 @@
+# src/domain/value_objects/year_month.py
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
@@ -50,3 +51,10 @@ class YearMonth(DataClassBase):
         """
         year, month = map(int, ym_str.split('-'))
         return cls(year, month)
+
+    def to_datetime(self) -> datetime:
+        """
+        YearMonth オブジェクトを datetime オブジェクトに変換する。
+        変換される datetime オブジェクトは、指定された年月の最初の日 (1日) を表す。
+        """
+        return datetime(self.year, self.month, 1)

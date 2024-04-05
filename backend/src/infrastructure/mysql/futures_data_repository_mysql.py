@@ -28,6 +28,6 @@ class FuturesDataRepositoryMysql(FuturesDataRepository):
             WHERE a.name = :asset_name AND s.trade_date = :trade_date
             """),
             {'asset_name': asset_name, 'trade_date': trade_date}
-        )
+        ).fetchall()
 
-        return [FuturesDataEntity(*row) for row in result]
+        return [FuturesDataEntity.from_db_row(row) for row in result]
