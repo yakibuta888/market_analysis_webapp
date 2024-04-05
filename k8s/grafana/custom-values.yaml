@@ -1,0 +1,13 @@
+# grafana/custom-values.yaml
+persistence:
+  enabled: true
+  type: pvc
+  size: 10Gi
+  # existingClaim: ""
+  accessModes:
+    - ReadWriteOnce
+  finalizers:
+    - kubernetes.io/pvc-protection
+  # subPath: ""
+  # storageClassName: ""
+  annotations: {}
