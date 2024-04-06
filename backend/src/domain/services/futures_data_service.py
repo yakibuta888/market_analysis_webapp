@@ -4,6 +4,7 @@ from datetime import date
 from sqlalchemy.exc import SQLAlchemyError
 
 from src.domain.entities.futures_data_entity import FuturesDataEntity
+from src.domain.exceptions.dataframe_validation_error import DataFrameValidationError
 from src.domain.exceptions.invalid_input_error import InvalidInputError
 from src.domain.exceptions.repository_error import RepositoryError
 from src.domain.repositories.futures_data_repository import FuturesDataRepository
@@ -56,3 +57,37 @@ class FuturesDataService:
             # 予期せぬ例外のキャッチ
             logger.error(f"予期せぬエラー: {e}")
             raise RepositoryError("予期せぬエラーが発生しました。")
+
+
+    def add_settlement_spread(self, df: pd.DataFrame) -> pd.DataFrame:
+        """
+        DataFrameに清算値のスプレッドを追加します。
+
+        :param df: DataFrame
+        :return: スプレッドを追加したDataFrame
+        """
+
+        required_columns = ['month', 'settle']
+        if df.empty:
+            raise DataFrameValidationError("入力されたDataFrameは空です。")
+
+        # 必要なカラムのチェック
+        if not all(column in df.columns for column in required_columns):
+            missing_columns = [column for column in required_columns if column not in df.columns]
+            raise DataFrameValidationError(f"必要なカラムが不足しています: {missing_columns}")
+
+        if df['month'].dtype != 'datetime64[ns]':
+            raise DataFrameValidationError("monthカラムのデータ型がdatetime64[ns]ではありません。")
+
+        try:
+            # DataFrameに清算値のスプレッドを追加
+            df = df.sort_values('month') # type: ignore
+            df['settle_spread'] = df['settle'] - df['settle'].shift(1)
+            df['settle_spread'] = df['settle_spread'].fillna(0) # type: ignore
+
+            return df
+
+        except Exception as e:
+            # 予期せぬエラーのキャッチと処理
+            logger.error(f"DataFrameの処理中にエラーが発生しました: {e}")
+            raise DataFrameValidationError(f"DataFrameの処理中にエラーが発生しました: {e}")

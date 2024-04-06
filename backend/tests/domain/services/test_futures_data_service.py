@@ -4,6 +4,7 @@ from datetime import date, datetime
 import pandas as pd
 
 from src.domain.entities.futures_data_entity import FuturesDataEntity
+from src.domain.exceptions.dataframe_validation_error import DataFrameValidationError
 from src.domain.services.futures_data_service import FuturesDataService, InvalidInputError, RepositoryError
 from src.domain.repositories.futures_data_repository import FuturesDataRepository
 from src.domain.value_objects.trade_date import TradeDate
@@ -36,6 +37,11 @@ def mock_futures_data_repository():
     ]
     mock_repo.fetch_by_asset_and_date.return_value = mock_entities
     return mock_repo
+
+
+@pytest.fixture
+def mock_service():
+    return FuturesDataService(futures_data_repository=MagicMock(spec=FuturesDataRepository))
 
 
 # 正常な動作のテスト
@@ -82,3 +88,42 @@ def test_make_dataframe_repository_error(mock_make_dataframe: MagicMock):
 
     with pytest.raises(RepositoryError):
         service.make_dataframe(asset_name="TestAsset", trade_date=date(2024, 3, 8))
+
+
+# 正常な入力に対するテスト
+def test_add_settlement_spread_normal(mock_service: FuturesDataService):
+    df = pd.DataFrame({
+        'month': pd.to_datetime(['2021-01', '2021-02', '2021-03']),
+        'settle': [100, 105, 102],
+    })
+    expected_spread = [0, 5, -3]  # 期待されるスプレッドの値
+    result_df = mock_service.add_settlement_spread(df)
+    assert all(result_df['settle_spread'] == expected_spread), "スプレッドが正しく計算されていません。"
+
+
+# 空のDataFrameに対するテスト
+def test_add_settlement_spread_empty_df(mock_service: FuturesDataService):
+    df = pd.DataFrame()
+    with pytest.raises(DataFrameValidationError):
+        mock_service.add_settlement_spread(df)
+
+
+# 必要なカラムが不足している場合のテスト
+def test_add_settlement_spread_missing_columns(mock_service: FuturesDataService):
+    df = pd.DataFrame({
+        'month': pd.to_datetime(['2021-01', '2021-02']),
+        # 'settle' カラムが欠けている
+    })
+    with pytest.raises(DataFrameValidationError):
+        mock_service.add_settlement_spread(df)
+
+
+# `month`カラムのデータ型が不正な場合のテスト
+def test_add_settlement_spread_invalid_month_type(mock_service: FuturesDataService):
+    df = pd.DataFrame({
+        'month': ['2021-01', '2021-02'],  # 日付型でない
+        'settle': [100, 105],
+    })
+    # ここではTypeErrorを想定していますが、実際のエラーハンドリングに応じて変更してください。
+    with pytest.raises(DataFrameValidationError):
+        mock_service.add_settlement_spread(df)

@@ -1,3 +1,4 @@
+# src/application/web/api/routers/user_router.py
 from fastapi import APIRouter, Depends, HTTPException
 from dataclasses import asdict
 
