@@ -1,5 +1,4 @@
 # src/api/dependencies.py
-
 import os
 
 from fastapi import Depends
