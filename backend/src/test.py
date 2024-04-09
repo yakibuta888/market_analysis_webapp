@@ -13,15 +13,48 @@ from src.infrastructure.scraping import cme_scraper
 
 
 if __name__ == "__main__":
-    asset_service = AssetService(AssetRepositoryMysql(db_session()))
-    settlement_service = SettlementService(SettlementRepositoryMysql(db_session()))
-    volume_oi_service = VolumeOIService(VolumeOIRepositoryMysql(db_session()))
+    # asset_service = AssetService(AssetRepositoryMysql(db_session()))
+    # settlement_service = SettlementService(SettlementRepositoryMysql(db_session()))
+    # volume_oi_service = VolumeOIService(VolumeOIRepositoryMysql(db_session()))
 
-    futuresdata_repository = FuturesDataRepositoryMysql(db_session())
+    # futuresdata_repository = FuturesDataRepositoryMysql(db_session())
 
-    asset_name = 'crude_oil'
-    trade_date = date(2024, 4, 2)
+    # asset_name = 'crude_oil'
+    # trade_date = date(2024, 4, 2)
 
-    result = futuresdata_repository.fetch_by_asset_and_date(asset_name, trade_date)
+    # result = futuresdata_repository.fetch_by_asset_and_date(asset_name, trade_date)
 
-    print(result)
+    # print(result)
+
+    from src.application.web.api.models.futures_data_model import FuturesDataRequest
+    from pydantic import ValidationError
+
+    # 正しいデータでのテスト
+    try:
+        request = FuturesDataRequest(
+            asset_name="Gold",
+            trade_dates=["2023-01-01", "2023-01-02"]
+        )
+        print(request)
+    except ValidationError as e:
+        print("バリデーションエラーが発生しました:", e.json())
+
+    # 不正な日付形式でのテスト
+    try:
+        request = FuturesDataRequest(
+            asset_name="Gold",
+            trade_dates=["2023-01-32"]  # 存在しない日付
+        )
+        print(request)
+    except ValidationError as e:
+        print("バリデーションエラーが発生しました:", e.json())
+
+    # 資産名が空のテスト
+    try:
+        request = FuturesDataRequest(
+            asset_name="",
+            trade_dates=["2023-01-01"]
+        )
+        print(request)
+    except ValidationError as e:
+        print("バリデーションエラーが発生しました:", e.json())

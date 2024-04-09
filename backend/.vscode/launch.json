@@ -6,7 +6,7 @@
             "type": "python",
             "request": "launch",
             "module": "pytest",
-            "args": ["-s", "tests/scripts/"],
+            "args": ["-s", "tests/application/web/api/test_futures_data_router.py"],
             "console": "integratedTerminal",
             "justMyCode": false
         }
