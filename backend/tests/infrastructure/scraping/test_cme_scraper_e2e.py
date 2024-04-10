@@ -40,6 +40,7 @@ def test_setup(asset_service: AssetService, test_session: Session):
     # テストデータベースに必要なアセットを挿入
     asset_service.add_asset('crude_oil')
     asset_service.add_asset('gold')
+    asset_service.add_asset('russian_ruble')
 
     yield
 
@@ -51,6 +52,7 @@ def test_setup(asset_service: AssetService, test_session: Session):
     # テストデータベースからアセットを削除
     asset_service.remove_asset('crude_oil')
     asset_service.remove_asset('gold')
+    asset_service.remove_asset('russian_ruble')
 
 
 
