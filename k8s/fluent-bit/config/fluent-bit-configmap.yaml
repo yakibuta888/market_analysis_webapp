@@ -21,7 +21,7 @@ data:
     [OUTPUT]
         Name loki
         Match kube.*
-        Url http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
+        host http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
 
   parsers.conf: |
     [PARSER]
