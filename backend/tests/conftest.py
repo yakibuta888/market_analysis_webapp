@@ -16,7 +16,11 @@ from src.domain.value_objects.name import Name
 from src.infrastructure.mock.mock_user_repository import MockUserRepository
 from src.infrastructure.mock.mock_service import MockUserService
 from src.infrastructure.database.database import get_engine, Base
+from src.settings import setup_logging
 
+
+def pytest_configure():
+    setup_logging()
 
 @pytest.fixture(scope='session', autouse=True)
 def set_env_vars():

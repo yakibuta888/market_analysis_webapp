@@ -32,10 +32,10 @@ class SettlementService:
                 )
                 self.settlement_repository.create(settlement_entity)
             except ValueError as e:
-                logger.error(f"Validation error for row {row}: {e}")
+                logger.error(f"Validation error for row {row}: {e}, asset_id: {asset_id}, trade_date: {trade_date}")
                 raise e
             except Exception as e:
-                logger.error(f"Error saving settlement for row {row}: {e}")
+                logger.error(f"Error saving settlement for row {row}: {e}, asset_id: {asset_id}, trade_date: {trade_date}")
                 raise e
         logger.info(f"Settlements for asset {asset_id} - {trade_date} saved successfully.")
 
@@ -58,10 +58,10 @@ class SettlementService:
                 )
                 self.settlement_repository.update(settlement_entity)
             except ValueError as e:
-                logger.error(f"Validation error for row {row}: {e}")
+                logger.error(f"Validation error for row {row}: {e}, asset_id: {asset_id}, trade_date: {trade_date}")
                 raise e
             except Exception as e:
-                logger.error(f"Error updating settlement for row {row}: {e}")
+                logger.error(f"Error updating settlement for row {row}: {e}, asset_id: {asset_id}, trade_date: {trade_date}")
                 raise e
         logger.info(f"Settlements for asset {asset_id} - {trade_date} updated successfully.")
 
@@ -69,7 +69,7 @@ class SettlementService:
         try:
             trade_date_obj = TradeDate.from_string(trade_date)
         except ValueError as e:
-            logger.error(f"Invalid date format: {trade_date}")
+            logger.error(f"Invalid date format: {trade_date}, asset_id: {asset_id}")
             raise e
         return self.settlement_repository.check_data_is_final_or_none(asset_id, trade_date_obj)
 

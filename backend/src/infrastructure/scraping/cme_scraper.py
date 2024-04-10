@@ -169,7 +169,7 @@ def scrape_settlements(asset_service: AssetService, settlement_service: Settleme
             # TODO: breakは開発中のみ。全てのアセットを取得する場合はコメントアウトする。
             # break
         else:
-            logger.info('settlements data is up to date.')
+            logger.info(' ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ settlements data is up to date. ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ')
     finally:
         driver.quit()
 
@@ -214,6 +214,6 @@ def scrape_volume_and_open_interest(asset_service: AssetService, volume_oi_servi
             # TODO: breakは開発中のみ。全てのアセットを取得する場合はコメントアウトする。
             # break
         else:
-            logger.info('volume and open interest data is up to date.')
+            logger.info(' ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ volume and open interest data is up to date. ﾟ+｡*ﾟ+｡｡+ﾟ*｡+ﾟ ')
     finally:
         driver.quit()

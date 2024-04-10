@@ -1,13 +1,17 @@
 # tests/domain/services/test_volume_oi_service.py
+import logging
 import pandas as pd
 import pytest
+from datetime import date
 from unittest.mock import Mock, call
+from _pytest.logging import LogCaptureFixture
 
 from src.domain.services.volume_oi_service import VolumeOIService
 from src.domain.entities.volume_oi_entity import VolumeOIEntity
 from src.domain.value_objects.trade_date import TradeDate
 from src.domain.value_objects.year_month import YearMonth
-from datetime import date
+from src.settings import logger
+
 
 @pytest.fixture
 def mock_volume_oi_repository():
@@ -164,3 +168,45 @@ def test_check_data_is_final_or_none_with_invalid_date(mock_volume_oi_repository
     with pytest.raises(ValueError) as excinfo:
         service.check_data_is_final(asset_id, trade_date)
     assert "Invalid date format" in str(excinfo.value)
+
+
+def test_transform_dataframe_types_missing_column(volume_oi_df: pd.DataFrame):
+    service = VolumeOIService(Mock())
+    missing_globex_df = volume_oi_df.drop(columns=['globex'])
+
+    # この操作がエラーを発生させずに完了することを確認
+    transformed_df = service._transform_dataframe_types(missing_globex_df)
+    assert 'globex' not in transformed_df.columns
+
+
+def test_transform_dataframe_types_with_non_numeric_string(volume_oi_df: pd.DataFrame):
+    service = VolumeOIService(Mock())
+    volume_oi_df['globex'] = ['N/A']  # 数値に変換不可能な値を設定
+
+    with pytest.raises(ValueError):
+        # 数値変換に失敗することを確認
+        service._transform_dataframe_types(volume_oi_df)
+
+
+def test_save_volume_oi_from_dataframe_logging(volume_oi_df: pd.DataFrame, mock_volume_oi_repository: Mock, caplog: LogCaptureFixture):
+    service = VolumeOIService(mock_volume_oi_repository)
+    asset_id = 1
+    trade_date = "Friday, 08 Mar 2024"
+    is_final = True
+
+    with caplog.at_level(logging.INFO):
+        service.save_volume_oi_from_dataframe(asset_id, trade_date, volume_oi_df, is_final)
+        assert "Volume and open interest data for asset 1 - Friday, 08 Mar 2024 saved successfully." in caplog.text
+
+
+def test_update_volume_oi_from_dataframe_error_logging(volume_oi_df: pd.DataFrame, mock_volume_oi_repository: Mock, caplog: LogCaptureFixture):
+    mock_volume_oi_repository.update.side_effect = Exception("Update error")
+    service = VolumeOIService(mock_volume_oi_repository)
+    asset_id = 4
+    trade_date = "Friday, 08 Mar 2024"
+    is_final = True
+
+    with caplog.at_level(logging.ERROR):
+        with pytest.raises(Exception):
+            service.update_volume_oi_from_dataframe(asset_id, trade_date, volume_oi_df, is_final)
+        assert "Update error" in caplog.text

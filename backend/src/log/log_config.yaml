@@ -19,7 +19,7 @@ loggers:
   src.settings:
     level: DEBUG
     handlers: [console, file]
-    propagate: no
+    propagate: True
 root:
   level: DEBUG
   handlers: [console]

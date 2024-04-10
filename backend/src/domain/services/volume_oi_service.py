@@ -32,7 +32,8 @@ class VolumeOIService:
     def _transform_dataframe_types(self, df: pd.DataFrame) -> pd.DataFrame:
         numeric_columns = ['globex', 'open_outcry', 'clear_port', 'total_volume', 'block_trades', 'efp', 'efr', 'tas', 'deliveries', 'at_close', 'change']
         for col in numeric_columns:
-            df[col] = df[col].apply(lambda x: int(x.replace(',', '').replace('+', ''))) # type: ignore
+            if df.get(col) is not None: # type: ignore
+                df[col] = df[col].apply(lambda x: int(x.replace(',', '').replace('+', ''))) # type: ignore
         return df
 
 
@@ -66,10 +67,10 @@ class VolumeOIService:
                 volume_oi_entity = self._row_to_entity(row, asset_id, trade_date, is_final)
                 self.volume_oi_repository.create(volume_oi_entity)
             except ValueError as e:
-                logger.error(f"Validation error for row {row}: {e}")
+                logger.error(f"Validation error for row {row}: {e}, asset_id: {asset_id}, trade_date: {trade_date}")
                 raise e
             except Exception as e:
-                logger.error(f"Error saving volume and open interest data for row {row}: {e}")
+                logger.error(f"Error saving volume and open interest data for row {row}: {e}, asset_id: {asset_id}, trade_date: {trade_date}")
                 raise e
         else:
             logger.info(f"Volume and open interest data for asset {asset_id} - {trade_date} saved successfully.")
@@ -84,10 +85,10 @@ class VolumeOIService:
                 volume_oi_entity = self._row_to_entity(row, asset_id, trade_date, is_final)
                 self.volume_oi_repository.update(volume_oi_entity)
             except ValueError as e:
-                logger.error(f"Validation error for row {row}: {e}")
+                logger.error(f"Validation error for row {row}: {e}, asset_id: {asset_id}, trade_date: {trade_date}")
                 raise e
             except Exception as e:
-                logger.error(f"Error updating volume and open interest data for row {row}: {e}")
+                logger.error(f"Error updating volume and open interest data for row {row}: {e}, asset_id: {asset_id}, trade_date: {trade_date}")
                 raise e
         else:
             logger.info(f"Volume and open interest data for asset {asset_id} - {trade_date} updated successfully.")
@@ -97,6 +98,6 @@ class VolumeOIService:
         try:
             trade_date_obj = TradeDate.from_string(trade_date)
         except ValueError as e:
-            logger.error(f"Invalid date format: {trade_date}")
+            logger.error(f"Invalid date format: {trade_date}, asset_id: {asset_id}")
             raise e
         return self.volume_oi_repository.check_data_is_final_or_none(asset_id, trade_date_obj)
