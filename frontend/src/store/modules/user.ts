@@ -1,6 +1,7 @@
+// src/store/modules/user.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { fetchUserData } from "../../api/userApi";
-import { Axios, AxiosError } from "axios";
+import { AxiosError } from "axios";
 
 export interface User {
   id: number;
@@ -22,8 +23,12 @@ export const fetchUser = createAsyncThunk(
       const data = await fetchUserData();
       return data;
     } catch (error) {
-      if (error && (error as AxiosError).response) {
-        return rejectWithValue((error as AxiosError).response?.data);
+      if (error && (error as AxiosError).message) {
+        return rejectWithValue({
+          message: (error as AxiosError).message,  // エラーメッセージ
+          code: (error as AxiosError).code,        // エラーコード
+          url: (error as AxiosError).config?.url   // エラーが発生したリクエストのURL
+        });
       }
       return rejectWithValue(error);
     }
@@ -37,19 +42,7 @@ const user = createSlice({
     loading: false,
     error: null
   } as UserState,
-  reducers: {
-    // fetchUserRequest(state) {
-    //   state.loading = true;
-    // },
-    // fetchUserSuccess(state, action) {
-    //   state.loading = false;
-    //   state.userData = action.payload;
-    // },
-    // fetchUserFailure(state, action) {
-    //   state.loading = false;
-    //   state.error = action.payload;
-    // }
-  },
+  reducers: {},
   extraReducers: builder => {
     builder
       .addCase(fetchUser.pending, state => {
@@ -67,7 +60,4 @@ const user = createSlice({
   }
 });
 
-// const { fetchUserRequest, fetchUserSuccess, fetchUserFailure } = user.actions;
-
-// export { fetchUserRequest, fetchUserSuccess, fetchUserFailure }
 export default user.reducer;

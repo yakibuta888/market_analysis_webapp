@@ -1,3 +1,4 @@
+// src/viewModels/UserViewModel.ts
 import { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';

@@ -15,6 +15,20 @@ export default defineConfig({
   server: {
     // 使用するポート番号の指定 default 3000
     port: 3001,
+    host: '0.0.0.0',
+    proxy: {
+      '/api': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        configure: (proxy, options) => {
+          // proxy は 'http-proxy' のインスタンスです
+          proxy.on('proxyReq', function (proxyReq, req, res) {
+            console.log('Proxying request to: ', req.url);
+          });
+        },
+      }
+    }
   },
   // テスト参考
   // https://vitest.dev/guide/#workspaces-support

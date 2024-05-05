@@ -9,7 +9,6 @@ if (rootElement) {
   root.render(
     <React.StrictMode>
       <App />
-      <div>test</div>
     </React.StrictMode>
   );
 } else {

@@ -1,3 +1,4 @@
+// src/components/UserProfile.tsx
 import React from 'react';
 import { useUserViewModel } from '../viewModels/UserViewModel';
 

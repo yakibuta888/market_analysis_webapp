@@ -1,3 +1,4 @@
+// src/viewModels/DashboardViewModel.ts
 import { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { ThunkDispatch } from '@reduxjs/toolkit';
