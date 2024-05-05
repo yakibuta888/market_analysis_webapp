@@ -21,7 +21,7 @@ data:
     [OUTPUT]
         Name loki
         Match kube.*
-        host http://loki.logging.svc.cluster.local:3100/loki/api/v1/push
+        Host http://loki.logging.svc.cluster.local:3100
 
   parsers.conf: |
     [PARSER]
@@ -29,4 +29,5 @@ data:
         Format json
         Time_Key time
         Time_Format %Y-%m-%dT%H:%M:%S.%L
+        Time_offset +09:00
         Time_Keep On

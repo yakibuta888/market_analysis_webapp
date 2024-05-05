@@ -439,10 +439,10 @@ Fluent BitがLokiにログを転送するように設定を変更する必要が
        [OUTPUT]
            Name loki
            Match kube.*
-           Url http://loki:3100/loki/api/v1/push
+           Host http://loki:3100/loki/api/v1/push
    ```
 
-   この設定では、Fluent Bitが`/var/log/containers/*.log`からログを収集し、それらをLokiの`/loki/api/v1/push`エンドポイントに転送するように設定します。`Url`にはLokiサービスの内部URLを指定します。このURLはLokiがデプロイされた環境によって異なる場合がありますので、適宜修正してください。
+   この設定では、Fluent Bitが`/var/log/containers/*.log`からログを収集し、それらをLokiの`/loki/api/v1/push`エンドポイントに転送するように設定します。`Host`にはLokiサービスの内部URLを指定します。このURLはLokiがデプロイされた環境によって異なる場合がありますので、適宜修正してください。
 
 ### ステップ3: ファイル構成
 
@@ -632,7 +632,7 @@ Kubernetesクラスタ内でデプロイされたサービスの内部URLを見�
 http://loki.monitoring.svc.cluster.local:3100
 ```
 
-このURLをFluent Bitの設定ファイルの`Url`パラメータに指定して、ログをLokiに転送できるようにします。
+このURLをFluent Bitの設定ファイルの`Host`パラメータに指定して、ログをLokiに転送できるようにします。
 
 ---
 
@@ -779,5 +779,3 @@ kubectl --namespace logging port-forward $POD_NAME 3000
 このメッセージの最後には、永続性が無効になっているという警告があります。これは、Grafanaのデータ（ダッシュボードの設定、ユーザー設定など）が永続ボリュームに保存されていないため、GrafanaのPodが終了するとすべてのデータが失われることを意味します。本番環境でGrafanaを使用する場合は、データの永続化を有効にすることをお勧めします。これはHelmチャートの設定オプションを通じて行うことができます。
 
 ---
-
-

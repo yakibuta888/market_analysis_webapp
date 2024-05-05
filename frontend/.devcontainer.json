@@ -76,5 +76,10 @@
   "features": {
     "ghcr.io/devcontainers/features/common-utils:2": {}
   },
-  "postStartCommand": ""
+  "postStartCommand": "",
+  "portsAttributes": {
+    "3001": {
+      "label": "3001"
+    }
+  }
 }
