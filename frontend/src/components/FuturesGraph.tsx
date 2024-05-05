@@ -1,53 +1,30 @@
-// import React, { useEffect, useState } from 'react';
-// import Plotly from 'plotly.js-basic-dist-min';
-// import axios from 'axios';
+// src/components/FuturesGraph.tsx
+import React from 'react';
+import Plot from 'react-plotly.js';
+import { useFuturesChartViewModel } from '../viewModels/FuturesGraphViewModel';
 
-// const FuturesGraph = () => {
-//     const [data, setData] = useState<any[]>([]);
+const FuturesChart: React.FC = () => {
+  const { data, loading, error } = useFuturesChartViewModel();
 
-//     useEffect(() => {
-//         const fetchData = async () => {
-//             const result = await axios.get('/futures-data/gold?trade_dates=2024-04-01');
-//             console.log(result.data)
-//             setData(result.data);
-//         };
+  if (loading) return <div>Loading data...</div>;
+  if (error) return <div>Error: {error.message}</div>;
+  if (!Array.isArray(data)) return <div>Invalid data format</div>;
 
-//         fetchData();
-//     }, []);
+  console.log(data);
+  return (
+    <Plot
+      data={[
+        {
+          x: data.map(d => d.month),
+          y: data.map(d => d.settle),
+          type: 'scatter',
+          mode: 'lines+markers',
+          marker: { color: 'red' },
+        },
+      ]}
+      layout={{ width: 920, height: 440, title: 'Gold Futures' }}
+    />
+  );
+};
 
-//     useEffect(() => {
-//         if (data.length > 0) {
-//             const trace1 = {
-//                 x: data.map(d => d.trade_date),
-//                 y: data.map(d => d.settlement_value),
-//                 type: 'scatter',
-//                 mode: 'lines+markers',
-//                 name: 'Settlement Value'
-//             };
-
-//             const trace2 = {
-//                 x: data.map(d => d.trade_date),
-//                 y: data.map(d => d.volume),
-//                 yaxis: 'y2',
-//                 type: 'bar',
-//                 name: 'Volume'
-//             };
-
-//             const layout = {
-//                 title: 'Futures Data',
-//                 yaxis: {title: 'Settlement Value'},
-//                 yaxis2: {
-//                     title: 'Volume',
-//                     overlaying: 'y',
-//                     side: 'right'
-//                 }
-//             };
-
-//             Plotly.newPlot('myDiv', [trace1, trace2], layout);
-//         }
-//     }, [data]);
-
-//     return <div id="myDiv"></div>;
-// };
-
-// export default FuturesGraph;
+export default FuturesChart;

@@ -1,9 +1,11 @@
 import { configureStore } from '@reduxjs/toolkit';
 import userReducer from './modules/user';
+import futuresDataReducer from './modules/futuresData';
 
 const store = configureStore({
   reducer: {
-    user: userReducer
+    user: userReducer,
+    futuresData: futuresDataReducer
   }
 });
 

@@ -3,6 +3,7 @@ import React from 'react';
 import { useDashboardViewModel } from '../viewModels/DashboardViewModel';
 import ChartDisplay from './ChartDisplay';
 import ChartSelector from './ChartSelector';
+import FuturesGraph from './FuturesGraph';
 
 const Dashboard: React.FC = () => {
   const { user, selectedChart, selectChart } = useDashboardViewModel();
@@ -14,6 +15,7 @@ const Dashboard: React.FC = () => {
       <h1>{user.name}'s Dashboard</h1>
       <ChartSelector selectedChart={selectedChart} onChange={selectChart} />
       {selectedChart && <ChartDisplay chartId={selectedChart} />}
+      <FuturesGraph />
     </div>
   );
 };
