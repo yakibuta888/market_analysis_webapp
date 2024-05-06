@@ -1,19 +1,10 @@
 // src/store/modules/user.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchUserData } from "../../api/userApi";
 import { AxiosError } from "axios";
 
-export interface User {
-  id: number;
-  email: string;
-  name: string;
-}
+import { fetchUserData } from "../../api/userApi";
+import { User } from "../../types/userTypes";
 
-export interface UserState {
-  userData: User | null;
-  loading: boolean;
-  error: Error | null;
-}
 
 // 非同期アクションクリエーター
 export const fetchUser = createAsyncThunk(
@@ -34,6 +25,12 @@ export const fetchUser = createAsyncThunk(
     }
   }
 );
+
+export interface UserState {
+  userData: User | null;
+  loading: boolean;
+  error: Error | null;
+}
 
 const user = createSlice({
   name: 'user',

@@ -1,24 +1,33 @@
 // src/store/modules/futuresData.ts
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 
-// APIからデータを取得する非同期アクション
+import { fetchFuturesDataApi } from '../../api/futuresDataApi';
+import { FuturesDataArray } from '../../types/futuresDataTypes';
+
+
 export const fetchFuturesData = createAsyncThunk(
   'futuresData/fetchFuturesData',
-  async (tradeDate: string, { rejectWithValue }) => {
+  async ({ asset, tradeDate }: { asset: string, tradeDate: string }, { rejectWithValue }) => {
     try {
-      const response = await axios.get(`/api/futures-data/gold?trade_dates=${tradeDate}`);
-      // 応答が配列でない場合の加工
-      return response.data.data;
+      const data = await fetchFuturesDataApi(asset, tradeDate);
+      return data;
     } catch (error) {
-      return rejectWithValue((error as AxiosError).response?.data);
+      if (error && (error as AxiosError).message) {
+        return rejectWithValue({
+          message: (error as AxiosError).message,
+          code: (error as AxiosError).code,
+          url: (error as AxiosError).config?.url
+        });
+      }
+      return rejectWithValue(error);
     }
   }
 );
 
 // ステートの型
 export interface futuresDataState {
-  data: any[];
+  data: FuturesDataArray;
   loading: boolean;
   error: Error | null;
 }

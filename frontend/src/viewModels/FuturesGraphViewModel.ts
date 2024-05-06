@@ -12,7 +12,7 @@ export const useFuturesChartViewModel = () => {
   const error = useSelector((state: RootState) => state.futuresData.error);
 
   useEffect(() => {
-    dispatch(fetchFuturesData('2024-04-01'));
+    dispatch(fetchFuturesData({ asset: 'gold', tradeDate: '2024-04-01'}));
   }, [dispatch]);
 
   return { data, loading, error };
