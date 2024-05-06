@@ -25,6 +25,12 @@ class AssetRepositoryMysql(AssetRepository):
             logger.error(f"データベースエラー: {e}")
             raise e
 
+    def fetch_all(self) -> list[AssetModel]:
+        assets = self.session.query(AssetModel).all()
+        if assets == []:
+            raise AssetNotFoundError("Assets not found")
+        return assets
+
     def fetch_by_name(self, name: Name) -> AssetModel:
         asset_db = self.session.query(AssetModel).filter(AssetModel.name == name.name).first()
         if asset_db is None:

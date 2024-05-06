@@ -2,8 +2,9 @@ import json
 import pytest
 from unittest.mock import Mock, patch
 
-from src.domain.services.asset_service import AssetService
 from src.domain.entities.asset_entity import AssetEntity
+from src.domain.exceptions.asset_not_found_error import AssetNotFoundError
+from src.domain.services.asset_service import AssetService
 from src.domain.repositories.asset_repository import AssetRepository
 from src.domain.value_objects.name import Name
 from src.infrastructure.database.models import Asset as AssetModel
@@ -112,3 +113,33 @@ def test_fetch_asset_id(asset_service: AssetService, mock_asset_repository: Mock
     # 検証：fetch_by_nameメソッドが期待通りの引数で呼び出され、期待する戻り値を返すこと
     mock_asset_repository.fetch_by_name.assert_called_once_with(Name("Test Asset"))
     assert asset_id == 1
+
+def test_fetch_all(asset_service: AssetService, mock_asset_repository: Mock):
+    # テストデータのセットアップ
+    mock_assets = [AssetModel(id=1, name="Asset 1"), AssetModel(id=2, name="Asset 2")]
+    mock_asset_repository.fetch_all.return_value = mock_assets
+
+    # メソッドの実行
+    results = asset_service.fetch_all()
+
+    # リポジトリのfetch_allメソッドが呼び出されたことを検証
+    mock_asset_repository.fetch_all.assert_called_once()
+
+    # 検証: 返されたリストが正しい長さであること
+    assert len(results) == 2
+    # 検証: 返されたオブジェクトが正しい型であること
+    assert all(isinstance(result, AssetEntity) for result in results)
+    # 検証: 返されたオブジェクトが正しい内容であること
+    assert {result.name.name for result in results} == {"Asset 1", "Asset 2"}
+
+def test_fetch_all_empty(asset_service: AssetService, mock_asset_repository: Mock):
+    # テストデータのセットアップ
+    mock_asset_repository.fetch_all.side_effect = AssetNotFoundError("Assets not found")
+
+    # メソッドの実行
+    with pytest.raises(AssetNotFoundError) as excinfo:
+        asset_service.fetch_all()
+
+    # エラーメッセージが適切であることを検証
+    mock_asset_repository.fetch_all.assert_called_once()
+    assert "Assets not found" in str(excinfo.value)

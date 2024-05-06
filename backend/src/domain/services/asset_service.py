@@ -3,9 +3,10 @@ import json
 from sqlalchemy.orm import Session
 
 from src.settings import logger
-from src.infrastructure.database.models import Asset
+from src.infrastructure.database.models import Asset as AssetModel
 from src.domain.entities.asset_entity import AssetEntity
 from src.domain.entities.asset_entity import Name
+from src.domain.exceptions.asset_not_found_error import AssetNotFoundError
 from src.domain.repositories.asset_repository import AssetRepository
 
 class AssetService:
@@ -64,3 +65,11 @@ class AssetService:
     def fetch_asset_id(self, name: str):
         asset_db = self.asset_repository.fetch_by_name(Name(name))
         return asset_db.id
+
+    def fetch_all(self) -> list[AssetEntity]:
+        try:
+            asset_models = self.asset_repository.fetch_all()
+            return [AssetEntity.from_db(asset) for asset in asset_models]
+        except AssetNotFoundError as e:
+            logger.error(f"資産が見つかりません: {e}")
+            raise e

@@ -12,6 +12,10 @@ class AssetRepository(ABC):
         pass
 
     @abstractmethod
+    def fetch_all(self) -> list[AssetModel]:
+        pass
+
+    @abstractmethod
     def fetch_by_name(self, name: Name) -> AssetModel:
         pass
 
