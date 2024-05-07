@@ -85,7 +85,7 @@ def _get_downloadable_dates_from_volume_oi(driver: WebDriver, get_element: GetEl
     return [trade_date.text for trade_date in trade_dates]
 
 
-def _settlement_last_updated_time(driver: WebDriver, get_element: GetElement, trade_date: str) -> datetime:
+def _settlement_last_updated_from_web(driver: WebDriver, get_element: GetElement, trade_date: str) -> datetime:
     date_button = get_element.xpath(f'//a[contains(text(), "{trade_date}")]')
     driver.execute_script("arguments[0].click();", date_button)  # type: ignore
     time.sleep(3)
@@ -99,7 +99,7 @@ def _settlement_last_updated_time(driver: WebDriver, get_element: GetElement, tr
 
 def _volume_oi_web_data_is_final(driver: WebDriver, get_element: GetElement) -> bool:
     final_label_element = get_element.xpath('//h5[contains(@class, "data-type")]')
-    logger.info(final_label_element.text)
+    logger.info(f'web data is {final_label_element.text}')
     return 'FINAL' in final_label_element.text
 
 
@@ -152,7 +152,7 @@ def scrape_settlements(asset_service: AssetService, settlement_service: Settleme
             logger.info(downloadable_dates)
 
             for trade_date in downloadable_dates:
-                last_updated = _settlement_last_updated_time(driver, get_element, trade_date)
+                last_updated = _settlement_last_updated_from_web(driver, get_element, trade_date)
                 data_is_latest_or_not_exsist = settlement_service.check_data_is_latest_or_not_exsist(asset_id, trade_date, last_updated)
 
                 if data_is_latest_or_not_exsist is None:
@@ -170,7 +170,7 @@ def scrape_settlements(asset_service: AssetService, settlement_service: Settleme
                     logger.debug(f'last_updated: {last_updated}')
                     logger.debug(df)
                 else:
-                    logger.debug(f'Data in Database is latest for asset ID: {asset_id} on {trade_date}.')
+                    logger.info(f'Data in Database is latest for asset ID: {asset_id} on {trade_date}.')
 
             # TODO: breakは開発中のみ。全てのアセットを取得する場合はコメントアウトする。
             # break
@@ -217,7 +217,7 @@ def scrape_volume_and_open_interest(asset_service: AssetService, volume_oi_servi
                         volume_oi_service.update_volume_oi_from_dataframe(asset_id, trade_date, df, True)
                         logger.debug(df)
                 else:
-                    logger.debug(f'Data in Database is final for asset ID: {asset_id} on {trade_date}.')
+                    logger.info(f'Data in Database is final for asset ID: {asset_id} on {trade_date}.')
 
             # TODO: breakは開発中のみ。全てのアセットを取得する場合はコメントアウトする。
             # break

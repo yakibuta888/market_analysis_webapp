@@ -56,7 +56,7 @@ def test_setup(asset_service: AssetService, test_session: Session):
 
 
 
-def test_e2e_scrape_to_database(asset_service: AssetService, settlement_service: SettlementService, volume_oi_service: VolumeOIService, test_session: Session, test_setup: None):
+def test_e2e_scrape_to_database(asset_service: AssetService, settlement_service: SettlementService, volume_oi_service: VolumeOIService, test_session: Session, test_setup: None, caplog: pytest.LogCaptureFixture):
     try:
         # スクレイピング処理の実行
         cme_scraper.scrape_settlements(asset_service, settlement_service)
@@ -76,5 +76,22 @@ def test_e2e_scrape_to_database(asset_service: AssetService, settlement_service:
 
         volume_ois = test_session.query(VolumeOIModel).all()
         assert len(volume_ois) > 0
+
+        # データベースの状態を変更せずに再度スクレイピングを実行
+        cme_scraper.scrape_settlements(asset_service, settlement_service)
+        cme_scraper.scrape_volume_and_open_interest(asset_service, volume_oi_service)
+
+        # ログに 'Data in Database is latest' メッセージが含まれているか確認
+        latest_data_logs = [record for record in caplog.records if 'Data in Database is latest' in record.message]
+        assert len(latest_data_logs) > 0, "No logs from settlement found indicating data is up to date."
+        final_data_logs = [record for record in caplog.records if 'Data in Database is final' in record.message]
+        assert len(final_data_logs) > 0, "No logs from volume_oi found indicating data is up to date."
+
+        # データが追加されていないことを確認
+        settlements_final_data = test_session.query(SettlementModel).all()
+        assert len(settlements_final_data) == len(settlements), "No new settlement data should have been added."
+        volume_ois_final_data = test_session.query(VolumeOIModel).all()
+        assert len(volume_ois_final_data) == len(volume_ois), "No new volume_oi data should have been added."
+
     except ElementNotFoundError as e:
         pytest.fail(f"Unexpected error occurred: {str(e)}")

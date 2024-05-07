@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from pandas.testing import assert_frame_equal
 from selenium.webdriver.chrome.webdriver import WebDriver
 from typing import Generator, Any
-from unittest.mock import Mock, patch, mock_open
+from unittest.mock import Mock, MagicMock, patch, mock_open
 
 from src.domain.services.asset_service import AssetService
 from src.domain.services.settlement_service import SettlementService
@@ -127,3 +127,19 @@ def test_scrape_settlements_integration(mock_webdriver: Generator[tuple[Mock, Mo
         # DataFrameの内容を比較
         expected_df = pd.DataFrame({"month": ["Jan"], "open": ["100"]})
         assert_frame_equal(args[2], expected_df)  # df
+
+def test_skip_scraping_if_data_is_latest(mock_webdriver: Generator[tuple[Mock, Mock], Any, None], mock_services: tuple[Mock, Mock]):
+    asset_service, settlement_service = mock_services
+
+    # モック設定
+    settlement_service.check_data_is_latest_or_not_exsist.return_value = True
+    with patch('src.infrastructure.scraping.cme_scraper._scrape_settlement_table', MagicMock()) as mock_scrape_table:
+        with patch('src.infrastructure.scraping.cme_scraper._get_downloadable_dates_from_settlement', return_value=["2021-01-01"]):
+            with patch('src.infrastructure.scraping.cme_scraper._settlement_last_updated_from_web', return_value='03 May 2024 10:32:00 PM CT'):
+                scrape_settlements(asset_service, settlement_service)
+
+            # データベースが最新であることのチェックが行われたことを確認
+            settlement_service.check_data_is_latest_or_not_exsist.assert_called_once()
+
+            # _scrape_settlement_table が呼び出されないことを確認
+            mock_scrape_table.assert_not_called()

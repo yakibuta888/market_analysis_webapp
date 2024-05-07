@@ -1,6 +1,6 @@
 # tests/infrastructure/mysql/test_futures_data_repository.py
 import pytest
-from datetime import date
+from datetime import date, datetime
 from sqlalchemy.orm import Session
 
 from src.infrastructure.database.models import Asset, Settlement, VolumeOI
@@ -23,7 +23,7 @@ def asset_and_data(db_session: Session):
         settle=1000,
         est_volume=250,
         prior_day_oi=310,
-        is_final=True
+        last_updated=datetime(2024, 3, 9, 12, 0, 0)
     )
     db_session.add(settlement)
 
