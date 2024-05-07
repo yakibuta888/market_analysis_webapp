@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import requests
 import time
+from datetime import datetime
 from typing import Generator
 
 from bs4 import BeautifulSoup
@@ -11,6 +12,7 @@ from selenium.common.exceptions import NoSuchElementException
 from selenium.webdriver.chrome.webdriver import WebDriver
 
 from src.domain.helpers.path import get_project_root
+from src.domain.logics.date_time_utilities import parse_datetime
 from src.domain.services.asset_service import AssetService
 from src.domain.services.settlement_service import SettlementService
 from src.domain.services.volume_oi_service import VolumeOIService
@@ -83,10 +85,16 @@ def _get_downloadable_dates_from_volume_oi(driver: WebDriver, get_element: GetEl
     return [trade_date.text for trade_date in trade_dates]
 
 
-def _settlement_web_data_is_final(driver: WebDriver, get_element: GetElement) -> bool:
-    final_label_element = get_element.xpath('//h4[contains(@class, "data-type")]')
-    logger.info(final_label_element.text)
-    return 'FINAL' in final_label_element.text
+def _settlement_last_updated_time(driver: WebDriver, get_element: GetElement, trade_date: str) -> datetime:
+    date_button = get_element.xpath(f'//a[contains(text(), "{trade_date}")]')
+    driver.execute_script("arguments[0].click();", date_button)  # type: ignore
+    time.sleep(3)
+
+    last_updated_element = get_element.css('.data-information > .timestamp > div')
+    last_updated_text = last_updated_element.text.replace('Last Updated ', '')
+    logger.info(f'last updated: {last_updated_text}')
+    last_updated = parse_datetime(last_updated_text)
+    return last_updated
 
 
 def _volume_oi_web_data_is_final(driver: WebDriver, get_element: GetElement) -> bool:
@@ -95,11 +103,7 @@ def _volume_oi_web_data_is_final(driver: WebDriver, get_element: GetElement) -> 
     return 'FINAL' in final_label_element.text
 
 
-def _scrape_settlement_table(driver: WebDriver, get_element: GetElement, trade_date: str) -> pd.DataFrame:
-    date_button = get_element.xpath(f'//a[contains(text(), "{trade_date}")]')
-    driver.execute_script("arguments[0].click();", date_button)  # type: ignore
-    time.sleep(3)
-
+def _scrape_settlement_table(driver: WebDriver) -> pd.DataFrame:
     get_element_for_load_all = GetElement(driver, retries_count=0, error_handling=False)
     try:
         load_all_button = get_element_for_load_all.xpath('//button[contains(@class, "load-all")]')
@@ -148,23 +152,25 @@ def scrape_settlements(asset_service: AssetService, settlement_service: Settleme
             logger.info(downloadable_dates)
 
             for trade_date in downloadable_dates:
-                data_is_final = settlement_service.check_data_is_final(asset_id, trade_date)
+                last_updated = _settlement_last_updated_time(driver, get_element, trade_date)
+                data_is_latest_or_not_exsist = settlement_service.check_data_is_latest_or_not_exsist(asset_id, trade_date, last_updated)
 
-                if data_is_final is None:
+                if data_is_latest_or_not_exsist is None:
                     logger.info(f'No data found for asset ID: {asset_id} on {trade_date}. Scraping data...')
-                    df = _scrape_settlement_table(driver, get_element, trade_date)
-                    is_final = _settlement_web_data_is_final(driver, get_element)
+                    df = _scrape_settlement_table(driver)
 
-                    settlement_service.save_settlements_from_dataframe(asset_id, trade_date, df, is_final)
-                    logger.debug(f'is_final: {is_final}')
+                    settlement_service.save_settlements_from_dataframe(asset_id, trade_date, df, last_updated)
+                    logger.debug(f'last_updated: {last_updated}')
                     logger.debug(df)
-                elif not data_is_final:
-                    if _settlement_web_data_is_final(driver, get_element):
-                        logger.info(f'Data in Database is preliminary, but web data is final. So, scraping data for asset ID: {asset_id} on {trade_date}...')
-                        df = _scrape_settlement_table(driver, get_element, trade_date)
+                elif not data_is_latest_or_not_exsist:
+                    logger.info(f'Data in Database is not latest, but web data is latest. So, scraping data for asset ID: {asset_id} on {trade_date}...')
+                    df = _scrape_settlement_table(driver)
 
-                        settlement_service.update_settlements_from_dataframe(asset_id, trade_date, df, True)
-                        logger.debug(df)
+                    settlement_service.update_settlements_from_dataframe(asset_id, trade_date, df, last_updated)
+                    logger.debug(f'last_updated: {last_updated}')
+                    logger.debug(df)
+                else:
+                    logger.debug(f'Data in Database is latest for asset ID: {asset_id} on {trade_date}.')
 
             # TODO: breakは開発中のみ。全てのアセットを取得する場合はコメントアウトする。
             # break
@@ -210,6 +216,8 @@ def scrape_volume_and_open_interest(asset_service: AssetService, volume_oi_servi
 
                         volume_oi_service.update_volume_oi_from_dataframe(asset_id, trade_date, df, True)
                         logger.debug(df)
+                else:
+                    logger.debug(f'Data in Database is final for asset ID: {asset_id} on {trade_date}.')
 
             # TODO: breakは開発中のみ。全てのアセットを取得する場合はコメントアウトする。
             # break

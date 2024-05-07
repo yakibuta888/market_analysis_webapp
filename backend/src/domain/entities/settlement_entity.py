@@ -1,7 +1,7 @@
 # src/domain/entities/settlement_entity.py
 from __future__ import annotations
 from dataclasses import dataclass
-from datetime import date
+from datetime import date, datetime
 
 from src.domain.helpers.dataclass import DataClassBase
 from src.domain.logics.validate_price_format import validate_price_format
@@ -24,7 +24,7 @@ class SettlementEntity(DataClassBase):
     settle: str | None
     est_volume: int
     prior_day_oi: int
-    is_final: bool
+    last_updated: datetime
 
     def __post_init__(self):
         self._validate_volume(self.est_volume)
@@ -49,7 +49,7 @@ class SettlementEntity(DataClassBase):
                 raise ValueError(f"Invalid price format for {field}: {value}")
 
     @classmethod
-    def new_entity_by_scraping(cls, asset_id: int, trade_date: str, month: str, open: str, high: str, low: str, last: str, change: str, settle: str, est_volume: str, prior_day_oi: str, is_final: bool) -> SettlementEntity:
+    def new_entity_by_scraping(cls, asset_id: int, trade_date: str, month: str, open: str, high: str, low: str, last: str, change: str, settle: str, est_volume: str, prior_day_oi: str, last_updated: datetime) -> SettlementEntity:
         return cls(
             id=None,
             asset_id=asset_id,
@@ -63,7 +63,7 @@ class SettlementEntity(DataClassBase):
             settle=settle,
             est_volume=int(est_volume.replace(",", "")),
             prior_day_oi=int(prior_day_oi.replace(",", "")),
-            is_final=is_final
+            last_updated=last_updated
         )
 
     @classmethod
@@ -81,5 +81,5 @@ class SettlementEntity(DataClassBase):
             settle=db_row.settle,
             est_volume=db_row.est_volume,
             prior_day_oi=db_row.prior_day_oi,
-            is_final=db_row.is_final
+            last_updated=db_row.last_updated
         )

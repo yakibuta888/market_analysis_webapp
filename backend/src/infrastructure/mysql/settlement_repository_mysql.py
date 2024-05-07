@@ -1,6 +1,6 @@
 # src/infrastructure/repositories/settlement_repository_mysql.py
 from sqlalchemy.orm import Session
-from datetime import date
+from datetime import date, datetime
 
 from src.domain.entities.settlement_entity import SettlementEntity
 from src.domain.repositories.settlement_repository import SettlementRepository
@@ -28,7 +28,7 @@ class SettlementRepositoryMysql(SettlementRepository):
                 settle=settlement_entity.settle,
                 est_volume=settlement_entity.est_volume,
                 prior_day_oi=settlement_entity.prior_day_oi,
-                is_final=settlement_entity.is_final
+                last_updated=settlement_entity.last_updated
             )
             self.session.add(settlement_model)
             self.session.commit()
@@ -55,7 +55,7 @@ class SettlementRepositoryMysql(SettlementRepository):
                 settlement_model.settle = settlement_entity.settle
                 settlement_model.est_volume = settlement_entity.est_volume
                 settlement_model.prior_day_oi = settlement_entity.prior_day_oi
-                settlement_model.is_final = settlement_entity.is_final
+                settlement_model.last_updated = settlement_entity.last_updated
                 self.session.commit()
                 logger.info(f"Updated settlement data for asset {settlement_entity.asset_id} on {settlement_entity.trade_date}.")
                 return settlement_model
@@ -68,13 +68,14 @@ class SettlementRepositoryMysql(SettlementRepository):
             raise e
 
 
-    def check_data_is_final_or_none(self, asset_id: int, trade_date: TradeDate) -> bool | None:
+    def check_last_updated_or_none(self, asset_id: int, trade_date: TradeDate) -> datetime | None:
         settlement_model = self.session.query(SettlementModel).filter(
             SettlementModel.asset_id == asset_id,
             SettlementModel.trade_date == trade_date.to_date()
         ).first()
         if settlement_model:
-            return settlement_model.is_final
+            last_updated: datetime = settlement_model.last_updated
+            return last_updated
         else:
             return None
 

@@ -1,5 +1,6 @@
 import json
 import pytest
+from datetime import datetime, timezone
 
 import pandas as pd
 from bs4 import BeautifulSoup
@@ -95,7 +96,7 @@ def mock_services():
     # 必要に応じてメソッドの戻り値を設定
     asset_service.fetch_asset_id.return_value = 1
     # 他の必要なメソッドのモックを設定
-    settlement_service.check_data_is_final.return_value = None  # DBにデータが存在しないことを模倣
+    settlement_service.check_data_is_latest_or_not_exsist.return_value = None  # DBにデータが存在しないことを模倣
     return asset_service, settlement_service
 
 def test_scrape_settlements_integration(mock_webdriver: Generator[tuple[Mock, Mock], Any, None], mock_services: tuple[Mock, Mock]):
@@ -103,6 +104,8 @@ def test_scrape_settlements_integration(mock_webdriver: Generator[tuple[Mock, Mo
     asset_service, settlement_service = mock_services
 
     # _get_downloadable_dates_from_settlementのテストを模倣するために必要なモックを設定
+    last_updated_text = '03 May 2024 10:32:00 PM CT'
+    mock_get_element.css.return_value.text = last_updated_text  # Mock#css()が呼ばれた後の.textで返す値を設定
     with patch('src.infrastructure.scraping.cme_scraper.GetElement', return_value=mock_get_element):
         with patch('src.infrastructure.scraping.cme_scraper._scrape_settlement_table') as mock_scrape_func:
             mock_scrape_func.return_value = pd.DataFrame({"month": ["Jan"], "open": ["100"]})
@@ -119,7 +122,7 @@ def test_scrape_settlements_integration(mock_webdriver: Generator[tuple[Mock, Mo
         # 関数呼び出しの引数を確認
         assert args[0] == 1  # asset_id
         assert args[1] == "2021-01-01"  # trade_date
-        assert args[3] is False  # is_final
+        assert args[3] == datetime(2024, 5, 4, 3, 32, 0, tzinfo=timezone.utc)
 
         # DataFrameの内容を比較
         expected_df = pd.DataFrame({"month": ["Jan"], "open": ["100"]})

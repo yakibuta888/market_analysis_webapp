@@ -1,6 +1,6 @@
 # src/infrastructure/database/models.py
 
-from sqlalchemy import Column, Integer, String, Float, Date, ForeignKey, UniqueConstraint, Boolean
+from sqlalchemy import Column, Integer, String, DateTime, Date, ForeignKey, UniqueConstraint, Boolean
 from sqlalchemy.orm import relationship
 from .database import Base
 
@@ -37,7 +37,7 @@ class Settlement(Base):
     settle = Column(String(16))
     est_volume = Column(Integer, nullable=False)
     prior_day_oi = Column(Integer, nullable=False)
-    is_final = Column(Boolean, nullable=False)
+    last_updated = Column(DateTime, nullable=False)
 
     asset = relationship("Asset", back_populates="settlements")
 
