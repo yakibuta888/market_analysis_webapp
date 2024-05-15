@@ -3,12 +3,14 @@ from fastapi import FastAPI
 
 from src.application.web.api.routers.asset_router import asset_router
 from src.application.web.api.routers.futures_data_router import futures_data_router
+from src.application.web.api.routers.trade_date_router import trade_date_router
 from src.application.web.api.routers.user_router import user_router
 
 
 app = FastAPI()
 app.include_router(asset_router)
 app.include_router(futures_data_router)
+app.include_router(trade_date_router)
 app.include_router(user_router)
 
 

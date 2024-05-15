@@ -86,6 +86,19 @@ def test_get_futures_data_missing_asset_name():
     assert response.status_code == 404  # 資産名がURLパスに含まれていないため、404 Not Foundが適切
 
 
+def test_get_futures_data_no_data_found(futures_data_service_mock: MagicMock):
+    # データが見つからない場合のテスト
+    futures_data_service_mock.make_dataframe.return_value = pd.DataFrame()
+
+    # APIエンドポイントのテスト実行
+    response = client.get("/futures-data/gold?trade_dates=2023-01-01")
+
+    # レスポンスの検証
+    assert response.status_code == 404  # 404 Not Foundが適切
+    assert "detail" in response.json()
+    assert "No data found for the given parameters." in response.json().get("detail")
+
+
 def test_get_futures_data_future_trade_date():
     # 未来の取引日を指定した場合のテスト
     future_date = "9999-12-31"
@@ -98,11 +111,14 @@ def test_get_futures_data_future_trade_date():
 
 
 def test_get_futures_data_server_error(futures_data_service_mock: MagicMock):
+    app.dependency_overrides[get_futures_data_service] = lambda: futures_data_service_mock
+    futures_data_service_mock.make_dataframe.return_value = test_data
     # 内部サーバーエラーをシミュレートするために、エラーを発生させる
     futures_data_service_mock.make_dataframe.side_effect = Exception("Unexpected error")
 
     # エンドポイントへのリクエストを実行
     response = client.get("/futures-data/gold?trade_dates=2023-01-01")
+    app.dependency_overrides.clear()
 
     # レスポンスの検証
     assert response.status_code == 500

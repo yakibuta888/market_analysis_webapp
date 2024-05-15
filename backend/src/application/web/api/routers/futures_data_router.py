@@ -3,6 +3,7 @@
 from datetime import date, datetime
 from fastapi import APIRouter, HTTPException, Depends, Query
 
+from src.domain.exceptions.data_not_found_error import DataNotFoundError
 from src.domain.exceptions.dataframe_validation_error import DataFrameValidationError
 from src.domain.exceptions.invalid_input_error import InvalidInputError
 from src.domain.exceptions.repository_error import RepositoryError
@@ -33,8 +34,7 @@ async def get_futures_data(
         df = futures_data_service.make_dataframe(request.asset_name, request.trade_dates)
 
         if df.empty:
-            logger.error("No data found for the given parameters.")
-            raise HTTPException(status_code=404, detail="No data found for the given parameters.")
+            raise DataNotFoundError("No data found for the given parameters.")
 
         df = futures_data_service.add_settlement_spread(df)
         df = to_year_month_format(df, 'month')
@@ -49,6 +49,9 @@ async def get_futures_data(
     except DataFrameValidationError as e:
         logger.error(f"Data frame validation error: {e}")
         raise HTTPException(status_code=400, detail=str(e))
+    except DataNotFoundError as e:
+        logger.error(f"Data not found error: {e}")
+        raise HTTPException(status_code=404, detail=str(e))
     except ValueError as e:
         logger.error(f"Value error: {e}")
         raise HTTPException(status_code=422, detail=str(e))

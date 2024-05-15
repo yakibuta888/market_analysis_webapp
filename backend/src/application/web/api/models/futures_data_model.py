@@ -1,9 +1,10 @@
 # src/application/web/api/models/futures_data_model.py
 from __future__ import annotations
 from datetime import datetime, date
-from pydantic import BaseModel, validator, Field
+from pydantic import BaseModel, field_validator, Field
 from typing import Any
 
+from src.domain.logics.validate_trade_date import validate_and_convert_trade_date
 from src.settings import logger
 
 
@@ -16,23 +17,12 @@ class FuturesDataRequest(BaseModel):
     trade_dates: list[date] = Field(..., description="取引日（複数指定可）")
 
 
-    @validator('trade_dates', each_item=True, pre=True)
-    def validate_and_convert_trade_dates(cls, value: str | date) -> date:
-        logger.debug(f"trade_datesの値を検証・変換します。value={value}")
-        if isinstance(value, str):
-            try:
-                # 文字列形式の取引日をdatetime.dateオブジェクトに変換
-                parsed_date = datetime.strptime(value, "%Y-%m-%d").date()
-            except ValueError as e:
-                # ValueErrorを捕捉し、カスタムエラーメッセージを発生させる
-                raise ValueError(f"trade_dateが無効な日付フォーマットです。YYYY-MM-DD形式である必要があります。: {value}") from e
-        elif isinstance(value, date): # type: ignore
-            parsed_date = value
-        else:
-            raise TypeError(f"trade_datesの項目はstrまたはdate型である必要があります。: {type(value)}")
-
-        if parsed_date > datetime.now().date():
-            raise ValueError("取引日は過去または今日でなければなりません。")
-
-        logger.debug(f"取引日を検証・変換しました。parsed_date={parsed_date}")
-        return parsed_date
+    @field_validator('trade_dates', mode='before')
+    def validate_and_convert_trade_dates(cls, values: list[str] | list[date]) -> list[date]:
+        result: list[date] = []
+        for value in values:
+            date_value = validate_and_convert_trade_date(value)
+            if date_value is None:
+                raise ValueError(f"Invalid date value: {value}")
+            result.append(date_value)
+        return result
