@@ -1,8 +1,9 @@
+/// <reference types="vitest" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import dynamicImport from "vite-plugin-dynamic-import";
 import checker from 'vite-plugin-checker';
-import { resolve } from "path";
+import path, { resolve } from "path";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -12,6 +13,11 @@ export default defineConfig({
     dynamicImport(),
     checker({ typescript: true })
   ],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
   server: {
     // 使用するポート番号の指定 default 3000
     port: 3001,
@@ -39,6 +45,6 @@ export default defineConfig({
     // dom
     environment: "happy-dom",
     // テスト全体で使用するライブラリをvitest-setup.jsに記載し、インポートする設定
-    setupFiles: [resolve(__dirname, "src", "vitest-setup.js")],
+    setupFiles: [resolve(__dirname, "src", "vitest-setup.ts")],
   },
 });

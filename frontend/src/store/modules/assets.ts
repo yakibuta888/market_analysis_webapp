@@ -1,17 +1,17 @@
-// src/store/modules/user.ts
+// src/store/modules/assets.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosError } from "axios";
 
-import { fetchUserData } from "../../api/userApi";
-import { User } from "../../types/userTypes";
+import { fetchAssetsData } from "../../api/assetsApi";
+import { AssetsArray } from "../../types/assetTypes";
 
 
 // 非同期アクションクリエーター
-export const fetchUser = createAsyncThunk(
-  'user/fetchUser',
+export const fetchAssets = createAsyncThunk(
+  'assets/fetchAssets',
   async (_, { rejectWithValue }) => {
     try {
-      const data = await fetchUserData();
+      const data = await fetchAssetsData();
       return data;
     } catch (error) {
       if (error && (error as AxiosError).message) {
@@ -26,43 +26,36 @@ export const fetchUser = createAsyncThunk(
   }
 );
 
-export interface UserState {
-  userData: User | null;
+
+export interface AssetsState {
+  assetsData: AssetsArray;
   loading: boolean;
   error: Error | null;
 }
 
-const user = createSlice({
-  name: 'user',
+const assets = createSlice({
+  name: 'assets',
   initialState: {
-    userData: null,
+    assetsData: [],
     loading: false,
     error: null
-  } as UserState,
-  reducers: {
-    login: (state, action) => {
-      state.userData = action.payload;
-    },
-    logout: state => {
-      state.userData = null;
-    },
-  },
+  } as AssetsState,
+  reducers: {},
   extraReducers: builder => {
     builder
-      .addCase(fetchUser.pending, state => {
+      .addCase(fetchAssets.pending, state => {
         state.loading = true;
         state.error = null;
     })
-      .addCase(fetchUser.fulfilled, (state, action) => {
+      .addCase(fetchAssets.fulfilled, (state, action) => {
         state.loading = false;
-        state.userData = action.payload;
+        state.assetsData = action.payload;
     })
-      .addCase(fetchUser.rejected, (state, action) => {
+      .addCase(fetchAssets.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as Error;
     });
   }
 });
 
-export const { login, logout } = user.actions;
-export default user.reducer;
+export default assets.reducer;

@@ -1,11 +1,16 @@
 import { configureStore } from '@reduxjs/toolkit';
-import userReducer from './modules/user';
+
+import assetsReducer from './modules/assets';
 import futuresDataReducer from './modules/futuresData';
+import tradeDates from './modules/tradeDates';
+import userReducer from './modules/user';
 
 const store = configureStore({
   reducer: {
+    assets: assetsReducer,
+    futuresData: futuresDataReducer,
+    tradeDates: tradeDates,
     user: userReducer,
-    futuresData: futuresDataReducer
   }
 });
 

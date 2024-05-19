@@ -1,15 +1,30 @@
+// src/App.tsx
+
 import React from 'react';
-import { Provider } from 'react-redux';
-import store from './store';
-import Dashboard from './components/Dashboard';
-import UserProfile from './components/UserProfile';
+
+import './App.scss';
+import { useAppDispatch, useAppSelector } from './store/hooks';
+import Dashboard from './components/Dashboard/Dashboard';
+import Sidebar from './components/Sidebar/Sidebar';
+import Login from './components/login/Login';
+
 
 const App: React.FC = () => {
+  const user = useAppSelector((state) => state.user.userData);
+
   return (
-    <Provider store={store}>
-      <Dashboard />
-      <UserProfile />
-    </Provider>
+      <div className="container">
+        {user ? (
+          <>
+            <Sidebar />
+            <Dashboard />
+          </>
+        ) : (
+          <>
+            <Login />
+          </>
+        )}
+      </div>
   );
 };
 

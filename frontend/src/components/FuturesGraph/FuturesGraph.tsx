@@ -1,10 +1,16 @@
-// src/components/FuturesGraph.tsx
+// src/components/FuturesGraph/FuturesGraph.tsx:
 import React from 'react';
 import Plot from 'react-plotly.js';
-import { useFuturesChartViewModel } from '../viewModels/FuturesGraphViewModel';
 
-const FuturesChart: React.FC = () => {
-  const { data, loading, error } = useFuturesChartViewModel();
+import { useFuturesChartViewModel } from '../../viewModels/FuturesGraphViewModel';
+
+interface Props {
+  asset: string;
+  tradeDate: string;
+}
+
+const FuturesChart: React.FC<Props> = ({ asset, tradeDate }) => {
+  const { data, loading, error } = useFuturesChartViewModel({ asset, tradeDate });
 
   if (loading) return <div>Loading data...</div>;
   if (error) return <div>Error: {error.message}</div>;
@@ -22,7 +28,7 @@ const FuturesChart: React.FC = () => {
           marker: { color: 'red' },
         },
       ]}
-      layout={{ width: 920, height: 440, title: 'Gold Futures' }}
+      layout={{ width: 920, height: 440, title: `${asset} Futures` }}
     />
   );
 };

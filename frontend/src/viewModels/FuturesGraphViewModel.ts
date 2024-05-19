@@ -1,19 +1,25 @@
 // src/viewModels/FuturesGraphViewModel.ts
 import { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
-import { fetchFuturesData } from '../store/modules/futuresData';
-import { RootState, AppDispatch } from '../store';
+import { fetchFuturesData, clearFuturesData } from '../store/modules/futuresData';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
-export const useFuturesChartViewModel = () => {
-  const dispatch = useDispatch<AppDispatch>();
-  const data = useSelector((state: RootState) => state.futuresData.data);
-  const loading = useSelector((state: RootState) => state.futuresData.loading);
-  const error = useSelector((state: RootState) => state.futuresData.error);
+
+export const useFuturesChartViewModel = (params: {
+  asset: string,
+  tradeDate: string
+}) => {
+  const dispatch = useAppDispatch();
+  const data = useAppSelector((state) => state.futuresData.data);
+  const loading = useAppSelector((state) => state.futuresData.loading);
+  const error = useAppSelector((state) => state.futuresData.error);
 
   useEffect(() => {
-    dispatch(fetchFuturesData({ asset: 'gold', tradeDate: '2024-04-01'}));
-  }, [dispatch]);
+    if (params.asset || params.tradeDate) {
+      dispatch(clearFuturesData());
+      dispatch(fetchFuturesData(params));
+    }
+  }, [dispatch, params.asset, params.tradeDate]);
 
   return { data, loading, error };
 };

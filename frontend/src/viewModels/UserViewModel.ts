@@ -1,16 +1,15 @@
 // src/viewModels/UserViewModel.ts
 import { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
 
 import { fetchUser } from '../store/modules/user';
-import { RootState, AppDispatch } from '../store';
+import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 
 export const useUserViewModel = () => {
-  const user = useSelector((state: RootState) => state.user.userData);
-  const loading = useSelector((state: RootState) => state.user.loading);
-  const error = useSelector((state: RootState) => state.user.error);
-  const dispatch = useDispatch<AppDispatch>();
+  const user = useAppSelector((state) => state.user.userData);
+  const loading = useAppSelector((state) => state.user.loading);
+  const error = useAppSelector((state) => state.user.error);
+  const dispatch = useAppDispatch();
 
   useEffect(() => {
     dispatch(fetchUser());

@@ -40,7 +40,13 @@ const futuresDataSlice = createSlice({
     loading: false,
     error: null
   } as futuresDataState,
-  reducers: {},
+  reducers: {
+    clearFuturesData: (state) => {
+      state.data = [];
+      state.loading = false;
+      state.error = null;
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchFuturesData.pending, (state) => {
@@ -56,5 +62,7 @@ const futuresDataSlice = createSlice({
       });
   }
 });
+
+export const { clearFuturesData } = futuresDataSlice.actions;
 
 export default futuresDataSlice.reducer;
