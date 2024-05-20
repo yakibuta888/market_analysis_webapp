@@ -1,3 +1,4 @@
+# src/domain/services/user_service.py
 from src.domain.entities.user_entity import UserEntity
 from src.domain.repositories.user_repository import UserRepository
 from src.domain.value_objects.name import Name
@@ -16,7 +17,7 @@ class UserService:
         try:
             user_entity = UserEntity.new_entity(
                 email=Email(email),
-                hashed_password=Password(password),
+                hashed_password=Password.create(password),
                 name=Name(name)
             )
             user_db: UserModel = self.user_repository.create(user_entity)

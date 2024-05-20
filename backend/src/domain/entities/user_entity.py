@@ -25,7 +25,7 @@ class UserEntity(DataClassBase):
         return cls(
             id=user_db.id,
             email=Email(user_db.email),
-            hashed_password=Password(user_db.hashed_password),
+            hashed_password=Password.from_db(user_db.hashed_password),
             name=Name(user_db.name)
         )
 
@@ -36,4 +36,4 @@ class UserEntity(DataClassBase):
         return UserEntity(self.id, Email(new_email), self.hashed_password, self.name)
 
     def change_password(self, new_password: str) -> UserEntity:
-        return UserEntity(self.id, self.email, Password(new_password), self.name)
+        return UserEntity(self.id, self.email, Password.create(new_password), self.name)
