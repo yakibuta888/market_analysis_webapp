@@ -13,6 +13,7 @@ class UserService:
     def __init__(self, user_repository: UserRepository):
         self.user_repository = user_repository
 
+
     def create_user(self, email: str, password: str, name: str) -> UserEntity:
         try:
             user_entity = UserEntity.new_entity(
@@ -25,12 +26,22 @@ class UserService:
         except ValueError as e:
             raise InvalidUserInputError(str(e))
 
+
     def fetch_user_by_id(self, user_id: int) -> UserEntity:
         try:
             user_db: UserModel = self.user_repository.fetch_by_id(user_id)
             return UserEntity.from_db(user_db)
-        except ValueError:
-            raise UserNotFoundError(f"User not found. id: {user_id}")
+        except ValueError as e:
+            raise UserNotFoundError(f"User not found. id: {user_id}\n details: {e}")
+
+
+    def fetch_user_by_email(self, email: str) -> UserEntity:
+        try:
+            user_db: UserModel = self.user_repository.fetch_by_email(Email(email))
+            return UserEntity.from_db(user_db)
+        except ValueError as e:
+            raise UserNotFoundError(f"User not found. email: {email}\n details: {e}")
+
 
     def change_user_attributes(self, user_id: int, new_email: str | None = None, new_password: str | None = None, new_name: str | None = None) -> UserEntity:
         user_entity = self.fetch_user_by_id(user_id)
