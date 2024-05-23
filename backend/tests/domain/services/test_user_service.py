@@ -1,3 +1,4 @@
+# tests/domain/services/test_user_service.py
 import pytest
 from src.domain.entities.user_entity import UserEntity
 from src.domain.services.user_service import UserService
@@ -13,13 +14,15 @@ from src.domain.exceptions.user_not_found_error import UserNotFoundError
 @pytest.fixture
 def user_service() -> UserService:
     user_repository = MockUserRepository()
-    user_repository.create(UserEntity(
-        id=1,
-        email=Email("existing@example.com"),
-        hashed_password=Password.create("strongpassword123"),
-        name=Name("Existing User")
-    ))
+    user_repository.create(
+        UserEntity.new_entity(
+            email=Email("existing@example.com"),
+            hashed_password=Password.create("strongpassword123"),
+            name=Name("Existing User")
+        )
+    )
     return UserService(user_repository)
+
 
 def test_create_user(user_service: UserService):
     email, password, name = "test@example.com", "strongpassword123", "Test User"
@@ -27,19 +30,24 @@ def test_create_user(user_service: UserService):
 
     assert user_entity.email.email == email
     assert user_entity.name.name == name
-    # ここでは、パスワードのハッシュ値のみを確認します（平文のパスワードは返されません）
-    assert user_entity.hashed_password.hashed_password is not None
+    assert Password.verify_password(password, user_entity.hashed_password.hashed_password)
+
 
 def test_fetch_user_by_id(user_service: UserService):
     user_id = 1
     user_entity = user_service.fetch_user_by_id(user_id)
 
-    assert user_entity is not None
     assert user_entity.id == user_id
+    assert user_entity.email.email == "existing@example.com"
+    assert user_entity.name.name == "Existing User"
 
-# TODO
+
 def test_fetch_user_by_email(user_service: UserService):
-    pass
+    user_entity = user_service.fetch_user_by_email("existing@example.com")
+
+    assert user_entity.email.email == "existing@example.com"
+    assert user_entity.name.name == "Existing User"
+
 
 def test_change_user_attributes(user_service: UserService):
     user_id = 1
@@ -48,8 +56,8 @@ def test_change_user_attributes(user_service: UserService):
 
     assert updated_user.email.email == new_email
     assert updated_user.name.name == new_name
-    # 新しいパスワードのハッシュが更新されたことを確認
-    assert updated_user.hashed_password.hashed_password is not None
+    assert Password.verify_password(new_password, updated_user.hashed_password.hashed_password)
+
 
 def test_user_creation_and_retrieval(user_service: UserService):
     email, password, name = "test@example.com", "strongpassword123", "Test User"
@@ -68,6 +76,7 @@ def test_user_creation_and_retrieval(user_service: UserService):
     assert fetched_user.email.email == email
     assert fetched_user.name.name == name
 
+
 # UserServiceのテストの拡張
 
 def test_create_user_with_invalid_email(user_service: UserService):
@@ -82,12 +91,51 @@ def test_fetch_non_existent_user(user_service: UserService):
         user_service.fetch_user_by_id(non_existent_user_id)
     assert f"User not found. id: {non_existent_user_id}" in exc_info.value.message
 
+def test_fetch_user_by_invalid_email(user_service: UserService):
+    invalid_email = "invalidemail"
+    with pytest.raises(UserNotFoundError) as exc_info:
+        user_service.fetch_user_by_email(invalid_email)
+    assert f"User not found. email: {invalid_email}" in exc_info.value.message
+
+def test_fetch_user_by_email_with_non_existent_email(user_service: UserService):
+    non_existent_email = "non_existent@example.com"
+    with pytest.raises(UserNotFoundError) as exc_info:
+        user_service.fetch_user_by_email(non_existent_email)
+    assert f"User not found. email: {non_existent_email}" in exc_info.value.message
+
+def test_change_user_attributes_for_non_existent_user(user_service: UserService):
+    non_existent_user_id = 999
+    with pytest.raises(UserNotFoundError) as exc_info:
+        user_service.change_user_attributes(non_existent_user_id)
+    assert f"User not found. id: {non_existent_user_id}" in exc_info.value.message
+
+def test_change_user_attributes_with_invalid_email(user_service: UserService):
+    user_id = 1
+    invalid_email = "invalidemail"
+    with pytest.raises(InvalidUserInputError) as exc_info:
+        user_service.change_user_attributes(user_id, new_email=invalid_email)
+    assert "無効なメールアドレスです。" in exc_info.value.message
+
+def test_change_user_attributes_with_invalid_password(user_service: UserService):
+    user_id = 1
+    invalid_password = "short"
+    with pytest.raises(InvalidUserInputError) as exc_info:
+        user_service.change_user_attributes(user_id, new_password=invalid_password)
+    assert "パスワードは8文字以上である必要があります。" in exc_info.value.message
+
+def test_change_user_attributes_with_invalid_name(user_service: UserService):
+    user_id = 1
+    invalid_name = ""
+    with pytest.raises(InvalidUserInputError) as exc_info:
+        user_service.change_user_attributes(user_id, new_name=invalid_name)
+    assert "名前は空にできません。" in exc_info.value.message
+
+
 # MockUserRepositoryのテストの拡張
 
 def test_persistence_of_data_in_mock_repository():
     mock_repo = MockUserRepository()
-    user_entity = UserEntity(
-        id=None,
+    user_entity = UserEntity.new_entity(
         email=Email("test@example.com"),
         hashed_password=Password.create("strongpassword123"),
         name=Name("Test User")
@@ -96,10 +144,19 @@ def test_persistence_of_data_in_mock_repository():
     assert created_user.id is not None
     fetched_user = mock_repo.fetch_by_id(created_user.id)
     assert fetched_user.email == user_entity.email.email
+    fetched_user_by_email = mock_repo.fetch_by_email(user_entity.email)
+    assert fetched_user_by_email.id == created_user.id
 
 def test_exception_for_non_existent_user_in_mock_repository():
     mock_repo = MockUserRepository()
     non_existent_user_id = 999
     with pytest.raises(ValueError) as exc_info:
         mock_repo.fetch_by_id(non_existent_user_id)
+    assert "User not found" in str(exc_info.value)
+
+def test_exception_for_non_existent_email_in_mock_repository():
+    mock_repo = MockUserRepository()
+    non_existent_email = Email("non_existent@example.com")
+    with pytest.raises(ValueError) as exc_info:
+        mock_repo.fetch_by_email(non_existent_email)
     assert "User not found" in str(exc_info.value)

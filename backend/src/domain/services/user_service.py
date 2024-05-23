@@ -45,11 +45,14 @@ class UserService:
 
     def change_user_attributes(self, user_id: int, new_email: str | None = None, new_password: str | None = None, new_name: str | None = None) -> UserEntity:
         user_entity = self.fetch_user_by_id(user_id)
-        if new_email is not None:
-            user_entity = user_entity.change_email(new_email)
-        if new_password is not None:
-            user_entity = user_entity.change_password(new_password)
-        if new_name is not None:
-            user_entity = user_entity.change_name(new_name)
-        user_db = self.user_repository.update(user_entity)
+        try:
+            if new_email is not None:
+                user_entity = user_entity.change_email(new_email)
+            if new_password is not None:
+                user_entity = user_entity.change_password(new_password)
+            if new_name is not None:
+                user_entity = user_entity.change_name(new_name)
+            user_db = self.user_repository.update(user_entity)
+        except ValueError as e:
+            raise InvalidUserInputError(str(e))
         return UserEntity.from_db(user_db)
