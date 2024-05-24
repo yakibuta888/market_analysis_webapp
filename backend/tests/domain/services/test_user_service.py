@@ -16,9 +16,9 @@ def user_service() -> UserService:
     user_repository = MockUserRepository()
     user_repository.create(
         UserEntity.new_entity(
-            email=Email("existing@example.com"),
-            hashed_password=Password.create("strongpassword123"),
-            name=Name("Existing User")
+            email="existing@example.com",
+            hashed_password="strongpassword123",
+            name="Existing User"
         )
     )
     return UserService(user_repository)
@@ -28,9 +28,9 @@ def test_create_user(user_service: UserService):
     email, password, name = "test@example.com", "strongpassword123", "Test User"
     user_entity = user_service.create_user(email, password, name)
 
-    assert user_entity.email.email == email
-    assert user_entity.name.name == name
-    assert Password.verify_password(password, user_entity.hashed_password.hashed_password)
+    assert user_entity.email == email
+    assert user_entity.name == name
+    assert Password.verify_password(password, user_entity.hashed_password)
 
 
 def test_fetch_user_by_id(user_service: UserService):
@@ -38,15 +38,15 @@ def test_fetch_user_by_id(user_service: UserService):
     user_entity = user_service.fetch_user_by_id(user_id)
 
     assert user_entity.id == user_id
-    assert user_entity.email.email == "existing@example.com"
-    assert user_entity.name.name == "Existing User"
+    assert user_entity.email == "existing@example.com"
+    assert user_entity.name == "Existing User"
 
 
 def test_fetch_user_by_email(user_service: UserService):
     user_entity = user_service.fetch_user_by_email("existing@example.com")
 
-    assert user_entity.email.email == "existing@example.com"
-    assert user_entity.name.name == "Existing User"
+    assert user_entity.email == "existing@example.com"
+    assert user_entity.name == "Existing User"
 
 
 def test_change_user_attributes(user_service: UserService):
@@ -54,9 +54,9 @@ def test_change_user_attributes(user_service: UserService):
     new_email, new_password, new_name = "new@example.com", "newpassword123", "New Name"
     updated_user = user_service.change_user_attributes(user_id, new_email, new_password, new_name)
 
-    assert updated_user.email.email == new_email
-    assert updated_user.name.name == new_name
-    assert Password.verify_password(new_password, updated_user.hashed_password.hashed_password)
+    assert updated_user.email == new_email
+    assert updated_user.name == new_name
+    assert Password.verify_password(new_password, updated_user.hashed_password)
 
 
 def test_user_creation_and_retrieval(user_service: UserService):
@@ -65,16 +65,16 @@ def test_user_creation_and_retrieval(user_service: UserService):
 
     # ユーザーが作成されていることを確認
     assert created_user is not None
-    assert created_user.email.email == email
-    assert created_user.name.name == name
+    assert created_user.email == email
+    assert created_user.name == name
 
     # 同じユーザーがfetch_by_idで取得できることを確認
     assert created_user.id is not None
     fetched_user = user_service.fetch_user_by_id(created_user.id)
     assert fetched_user is not None
     assert fetched_user.id == created_user.id
-    assert fetched_user.email.email == email
-    assert fetched_user.name.name == name
+    assert fetched_user.email == email
+    assert fetched_user.name == name
 
 
 # UserServiceのテストの拡張
@@ -136,15 +136,15 @@ def test_change_user_attributes_with_invalid_name(user_service: UserService):
 def test_persistence_of_data_in_mock_repository():
     mock_repo = MockUserRepository()
     user_entity = UserEntity.new_entity(
-        email=Email("test@example.com"),
-        hashed_password=Password.create("strongpassword123"),
-        name=Name("Test User")
+        email="test@example.com",
+        hashed_password="strongpassword123",
+        name="Test User"
     )
     created_user = mock_repo.create(user_entity)
     assert created_user.id is not None
     fetched_user = mock_repo.fetch_by_id(created_user.id)
-    assert fetched_user.email == user_entity.email.email
-    fetched_user_by_email = mock_repo.fetch_by_email(user_entity.email)
+    assert fetched_user.email == user_entity.email
+    fetched_user_by_email = mock_repo.fetch_by_email(Email(user_entity.email))
     assert fetched_user_by_email.id == created_user.id
 
 def test_exception_for_non_existent_user_in_mock_repository():

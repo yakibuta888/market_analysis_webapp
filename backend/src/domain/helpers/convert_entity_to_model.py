@@ -9,7 +9,11 @@ def convert_entity_to_model(entity: DataClassBase, model: Type[BaseModel]) -> Ba
     entity_dict = asdict(entity)
 
     # カスタム型の変換
+    to_model_dict = {}
     for field, value in entity_dict.items():
+        normalise_field = field.lstrip('_')
         if isinstance(value, dict) and len(value) == 1:
-            entity_dict[field] = next(iter(value.values()))
-    return model(**entity_dict)
+            to_model_dict[normalise_field] = next(iter(value.values()))
+        else:
+            to_model_dict[normalise_field] = value
+    return model(**to_model_dict)

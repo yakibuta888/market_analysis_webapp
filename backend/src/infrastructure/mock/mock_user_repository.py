@@ -14,9 +14,9 @@ class MockUserRepository(UserRepository):
     def create(self, user_entity: UserEntity) -> UserModel:
         user_db = UserModel(
             id=self.next_id,
-            name=user_entity.name.name,  # Value Objectから値を抽出
-            email=user_entity.email.email,  # 同上
-            hashed_password=user_entity.hashed_password.hashed_password  # 同上
+            name=user_entity.name,  # Value Objectから値を抽出
+            email=user_entity.email,  # 同上
+            hashed_password=user_entity.hashed_password  # 同上
         )
         self.users[self.next_id] = user_db
         self.next_id += 1
@@ -40,9 +40,9 @@ class MockUserRepository(UserRepository):
     def update(self, user_entity: UserEntity) -> UserModel:
         if user_entity.id in self.users:
             updated_user = self.users[user_entity.id]
-            updated_user.name = user_entity.name.name
-            updated_user.email = user_entity.email.email
-            updated_user.hashed_password = user_entity.hashed_password.hashed_password
+            updated_user.name = user_entity.name
+            updated_user.email = user_entity.email
+            updated_user.hashed_password = user_entity.hashed_password
             return updated_user
         else:
             raise ValueError("User not found")

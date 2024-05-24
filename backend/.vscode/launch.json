@@ -6,7 +6,7 @@
             "type": "python",
             "request": "launch",
             "module": "pytest",
-            "args": ["-s", "tests/application/web/api/test_asset_router.py"],
+            "args": ["-s", "tests/application/web/api/test_user_router.py"],
             "console": "integratedTerminal",
             "justMyCode": false
         }

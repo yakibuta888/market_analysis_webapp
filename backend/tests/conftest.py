@@ -37,11 +37,10 @@ def setup_urls_config(monkeypatch: MonkeyPatch):
 
 def mock_user_repository():
     user_repository = MockUserRepository()
-    test_user = UserEntity(
-        id=1,
-        email=Email("test@example.com"),
-        hashed_password=Password.create("hashed_password123"),
-        name=Name("Test User")
+    test_user = UserEntity.new_entity(
+        email="test@example.com",
+        hashed_password="hashed_password123",
+        name="Test User"
     )
     user_repository.create(test_user)
     return user_repository

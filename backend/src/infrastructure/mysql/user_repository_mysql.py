@@ -13,9 +13,9 @@ class UserRepositoryMysql(UserRepository):
 
     def create(self, user_entity: UserEntity) -> UserModel:
         user_db = UserModel(
-            email=user_entity.email.email,
-            hashed_password=user_entity.hashed_password.hashed_password,
-            name=user_entity.name.name,
+            email=user_entity.email,
+            hashed_password=user_entity.hashed_password,
+            name=user_entity.name,
         )
         self.session.add(user_db)
         self.session.commit()

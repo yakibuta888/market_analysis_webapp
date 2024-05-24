@@ -8,6 +8,7 @@ from typing import Any
 
 from src.settings import logger
 from src.domain.services.asset_service import AssetService
+from src.domain.services.auth_service import AuthService
 from src.domain.services.futures_data_service import FuturesDataService
 from src.domain.services.trade_date_service import TradeDateService
 from src.domain.services.user_service import UserService
@@ -33,9 +34,11 @@ def get_user_repository(db: Session = Depends(get_db)) -> UserRepository:
     logger.info("Fetching UserRepositoryMysql")
     return UserRepositoryMysql(db)
 
-def get_user_service(db: Session = Depends(get_db)) -> UserService:
-    user_repository = get_user_repository(db)
+def get_user_service(user_repository: UserRepository = Depends(get_user_repository)) -> UserService:
     return UserService(user_repository)
+
+def get_auth_service(user_service: UserService = Depends(get_user_service)) -> AuthService:
+    return AuthService(user_service)
 
 def get_futures_data_repository(db: Session = Depends(get_db)) -> FuturesDataRepository:
     logger.info("Fetching FuturesDataRepositoryMysql")

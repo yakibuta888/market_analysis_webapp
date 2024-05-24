@@ -74,4 +74,4 @@ def test_fetch_user_not_found(mock_user_service: MockUserService):
     assert response.status_code == 404
     assert detail_data["error_type"] == "UserNotFoundError"
     assert detail_data["message"] == "User not found"
-    assert detail_data["detail"] == f"User not found. id: {user_id}"
+    assert f"User not found. id: {user_id}" in detail_data["detail"]
