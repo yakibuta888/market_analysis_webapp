@@ -18,7 +18,7 @@ class UserService:
         try:
             user_entity = UserEntity.new_entity(
                 email=email,
-                hashed_password=password,
+                password=password,
                 name=name
             )
             user_db: UserModel = self.user_repository.create(user_entity)

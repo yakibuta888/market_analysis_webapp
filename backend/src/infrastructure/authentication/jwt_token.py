@@ -16,8 +16,8 @@ ACCESS_TOKEN_EXPIRE_MINUTES = timedelta(minutes=30)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
 
-def create_access_token(data: dict[str, str | datetime], expires_delta: timedelta = ACCESS_TOKEN_EXPIRE_MINUTES):
-    to_encode = data.copy()
+def create_access_token(data: dict[str, str], expires_delta: timedelta = ACCESS_TOKEN_EXPIRE_MINUTES):
+    to_encode: dict[str, str | datetime] = {**data}
     expire = datetime.now(timezone.utc) + expires_delta
 
     to_encode.update({"exp": expire})
@@ -32,5 +32,5 @@ def verify_token(token: str = Depends(oauth2_scheme)):
         if email is None:
             raise CredentialsError("Could not validate credentials")
         return email
-    except JWTError:
-        raise CredentialsError("Could not validate credentials")
+    except JWTError as e:
+        raise CredentialsError(f"Could not validate credentials: {str(e)}")

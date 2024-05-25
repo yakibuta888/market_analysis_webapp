@@ -17,7 +17,7 @@ def user_service() -> UserService:
     user_repository.create(
         UserEntity.new_entity(
             email="existing@example.com",
-            hashed_password="strongpassword123",
+            password="strongpassword123",
             name="Existing User"
         )
     )
@@ -137,7 +137,7 @@ def test_persistence_of_data_in_mock_repository():
     mock_repo = MockUserRepository()
     user_entity = UserEntity.new_entity(
         email="test@example.com",
-        hashed_password="strongpassword123",
+        password="strongpassword123",
         name="Test User"
     )
     created_user = mock_repo.create(user_entity)

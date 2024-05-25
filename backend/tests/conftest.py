@@ -39,7 +39,7 @@ def mock_user_repository():
     user_repository = MockUserRepository()
     test_user = UserEntity.new_entity(
         email="test@example.com",
-        hashed_password="hashed_password123",
+        password="hashed_password123",
         name="Test User"
     )
     user_repository.create(test_user)

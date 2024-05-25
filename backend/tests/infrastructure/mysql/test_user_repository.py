@@ -23,7 +23,7 @@ def test_create_user(user_repository: UserRepositoryMysql, db_session: Session):
     # リポジトリのメソッドをテスト
     user_entity = UserEntity.new_entity(
         email="test@example.com",
-        hashed_password="strongpassword123",
+        password="strongpassword123",
         name="Test User"
     )
     user_db = user_repository.create(user_entity)
@@ -38,7 +38,7 @@ def test_create_user(user_repository: UserRepositoryMysql, db_session: Session):
 def test_fetch_user_by_id(user_repository: UserRepositoryMysql):
     user_entity = UserEntity.new_entity(
         email="test2@example.com",
-        hashed_password="anotherpassword123",
+        password="anotherpassword123",
         name="Another User"
     )
     user_db = user_repository.create(user_entity)
@@ -51,7 +51,7 @@ def test_fetch_user_by_id(user_repository: UserRepositoryMysql):
 def test_fetch_user_by_email(user_repository: UserRepositoryMysql):
     user_entity = UserEntity.new_entity(
         email="test3@example.com",
-        hashed_password="yetanotherpassword123",
+        password="yetanotherpassword123",
         name="Yet Another User"
     )
     user_repository.create(user_entity)
@@ -78,7 +78,7 @@ def test_fetch_user_by_email_not_found(user_repository: UserRepositoryMysql):
 def test_create_duplicate_user(user_repository: UserRepositoryMysql):
     user_entity = UserEntity.new_entity(
         email="duplicate@example.com",
-        hashed_password="password123",
+        password="password123",
         name="Duplicate User"
     )
     user_repository.create(user_entity)

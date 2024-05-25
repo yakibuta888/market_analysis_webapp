@@ -29,10 +29,10 @@ class UserEntity(DataClassBase):
         return self._name.name
 
     @classmethod
-    def new_entity(cls, email: str, hashed_password: str, name: str) -> UserEntity:
+    def new_entity(cls, email: str, password: str, name: str) -> UserEntity:
         try:
             email_vo=Email(email)
-            hashed_password_vo=Password.create(hashed_password)
+            hashed_password_vo=Password.create(password)
             name_vo=Name(name)
             return cls(id=None, _email=email_vo, _hashed_password=hashed_password_vo, _name=name_vo)
         except ValueError as e:
