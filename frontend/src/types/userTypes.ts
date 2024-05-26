@@ -1,7 +1,7 @@
 // src/types/userTypes.ts
 export interface User {
-  id: string;
+  id: number;
   email: string;
   name: string;
-  photo: string;
+  photo: string | null;
 }

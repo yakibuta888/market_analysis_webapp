@@ -1,43 +1,66 @@
-import { useEffect } from "react";
-import { Button } from "@mui/material";
+import React from "react";
+import { Button, TextField, CircularProgress, Typography, Box } from "@mui/material";
 
 import "./Login.scss"
-import { login, logout, fetchUser } from '@/store/modules/user';
-import { useAppDispatch, useAppSelector } from '@/store/hooks';
+import { LoginViewModel } from "@/viewModels/LoginViewModel";
 
 
-const Login = () => {
-  const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user.userData);
-
-  useEffect(() => {
-    if (!user) {
-      dispatch(fetchUser());
-    }
-  }, [dispatch, user]);
-
-  const signIn = () => {
-    useEffect(() => {
-      if (user) {
-        dispatch(
-          login({
-            id: user.id,
-            name: user.name,
-            email: user.email,
-          })
-        );
-      } else {
-        dispatch(logout());
-      }
-    }, [dispatch]);
-  }
+const Login: React.FC = () => {
+  const {
+    email,
+    password,
+    handleEmailChange,
+    handlePasswordChange,
+    handleSubmit,
+    authState,
+  } = LoginViewModel();
 
   return (
     <div className="login">
-      <div className="loginLogo">
-        <img src="./phoenix.png" alt="logo" />
-      </div>
-      <Button variant="outlined" color="primary" onClick={signIn}>Login</Button>
+      <Box component="div" sx={{ maxWidth: 400, margin: 'auto', padding: 2, boxShadow: 3, borderRadius: 2 }}>
+        <div className="loginLogo">
+          <img src="./phoenix.png" alt="logo" />
+        </div>
+        <Typography variant="h4" component="h2" gutterBottom>
+          Login
+        </Typography>
+        <form onSubmit={handleSubmit}>
+          <Box mb={2}>
+            <TextField
+              label="Email"
+              type="email"
+              value={email}
+              onChange={handleEmailChange}
+              required
+              fullWidth
+            />
+          </Box>
+          <Box mb={2}>
+            <TextField
+              label="Password"
+              type="password"
+              value={password}
+              onChange={handlePasswordChange}
+              required
+              fullWidth
+            />
+          </Box>
+          {authState.error && (
+            <Box mb={2} color="error.main">
+              <Typography>{authState.error.message}</Typography>
+            </Box>
+          )}
+          <Button
+            type="submit"
+            variant="outlined"
+            color="primary"
+            disabled={authState.loading}
+            fullWidth
+          >
+            {authState.loading ? <CircularProgress size={24} /> : 'Login'}
+          </Button>
+        </form>
+      </Box>
     </div>
   );
 }

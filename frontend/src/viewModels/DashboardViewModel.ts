@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 export const useDashboardViewModel = () => {
   const dispatch = useAppDispatch();
-  const user = useAppSelector((state) => state.user.userData);
+  const user = useAppSelector((state) => state.auth.user);
 
   const assets = useAppSelector((state) => state.assets.assetsData);
   const assetsLoading = useAppSelector((state) => state.assets.loading);
@@ -21,6 +21,7 @@ export const useDashboardViewModel = () => {
   const [selectedGraphType, setSelectedGraphType] = useState<string>('futures-data');
   const [selectedAsset, setSelectedAsset] = useState<string>('');
   const [selectedTradeDate, setSelectedTradeDate] = useState<string>('');
+
 
   useEffect(() => {
     dispatch(fetchAssets());

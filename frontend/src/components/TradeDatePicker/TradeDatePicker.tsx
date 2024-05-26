@@ -27,12 +27,14 @@ const TradeDatePicker: React.FC<Props> = ({ graphType, asset, startDate, endDate
   if (!Array.isArray(tradeDates)) return <div>Invalid trade dates</div>;
 
   return (
-    <DatePicker
-      selected={selectedTradeDate ? parseISO(selectedTradeDate) : null}
-      onChange={(date: Date) => onDateChange(format(date, 'yyyy-MM-dd'))}
-      includeDates={tradeDates.map(d => parseISO(d))}
-      placeholderText='Select a trade date'
-    />
+    <div className="date-picker">
+      <DatePicker
+        selected={selectedTradeDate ? parseISO(selectedTradeDate) : null}
+        onChange={(date: Date) => onDateChange(format(date, 'yyyy-MM-dd'))}
+        includeDates={tradeDates.map(d => parseISO(d))}
+        placeholderText='Select a trade date'
+      />
+    </div>
   );
 }
 

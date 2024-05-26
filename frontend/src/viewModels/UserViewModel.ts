@@ -6,9 +6,9 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
 
 export const useUserViewModel = () => {
-  const user = useAppSelector((state) => state.user.userData);
-  const loading = useAppSelector((state) => state.user.loading);
-  const error = useAppSelector((state) => state.user.error);
+  const user = useAppSelector((state) => state.auth.user);
+  const loading = useAppSelector((state) => state.auth.loading);
+  const error = useAppSelector((state) => state.auth.error);
   const dispatch = useAppDispatch();
 
   useEffect(() => {

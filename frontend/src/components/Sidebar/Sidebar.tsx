@@ -1,15 +1,23 @@
 import "./Sidebar.scss";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import AddIcon from '@mui/icons-material/Add';
+
+import { logout } from '@/store/modules/auth';
 import SidebarChannel from "./SidebarChannel";
 import MicIcon from '@mui/icons-material/Mic';
 import HeadphonesIcon from '@mui/icons-material/Headphones';
 import SettingsIcon from '@mui/icons-material/Settings';
-import { useAppSelector } from "@/store/hooks";
+import { useAppDispatch, useAppSelector } from "@/store/hooks";
 
 
 const Sidebar = () => {
-  const user = useAppSelector((state) => state.user.userData);
+  const user = useAppSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+  };
+
 
   return (
     <div className="sidebar">
@@ -42,7 +50,7 @@ const Sidebar = () => {
 
           <div className="sidebarFooter">
             <div className="sidebarAccount">
-              <img src={user?.photo ? user.photo : "./phoenix.png"} alt="" onClick={() => null}/>
+              <img src={user?.photo ? user.photo : "./phoenix.png"} alt="" onClick={() => handleLogout()}/>
               <div className="accountName">
                 <h4>{user?.name}</h4>
                 <span>#{user?.id}</span>
