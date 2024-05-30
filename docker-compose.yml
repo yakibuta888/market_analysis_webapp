@@ -47,6 +47,7 @@ services:
       - ./backend:$WORK_DIR:ro
     depends_on:
       - database
+      - redis
 
   database:
     image: mysql:8.0.29
@@ -59,6 +60,15 @@ services:
       - db-store:/var/lib/mysql
       - ./mysql/logs:/var/log/mysql
       - ./mysql/initdb.d:/docker-entrypoint-initdb.d:ro
+
+  redis:
+    image: redis:6.2.5
+    platform: linux/x86_64
+    ports:
+      - $IP:6379:6379
+    volumes:
+      - ./redis/data:/data
+      - ./redis/conf/redis.conf:/usr/local/etc/redis/redis.conf:ro
 
 networks:
   default:

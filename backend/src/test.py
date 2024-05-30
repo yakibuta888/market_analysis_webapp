@@ -26,35 +26,49 @@ if __name__ == "__main__":
 
     # print(result)
 
-    from src.application.web.api.models.futures_data_model import FuturesDataRequest
-    from pydantic import ValidationError
+    # from src.application.web.api.models.futures_data_model import FuturesDataRequest
+    # from pydantic import ValidationError
 
-    # 正しいデータでのテスト
-    try:
-        request = FuturesDataRequest(
-            asset_name="Gold",
-            trade_dates=["2023-01-01", "2023-01-02"]
-        )
-        print(request)
-    except ValidationError as e:
-        print("バリデーションエラーが発生しました:", e.json())
+    # # 正しいデータでのテスト
+    # try:
+    #     request = FuturesDataRequest(
+    #         asset_name="Gold",
+    #         trade_dates=["2023-01-01", "2023-01-02"]
+    #     )
+    #     print(request)
+    # except ValidationError as e:
+    #     print("バリデーションエラーが発生しました:", e.json())
 
-    # 不正な日付形式でのテスト
-    try:
-        request = FuturesDataRequest(
-            asset_name="Gold",
-            trade_dates=["2023-01-32"]  # 存在しない日付
-        )
-        print(request)
-    except ValidationError as e:
-        print("バリデーションエラーが発生しました:", e.json())
+    # # 不正な日付形式でのテスト
+    # try:
+    #     request = FuturesDataRequest(
+    #         asset_name="Gold",
+    #         trade_dates=["2023-01-32"]  # 存在しない日付
+    #     )
+    #     print(request)
+    # except ValidationError as e:
+    #     print("バリデーションエラーが発生しました:", e.json())
 
-    # 資産名が空のテスト
-    try:
-        request = FuturesDataRequest(
-            asset_name="",
-            trade_dates=["2023-01-01"]
-        )
-        print(request)
-    except ValidationError as e:
-        print("バリデーションエラーが発生しました:", e.json())
+    # # 資産名が空のテスト
+    # try:
+    #     request = FuturesDataRequest(
+    #         asset_name="",
+    #         trade_dates=["2023-01-01"]
+    #     )
+    #     print(request)
+    # except ValidationError as e:
+    #     print("バリデーションエラーが発生しました:", e.json())
+
+    import requests
+
+    url = 'https://script.google.com/macros/s/AKfycbxV5HzkXC3ewwAilkcJ4JXxUWMhHK7ICwbcJoL7Z5cY5fHw3CGb89wXcVMITg0JPjf_Tg/exec'
+    data = {
+        "action": "sendVerificationEmail",
+        "email": "ms1kz.hsh5n+test-register@gmail.com",
+        "password": "testp@ssw0rd",
+        "name": "Test Register"
+    }
+
+    response = requests.post(url, json=data)
+
+    print(response.text)

@@ -1,13 +1,12 @@
 # tests/infrastructure/test_user_repository.py
 import pytest
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import SQLAlchemyError
 
 from src.settings import logger
 from src.infrastructure.mysql.user_repository_mysql import UserRepositoryMysql
 from src.infrastructure.database.models import User as UserModel
 from src.domain.entities.user_entity import UserEntity
-from src.domain.value_objects.name import Name
-from src.domain.value_objects.password import Password
 from src.domain.value_objects.email import Email
 
 
@@ -83,7 +82,7 @@ def test_create_duplicate_user(user_repository: UserRepositoryMysql):
     )
     user_repository.create(user_entity)
 
-    with pytest.raises(Exception) as excinfo:  # データベース固有の例外をここで捕捉する
+    with pytest.raises(SQLAlchemyError) as excinfo:  # データベース固有の例外をここで捕捉する
         user_repository.create(user_entity)
 
     assert "Duplicate entry" in str(excinfo.value)  # エラーメッセージはデータベースによって異なる場合があるので注意

@@ -9,3 +9,6 @@ data:
   MYSQL_DATABASE: "market_analysis_webapp_db"
   MYSQL_HOST: mysql-service
   MYSQL_PORT: "3306"
+  REDIS_HOST: "redis-service"
+  REDIS_PORT: "6379"
+  REDIS_DB: "0"

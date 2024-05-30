@@ -57,3 +57,11 @@ class UserEntity(DataClassBase):
 
     def change_password(self, new_password: str) -> UserEntity:
         return UserEntity(self.id, self._email, Password.create(new_password), self._name)
+
+    def to_dict(self) -> dict[str, str | int | None]:
+        return {
+            "id": self.id,
+            "email": self.email,
+            "hashed_password": self.hashed_password,  # noqa: B303
+            "name": self.name
+        }

@@ -2,7 +2,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios, { AxiosError } from 'axios';
 
-import { fetchUserData, getTokenAndFetchUserData, LoginParams } from '@/api/authApi';
+import { fetchUserData, getTokenAndFetchUserData, LoginParams, verifyTokenAndFetchUserData, RegisterParams, registUser } from '@/api/authApi';
 import { User } from '@/types/userTypes';
 
 
@@ -52,9 +52,51 @@ export const initializeAuth = createAsyncThunk(
 );
 
 
+export const verifyUser = createAsyncThunk(
+  'auth/verifyUser',
+  async ({ verifyToken }: { verifyToken: string }, { rejectWithValue }) => {
+    try {
+      const authData = await verifyTokenAndFetchUserData({ verifyToken });
+      localStorage.setItem('token', authData.token);
+      return authData;
+    } catch (error) {
+      if (error && (error as AxiosError).message) {
+        return rejectWithValue({
+          message: (error as AxiosError).message,
+          code: (error as AxiosError).code,
+          url: (error as AxiosError).config?.url
+        });
+      }
+      return rejectWithValue(error);
+    }
+  }
+);
+
+
+export const register = createAsyncThunk(
+  'auth/register',
+  async ({ email, password, name }: RegisterParams, { rejectWithValue }) => {
+    try {
+      const message: { message: string } = await registUser({ email, password, name });
+      return message;
+    } catch (error) {
+      if (error && (error as AxiosError).message) {
+        return rejectWithValue({
+          message: (error as AxiosError).message,
+          code: (error as AxiosError).code,
+          url: (error as AxiosError).config?.url
+        });
+      }
+      return rejectWithValue(error);
+    }
+  }
+);
+
+
 export interface AuthState {
   token: string | null;
   user: User | null;
+  message: string;
   loading: boolean;
   error: Error | null;
 }
@@ -62,6 +104,7 @@ export interface AuthState {
 const initialState: AuthState = {
   token: null,
   user: null,
+  message: '',
   loading: false,
   error: null,
 };
@@ -74,6 +117,8 @@ const authSlice = createSlice({
     logout: (state) => {
       state.token = null;
       state.user = null;
+      state.message = '';
+      state.error = null;
       localStorage.removeItem('token');
       delete axios.defaults.headers.common['Authorization'];
     }
@@ -107,6 +152,35 @@ const authSlice = createSlice({
         state.token = null;
         state.user = null;
         state.error = action.payload as Error;
+      })
+      .addCase(verifyUser.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(verifyUser.fulfilled, (state, action) => {
+        state.loading = false;
+        state.token = action.payload.token;
+        state.user = action.payload.user;
+      })
+      .addCase(verifyUser.rejected, (state, action) => {
+        state.loading = false;
+        state.token = null;
+        state.user = null;
+        state.error = action.payload as Error;
+      })
+      .addCase(register.pending, (state) => {
+        state.loading = true;
+        state.error = null;
+        state.message = '';
+      })
+      .addCase(register.fulfilled, (state, action) => {
+        state.loading = false;
+        state.message = action.payload.message;
+      })
+      .addCase(register.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as Error;
+        state.message = 'Sign up failed. Please try again.'
       });
   }
 });

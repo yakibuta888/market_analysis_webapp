@@ -9,3 +9,9 @@ class Token(BaseModel):
 class LoginModel(BaseModel):
     email: str
     password: str
+
+class RegisterModel(BaseModel):
+    message: str
+
+class VerifyRequestModel(BaseModel):
+    token: str

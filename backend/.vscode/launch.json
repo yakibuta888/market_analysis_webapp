@@ -6,7 +6,7 @@
             "type": "python",
             "request": "launch",
             "module": "pytest",
-            "args": ["-s", "tests/application/web/api/test_auth_router.py"],
+            "args": ["-s", "tests/infrastructure/authentication/test_verification_token.py"],
             "console": "integratedTerminal",
             "justMyCode": false
         }

@@ -55,6 +55,6 @@ export const useDashboardViewModel = () => {
     selectedAsset,
     setSelectedAsset,
     selectedTradeDate,
-    setSelectedTradeDate
+    setSelectedTradeDate,
   };
 };

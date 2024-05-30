@@ -1,14 +1,14 @@
-// src/viewModels/LoginViewModel.ts
+// src/viewModels/RegisterViewModel.ts
 
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { login } from '../store/modules/auth';
+import { register } from '../store/modules/auth';
 import { useAppDispatch, useAppSelector } from '@/store/hooks';
 
-export const LoginViewModel = () => {
+export const RegisterViewModel = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [name, setName] = useState('');
   const dispatch = useAppDispatch();
   const authState = useAppSelector(state => state.auth);
 
@@ -20,24 +20,23 @@ export const LoginViewModel = () => {
     setPassword(e.target.value);
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    dispatch(login({ email, password }));
+  const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setName(e.target.value);
   };
 
-  const navigate = useNavigate();
-
-  const handleSignUpClick = () => {
-    navigate('/register');
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    dispatch(register({ email, password, name }));
   };
 
   return {
     email,
     password,
+    name,
     handleEmailChange,
     handlePasswordChange,
+    handleNameChange,
     handleSubmit,
     authState,
-    handleSignUpClick,
   };
 };

@@ -1,12 +1,17 @@
 # tests/domain/services/test_user_service.py
 import pytest
+from sqlalchemy.exc import SQLAlchemyError
+from unittest.mock import MagicMock
+
 from src.domain.entities.user_entity import UserEntity
 from src.domain.services.user_service import UserService
+from src.domain.repositories.user_repository import UserRepository
 from src.infrastructure.mock.mock_user_repository import MockUserRepository
 from src.domain.value_objects.name import Name
 from src.domain.value_objects.email import Email
 from src.domain.value_objects.password import Password
 from src.domain.exceptions.invalid_user_input_error import InvalidUserInputError
+from src.domain.exceptions.repository_error import RepositoryError
 from src.domain.exceptions.user_not_found_error import UserNotFoundError
 
 
@@ -31,6 +36,38 @@ def test_create_user(user_service: UserService):
     assert user_entity.email == email
     assert user_entity.name == name
     assert Password.verify_password(password, user_entity.hashed_password)
+
+
+def test_save_user_success(user_service: UserService):
+    user_entity = UserEntity.new_entity(
+        email="test@example.com",
+        password="strongpassword123",
+        name="Test User"
+    )
+
+    saved_user = user_service.save_user(user_entity)
+
+    assert saved_user.email == user_entity.email
+    assert saved_user.hashed_password == user_entity.hashed_password
+    assert saved_user.name == user_entity.name
+
+
+def test_save_user_failure():
+    user_repository_mock = MagicMock(spec=UserRepository)
+    user_service_mock = UserService(user_repository_mock)
+    user_entity = UserEntity.new_entity(
+        email="test@example.com",
+        password="strongpassword123",
+        name="Test User"
+    )
+    user_repository_mock.create.side_effect = SQLAlchemyError("DB Error")
+
+    with pytest.raises(RepositoryError) as exc_info:
+        user_service_mock.save_user(user_entity)
+
+    assert "An error occurred while saving user: DB Error" in str(exc_info.value)
+    user_repository_mock.create.assert_called_once_with(user_entity)
+
 
 
 def test_fetch_user_by_id(user_service: UserService):
@@ -84,6 +121,18 @@ def test_create_user_with_invalid_email(user_service: UserService):
     with pytest.raises(InvalidUserInputError) as exc_info:
         user_service.create_user(invalid_email, valid_password, valid_name)
     assert "無効なメールアドレスです。" in exc_info.value.message
+
+def test_create_user_with_invalid_password(user_service: UserService):
+    valid_email, invalid_password, valid_name = "invalid@email.net", "short", "Test User"
+    with pytest.raises(InvalidUserInputError) as exc_info:
+        user_service.create_user(valid_email, invalid_password, valid_name)
+    assert "パスワードは8文字以上である必要があります。" in exc_info.value.message
+
+def test_create_user_missing_arguments(user_service: UserService):
+    valid_email, valid_password = "testuser@example.com", "strongpassword123"
+    with pytest.raises(InvalidUserInputError) as exc_info:
+        user_service.create_user(valid_email, valid_password, "")
+    assert "名前は空にできません。" in exc_info.value.message
 
 def test_fetch_non_existent_user(user_service: UserService):
     non_existent_user_id = 999

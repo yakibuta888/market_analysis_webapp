@@ -2,18 +2,19 @@
 
 import pytest
 from jose import jwt
-from unittest.mock import Mock
+from unittest.mock import Mock, patch
 
 from src.domain.entities.user_entity import UserEntity
 from src.domain.exceptions.credentials_error import CredentialsError
 from src.domain.exceptions.invalid_user_input_error import InvalidUserInputError
+from src.domain.exceptions.repository_error import RepositoryError
 from src.domain.exceptions.user_not_found_error import UserNotFoundError
 from src.domain.services.auth_service import AuthService
+from src.domain.services.email_service import EmailService
 from src.domain.services.user_service import UserService
-from src.domain.value_objects.email import Email
-from src.domain.value_objects.password import Password
-from src.domain.value_objects.name import Name
+from src.domain.repositories.temp_user_repository import TempUserRepository
 from src.infrastructure.authentication.jwt_token import create_access_token, verify_token, SECRET_KEY, ALGORITHM
+from src.infrastructure.authentication.verification_token import generate_verification_token
 
 
 @pytest.fixture
@@ -22,8 +23,19 @@ def user_service_mock():
 
 
 @pytest.fixture
-def auth_service(user_service_mock: Mock):
-    return AuthService(user_service=user_service_mock)
+def temp_user_repository_mock():
+    return Mock(spec=TempUserRepository)
+
+
+@pytest.fixture
+def email_service_mock():
+    email_service = Mock(spec=EmailService)
+    email_service.send_verification_email = Mock()
+    return email_service
+
+@pytest.fixture
+def auth_service(user_service_mock: Mock, temp_user_repository_mock: Mock, email_service_mock: Mock):
+    return AuthService(user_service=user_service_mock, email_service=email_service_mock, temp_user_repository=temp_user_repository_mock)
 
 
 def test_authenticate_user_success(auth_service: AuthService, user_service_mock: Mock):
@@ -182,3 +194,64 @@ def test_get_current_user_user_not_found(auth_service: AuthService, user_service
 
     with pytest.raises(UserNotFoundError):
         auth_service.get_current_user(token)
+
+
+@patch("src.domain.services.auth_service.generate_verification_token")
+def test_register_user_success(mock_generate_verification_token: Mock, auth_service: AuthService, temp_user_repository_mock: Mock, email_service_mock: Mock):
+    email = "test@example.com"
+    password = "strongpassword123"
+    name = "Test User"
+    token = "fixed_verification_token"
+    mock_generate_verification_token.return_value = token
+
+    message = auth_service.register_user(email, password, name)
+
+    temp_user_repository_mock.save_temp_user.assert_called_once()
+    email_service_mock.send_verification_email.assert_called_once_with(email, token)
+    assert "アカウントの確認のため、Eメールをご確認ください。" in message
+
+
+def test_register_user_invalid_input(auth_service: AuthService):
+    with pytest.raises(InvalidUserInputError):
+        auth_service.register_user("invalidemail", "password", "Test User")
+
+
+def test_confirm_registration_success(auth_service: AuthService, temp_user_repository_mock: Mock, user_service_mock: Mock):
+    email = "test@example.com"
+    password = "strongpassword123"
+    name = "Test User"
+    token = generate_verification_token(email)
+    temp_user = UserEntity.new_entity(email=email, password=password, name=name)
+
+    temp_user_repository_mock.fetch_temp_user_by_email.return_value = temp_user
+    user_service_mock.save_user.return_value = temp_user
+
+    access_token = auth_service.confirm_registration(token)
+
+    temp_user_repository_mock.fetch_temp_user_by_email.assert_called_once_with(email)
+    user_service_mock.save_user.assert_called_once_with(temp_user)
+    assert access_token is not None
+
+
+def test_confirm_registration_invalid_token(auth_service: AuthService):
+    with pytest.raises(CredentialsError):
+        auth_service.confirm_registration("invalid_token")
+
+
+def test_confirm_registration_user_not_found(auth_service: AuthService, temp_user_repository_mock: Mock):
+    token = generate_verification_token("test@example.com")
+    temp_user_repository_mock.fetch_temp_user_by_email.side_effect = UserNotFoundError("User not found")
+
+    with pytest.raises(UserNotFoundError):
+        auth_service.confirm_registration(token)
+
+
+def test_confirm_registration_invalid_user_input(auth_service: AuthService, temp_user_repository_mock: Mock, user_service_mock: Mock):
+    email = "test@example.com"
+    token = generate_verification_token(email)
+    temp_user = UserEntity.new_entity(email=email, password="password", name="Test User")
+    temp_user_repository_mock.fetch_temp_user_by_email.return_value = temp_user
+    user_service_mock.save_user.side_effect = RepositoryError("Repository error")
+
+    with pytest.raises(RepositoryError):
+        auth_service.confirm_registration(token)
