@@ -59,16 +59,62 @@ if __name__ == "__main__":
     # except ValidationError as e:
     #     print("バリデーションエラーが発生しました:", e.json())
 
-    import requests
+    # import requests
 
-    url = 'https://script.google.com/macros/s/AKfycbxV5HzkXC3ewwAilkcJ4JXxUWMhHK7ICwbcJoL7Z5cY5fHw3CGb89wXcVMITg0JPjf_Tg/exec'
-    data = {
-        "action": "sendVerificationEmail",
-        "email": "ms1kz.hsh5n+test-register@gmail.com",
-        "password": "testp@ssw0rd",
-        "name": "Test Register"
-    }
+    # url = 'https://script.google.com/macros/s/AKfycbxV5HzkXC3ewwAilkcJ4JXxUWMhHK7ICwbcJoL7Z5cY5fHw3CGb89wXcVMITg0JPjf_Tg/exec'
+    # data = {
+    #     "action": "sendVerificationEmail",
+    #     "email": "ms1kz.hsh5n+test-register@gmail.com",
+    #     "password": "testp@ssw0rd",
+    #     "name": "Test Register"
+    # }
 
-    response = requests.post(url, json=data)
+    # response = requests.post(url, json=data)
 
-    print(response.text)
+    # print(response.text)
+
+    from selenium import webdriver
+    from selenium.webdriver.chrome.service import Service
+    from selenium.webdriver.chrome.options import Options
+    from webdriver_manager.chrome import ChromeDriverManager
+    from src.infrastructure.scraping.get_element import GetElement
+    from src.infrastructure.scraping.web_driver_setup import WebDriverSetup
+
+    class WDSetup:
+        def __init__(self, headless: bool = False):
+            self.options = Options()
+
+            self.options.add_argument('--no-sandbox')
+            self.options.add_argument('--disable-dev-shm-usage')
+            self.options.add_argument('--disable-gpu')
+            self.options.add_argument('--disable-extensions')
+            self.options.add_argument('--disable-infobars')
+            self.options.add_argument('--start-maximized')
+            self.options.add_argument('--window-size=1280x1696')
+            self.options.add_argument('--disable-browser-side-navigation')
+            self.options.add_argument('--ignore-certificate-errors')
+            self.options.add_argument('--ignore-ssl-errors')
+            self.options.add_argument('--disable-application-cache')
+            self.options.add_argument('--disable-software-rasterizer')
+            self.options.add_argument('--disable-logging')
+            self.options.add_argument('--single-process')
+            self.options.add_argument('--remote-debugging-port=9222')
+
+            if headless:
+                self.options.add_argument('--headless')  # ヘッドレスモードを使用しない
+
+        def get_driver(self):
+            service = Service(ChromeDriverManager().install())
+            driver = webdriver.Chrome(service=service, options=self.options)
+            return driver
+
+    webdriver_setup = WebDriverSetup(headless=True)
+    # webdriver_setup = WDSetup(headless=True)
+    driver = webdriver_setup.get_driver()
+    driver.get('https://www.google.com')
+    get_element = GetElement(driver)
+    element = get_element.xpath('//input[contains(@id, "gbqfbb")]')
+    driver.execute_script('arguments[0].click();', element)
+    driver.save_screenshot('screenshot.png')
+
+    driver.quit()

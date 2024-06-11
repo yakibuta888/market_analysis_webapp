@@ -1,0 +1,29 @@
+Error Type: TimeoutException
+message: Message: 
+Stacktrace:
+#0 0x5d71b6c9cdc3 <unknown>
+#1 0x5d71b698b4e7 <unknown>
+#2 0x5d71b69d635d <unknown>
+#3 0x5d71b69d6411 <unknown>
+#4 0x5d71b6a19774 <unknown>
+#5 0x5d71b69f847d <unknown>
+#6 0x5d71b6a16c29 <unknown>
+#7 0x5d71b69f81f3 <unknown>
+#8 0x5d71b69c928a <unknown>
+#9 0x5d71b69c9c5e <unknown>
+#10 0x5d71b6c610eb <unknown>
+#11 0x5d71b6c6503b <unknown>
+#12 0x5d71b6c4d201 <unknown>
+#13 0x5d71b6c65ba2 <unknown>
+#14 0x5d71b6c320bf <unknown>
+#15 0x5d71b6c8bf18 <unknown>
+#16 0x5d71b6c8c0f0 <unknown>
+#17 0x5d71b6c9bf14 <unknown>
+#18 0x726886ab9134 <unknown>
+
+Stack Trace:
+NoneType: None
+
+time: 2024年06月11日 18:37:49
+url: https://www.cmegroup.com/markets/energy/crude-oil/light-sweet-crude.settlements.html
+selector: //label[contains(text(), "Trade date")]/parent::div/div/button

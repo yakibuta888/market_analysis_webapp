@@ -3,9 +3,9 @@ set -euxo pipefail
 
 FILE=$HOME/.vnc/passwd
 if [ -f "$FILE" ]; then
-  USER="$(whoami)" vncserver :1 -depth 24 -geometry 800x600 -br -rfbport=5901 -PasswordFile=$HOME/.vnc/passwd
+  USER="$(whoami)" vncserver :1 -depth 24 -geometry 1280x720 -br -rfbport=5901 -PasswordFile=$HOME/.vnc/passwd
 else
-  USER="$(whoami)" vncserver :1 -geometry 800x600 -depth 24
+  USER="$(whoami)" vncserver :1 -geometry 1280x720 -depth 24
 fi
 
 if ! lsof -i:80 > /dev/null; then
