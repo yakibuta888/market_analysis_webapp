@@ -1,3 +1,4 @@
+import os
 from datetime import date
 from sqlalchemy import text
 
@@ -73,10 +74,15 @@ if __name__ == "__main__":
 
     # print(response.text)
 
+    import time
     from selenium import webdriver
     from selenium.webdriver.chrome.service import Service
     from selenium.webdriver.chrome.options import Options
     from webdriver_manager.chrome import ChromeDriverManager
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+
     from src.infrastructure.scraping.get_element import GetElement
     from src.infrastructure.scraping.web_driver_setup import WebDriverSetup
 
@@ -97,8 +103,9 @@ if __name__ == "__main__":
             self.options.add_argument('--disable-application-cache')
             self.options.add_argument('--disable-software-rasterizer')
             self.options.add_argument('--disable-logging')
-            self.options.add_argument('--single-process')
-            self.options.add_argument('--remote-debugging-port=9222')
+            # self.options.add_argument('--single-process')
+            # self.options.add_argument('--remote-debugging-port=9222')
+            self.options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.55 Safari/537.36') # type: ignore
 
             if headless:
                 self.options.add_argument('--headless')  # ヘッドレスモードを使用しない
@@ -106,15 +113,28 @@ if __name__ == "__main__":
         def get_driver(self):
             service = Service(ChromeDriverManager().install())
             driver = webdriver.Chrome(service=service, options=self.options)
+            driver.implicitly_wait(3)  # 指定したドライバーが見つかるまでの待ち時間を設定
             return driver
 
-    webdriver_setup = WebDriverSetup(headless=True)
-    # webdriver_setup = WDSetup(headless=True)
+    webdriver_setup = WebDriverSetup(headless=False)
+    # webdriver_setup = WDSetup(headless=False)
     driver = webdriver_setup.get_driver()
-    driver.get('https://www.google.com')
     get_element = GetElement(driver)
-    element = get_element.xpath('//input[contains(@id, "gbqfbb")]')
+    # driver.get('https://www.google.com')
+    driver.get('https://www.cmegroup.com/markets/energy/crude-oil/light-sweet-crude.settlements.html')
+    time.sleep(5)
+    # try:
+    #     WebDriverWait(driver, 30).until(EC.element_to_be_clickable((By.XPATH, '//input[contains(@id, "gbqfbb")]')))
+    #     # WebDriverWait(driver, 30).until(EC.visibility_of_element_located((By.XPATH, '//label[contains(text(), "Trade date")]/parent::div/div/button')))
+    #     element = driver.find_element(By.XPATH, '//input[contains(@id, "gbqfbb")]')
+    #     print("Element found")
+    # except Exception as e:
+    #     print(f"An error occurred: {e}")
+    driver.save_screenshot('screenshot1.png')
+    # print(driver.page_source)
+    # element = get_element.xpath('//input[contains(@id, "gbqfbb")]')
+    element = get_element.xpath('//label[contains(text(), "Trade date")]/parent::div/div/button')
     driver.execute_script('arguments[0].click();', element)
-    driver.save_screenshot('screenshot.png')
+    driver.save_screenshot('screenshot2.png')
 
     driver.quit()

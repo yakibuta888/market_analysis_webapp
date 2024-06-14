@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.4.1
 FROM python:3.11-slim
 
-ENV DISPLAY=:1
+ENV DISPLAY=:99
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update \
@@ -25,6 +25,10 @@ RUN apt-get update \
 	x11-utils \
 	x11-xserver-utils \
 	x11-apps \
+	# ヘッドレスモードの代わりに仮想フレームバッファを使用
+	xvfb \
+	x11vnc \
+	fluxbox \
 	# 日本語環境
 	task-japanese \
 	locales \

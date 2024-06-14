@@ -29,7 +29,7 @@ def test_dataframe_to_json():
 
 def test_to_year_month_format():
     # テスト用のDataFrameを作成
-    rng = pd.date_range('2021-01-01', periods=3, freq='M')
+    rng = pd.date_range('2021-01-01', periods=3, freq='ME')
     df = pd.DataFrame({ 'date': rng })
 
     # 関数の実行

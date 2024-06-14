@@ -16,6 +16,7 @@ def test_send_verification_email_success(email_service: EmailService):
     with requests_mock.Mocker() as mock:
         mock.post(GAS_URL, status_code=200)
 
+        action = "sendVerificationEmail"
         email = "test@example.com"
         token = "sample_token"
 
@@ -24,7 +25,7 @@ def test_send_verification_email_success(email_service: EmailService):
         assert mock.called
         assert mock.call_count == 1
         request = mock.request_history[0]
-        assert request.json() == {"email": email, "token": token}
+        assert request.json() == {"action": action, "email": email, "token": token}
 
 
 def test_send_verification_email_retries(email_service: EmailService):
@@ -41,6 +42,7 @@ def test_send_verification_email_retries(email_service: EmailService):
 
 
 def test_send_verification_email_success_after_retries(email_service: EmailService):
+    action = "sendVerificationEmail"
     email = "test@example.com"
     token = "testtoken"
 
@@ -54,4 +56,4 @@ def test_send_verification_email_success_after_retries(email_service: EmailServi
         # Assert that requests.post was called 3 times due to retries
         assert mock_post.call_count == 3
         request = mock_post.call_args_list[2]
-        assert request[1]['json'] == {"email": email, "token": token}
+        assert request[1]['json'] == {"action": action, "email": email, "token": token}

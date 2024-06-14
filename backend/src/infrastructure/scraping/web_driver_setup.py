@@ -10,8 +10,9 @@ class WebDriverSetup:
         if headless:
             self.options.add_argument('--headless') # type: ignore
         self.options.add_argument('--no-sandbox') # type: ignore
-        self.options.add_argument('--disable-dev-shm-usage') # type: ignore
         self.options.add_argument('--disable-gpu') # type: ignore
+        self.options.add_argument('--disable-software-rasterizer') # type: ignore
+        self.options.add_argument('--disable-dev-shm-usage') # type: ignore
         self.options.add_argument('--disable-extensions') # type: ignore
         self.options.add_argument("--start-maximized") # type: ignore
         self.options.add_argument("--enable-automation") # type: ignore
@@ -21,13 +22,11 @@ class WebDriverSetup:
         self.options.add_argument('--ignore-certificate-errors') # type: ignore
         self.options.add_argument('--ignore-ssl-errors') # type: ignore
         self.options.add_argument("--disable-application-cache") # type: ignore
-        self.options.add_argument('--disable-software-rasterizer') # type: ignore
         self.options.add_argument("--hide-scrollbars") # type: ignore
         self.options.add_argument("--enable-logging") # type: ignore
         self.options.add_argument("--log-level=0") # type: ignore
-        self.options.add_argument("--single-process") # type: ignore
         self.options.add_argument("--homedir=/tmp") # type: ignore
-        # self.options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3') # type: ignore
+        self.options.add_argument('user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.6478.55 Safari/537.36') # type: ignore
         prefs = {"profile.default_content_setting_values.notifications" : 2}
         self.options.add_experimental_option("prefs",prefs) # type: ignore
 

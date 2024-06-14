@@ -137,7 +137,7 @@ def scrape_settlements(asset_service: AssetService, settlement_service: Settleme
     # `settlements` ページからデータをスクレイピングし、DataFrameに格納するロジック
     # ここでDataFrameを作成し、データを永続化するサービスに渡す
     logger.info('Scraping settlements data...')
-    webdriver_setup = WebDriverSetup(headless=True)
+    webdriver_setup = WebDriverSetup(headless=False)
     driver = webdriver_setup.get_driver()
     get_element = GetElement(driver)
 
@@ -184,7 +184,7 @@ def scrape_volume_and_open_interest(asset_service: AssetService, volume_oi_servi
     # `volume_and_open_interest` ページからデータをスクレイピングし、DataFrameに格納するロジック
     # このページのテーブル構造は `settlements` と異なるため、異なる処理が必要
     logger.info('Scraping volume and open interest data...')
-    webdriver_setup = WebDriverSetup(headless=True)
+    webdriver_setup = WebDriverSetup(headless=False)
     driver = webdriver_setup.get_driver()
     get_element = GetElement(driver)
 
