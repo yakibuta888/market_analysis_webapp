@@ -25,6 +25,15 @@ jobs:
           --health-interval=10s
           --health-timeout=5s
           --health-retries=3
+      redis:
+        image: redis:latest
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 3
 
     steps:
     - name: Check Out Repo
@@ -80,14 +89,17 @@ jobs:
         cd backend
         pip install -r requirements.txt
 
-    - name: Wait for MySQL
+    - name: Wait for MySQL and Redis
       run: |
-        until nc -z -v -w30 127.0.0.1 3306
+        until nc -z -v -w30 127.0.0.1 3306 && nc -z -v -w30 127.0.0.1 6379
         do
-          echo "Waiting for MySQL..."
+          echo "Waiting for MySQL and Redis..."
           sleep 1
         done
-        echo "MySQL is up and running!"
+        echo "MySQL and Redis are up and running!"
+
+    - name: Install xvfb
+      run: sudo apt-get install -y xvfb
 
     - name: Run tests
       env:
@@ -98,8 +110,14 @@ jobs:
         DIALECT: mysql
         DRIVER: pymysql
         MYSQL_PORT: 3306
+        REDIS_HOST: 127.0.0.1
+        REDIS_PORT: 6379
+        REDIS_DB: 0
         PYTHONPATH: ${{ github.workspace }}/backend
-      run: pytest
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        SECURITY_PASSWORD_SALT: ${{ secrets.SECURITY_PASSWORD_SALT }}
+      run: |
+        xvfb-run pytest
       working-directory: ./backend
 
     - name: Set up Kubeconfig

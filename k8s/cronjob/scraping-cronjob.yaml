@@ -12,7 +12,7 @@ spec:
           containers:
           - name: settlement-scraping
             image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
-            command: ["python3", "src/application/background_workers/run_scraping_tasks.py", "settlement"]
+            command: ["/usr/local/bin/virtual_display_start.sh", "python3", "src/application/background_workers/run_scraping_tasks.py", "settlement"]
             envFrom:
             - secretRef:
                 name: backend-secrets
@@ -36,7 +36,7 @@ spec:
           containers:
           - name: settlement-scraping
             image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
-            command: ["python3", "src/application/background_workers/run_scraping_tasks.py", "settlement"]
+            command: ["/usr/local/bin/virtual_display_start.sh", "python3", "src/application/background_workers/run_scraping_tasks.py", "settlement"]
             envFrom:
             - secretRef:
                 name: backend-secrets
@@ -60,7 +60,7 @@ spec:
           containers:
           - name: volume-oi-scraping
             image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
-            command: ["python3", "src/application/background_workers/run_scraping_tasks.py", "volume_oi"]
+            command: ["/usr/local/bin/virtual_display_start.sh", "python3", "src/application/background_workers/run_scraping_tasks.py", "volume_oi"]
             envFrom:
             - secretRef:
                 name: backend-secrets
@@ -84,7 +84,7 @@ spec:
           containers:
           - name: volume-oi-scraping
             image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
-            command: ["python3", "src/application/background_workers/run_scraping_tasks.py", "volume_oi"]
+            command: ["/usr/local/bin/virtual_display_start.sh", "python3", "src/application/background_workers/run_scraping_tasks.py", "volume_oi"]
             envFrom:
             - secretRef:
                 name: backend-secrets
