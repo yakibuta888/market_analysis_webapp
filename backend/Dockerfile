@@ -71,8 +71,8 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # start.shスクリプトのコピーと実行権限の設定
-COPY virtual_display_start.sh /usr/local/bin/virtual_display_start.sh
-RUN chmod +x /usr/local/bin/virtual_display_start.sh
+COPY scripts/virtual_display_start.sh /usr/local/bin/virtual_display_start.sh
+RUN sudo chmod +x /usr/local/bin/virtual_display_start.sh
 
 # アプリケーションの起動コマンド
 CMD ["gunicorn", "-k", "uvicorn.workers.UvicornWorker", "src.main:app", "--bind", "0.0.0.0:8000", "--workers", "4"]
