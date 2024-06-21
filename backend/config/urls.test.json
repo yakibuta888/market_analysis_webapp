@@ -8,9 +8,5 @@
   {
     "settlements": "https://www.cmegroup.com/markets/metals/precious/gold.settlements.html",
     "volume_and_open_interest": "https://www.cmegroup.com/markets/metals/precious/gold.volume.html"
-  },
-  "russian_ruble": {
-    "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/russian-ruble.settlements.html",
-    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/russian-ruble.volume.html"
   }
 }

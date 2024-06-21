@@ -7,7 +7,7 @@ from itsdangerous import URLSafeTimedSerializer
 from src.domain.exceptions.credentials_error import CredentialsError
 
 
-@pytest.fixture(scope='session', autouse=True)
+@pytest.fixture(scope='function', autouse=True)
 def set_test_env_vars():
     original_secret_key = os.getenv('SECRET_KEY')
     original_salt = os.getenv('SECURITY_PASSWORD_SALT')

@@ -110,10 +110,6 @@
     "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/south-african-rand.settlements.html",
     "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/south-african-rand.volume.html"
   },
-  "russian_ruble": {
-    "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/russian-ruble.settlements.html",
-    "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/russian-ruble.volume.html"
-  },
   "mexican_peso": {
     "settlements": "https://www.cmegroup.com/markets/fx/emerging-market/mexican-peso.settlements.html",
     "volume_and_open_interest": "https://www.cmegroup.com/markets/fx/emerging-market/mexican-peso.volume.html"
