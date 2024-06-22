@@ -1,7 +1,6 @@
 import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
-import CssBaseline from '@mui/material/CssBaseline';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
@@ -32,8 +31,7 @@ export default function AppLayout() {
 
 
   return (
-    <Box sx={{ display: 'flex', bgcolor: (theme) => theme.palette.grey[100], minHeight: "100vh", minWidth: "100vw" }}>
-      <CssBaseline />
+    <Box sx={{ display: 'flex', minWidth: '100vw'}}>
 
       {/* Header */}
       <AppBar
@@ -65,7 +63,7 @@ export default function AppLayout() {
         mobileOpen={mobileOpen}
         handleDrawerClose={handleDrawerClose}
         handleDrawerTransitionEnd={handleDrawerTransitionEnd}
-       />
+      />
 
       {/* Main content */}
       <Box

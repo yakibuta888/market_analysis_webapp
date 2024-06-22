@@ -7,4 +7,7 @@ export const theme = createTheme({
     fontWeightMedium: 500,
     fontWeightBold: 700,
   },
+  palette: {
+    mode: 'dark'
+  }
 });

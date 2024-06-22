@@ -1,3 +1,4 @@
+// src/components/common/SideBar.tsx
 import React from 'react'
 
 import Divider from '@mui/material/Divider';
@@ -18,8 +19,9 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import LoginIcon from '@mui/icons-material/Login';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
-import { NavLink } from 'react-router-dom';
-import { useAppSelector } from '@/store/hooks';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { useAppSelector, useAppDispatch } from '@/store/hooks';
+import { logout } from '@/store/modules/auth';
 
 
 interface SideBarProps {
@@ -32,13 +34,21 @@ interface SideBarProps {
 
 interface menuItem {
   text: string,
-  path: string,
+  path?: string,
   icon: React.ComponentType,
+  action?: () => void,
 }
 
 
 const SideBar: React.FC<SideBarProps> = ({ drawerWidth, mobileOpen, handleDrawerClose, handleDrawerTransitionEnd }) => {
   const isLoggedIn = useAppSelector((state) => state.auth.token !== null);
+  const dispatch = useAppDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/login');
+  }
 
   const MenuItems: menuItem[] = [
     { text: "Home", path: "/", icon: HomeIcon },
@@ -50,7 +60,7 @@ const SideBar: React.FC<SideBarProps> = ({ drawerWidth, mobileOpen, handleDrawer
   const SettingItems: menuItem[] = [
     { text: "Profile", path: "/profile", icon: PersonIcon },
     { text: "Settings", path: "/settings", icon: SettingsIcon },
-    { text: "Logout", path: "/login", icon: LogoutIcon },
+    { text: "Logout", icon: LogoutIcon, action: handleLogout },
   ]
 
   const GuestItems: menuItem[] = [
@@ -74,7 +84,7 @@ const SideBar: React.FC<SideBarProps> = ({ drawerWidth, mobileOpen, handleDrawer
       <Divider />
       <List>
         {MenuItems.map((item, index) => (
-          <NavLink to={item.path} key={item.text} style={({isActive}) => {
+          <NavLink to={item.path || ''} key={item.text} style={({isActive}) => {
             return {
               ...baseLinkStyle,
               ...(isActive ? activeLinkStyle : {}),
@@ -95,27 +105,38 @@ const SideBar: React.FC<SideBarProps> = ({ drawerWidth, mobileOpen, handleDrawer
       {isLoggedIn ?
         <List>
           {SettingItems.map((item, index) => (
-            <NavLink to={item.path} key={item.text} style={({ isActive }) => {
-              return {
-                ...baseLinkStyle,
-                ...(isActive ? activeLinkStyle : {}),
-              }
-            }}>
+            item.path ? (
+              <NavLink to={item.path} key={item.text} style={({ isActive }) => {
+                return {
+                  ...baseLinkStyle,
+                  ...(isActive ? activeLinkStyle : {}),
+                }
+              }}>
+                <ListItem key={index} disablePadding>
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <item.icon />
+                    </ListItemIcon>
+                    <ListItemText primary={item.text} />
+                  </ListItemButton>
+                </ListItem>
+              </NavLink>
+            ) : (
               <ListItem key={index} disablePadding>
-                <ListItemButton>
+                <ListItemButton onClick={item.action}>
                   <ListItemIcon>
                     <item.icon />
                   </ListItemIcon>
                   <ListItemText primary={item.text} />
                 </ListItemButton>
               </ListItem>
-            </NavLink>
+            )
           ))}
         </List>
         :
         <List>
           {GuestItems.map((item, index) => (
-            <NavLink to={item.path} key={item.text} style={({ isActive }) => {
+            <NavLink to={item.path || ''} key={item.text} style={({ isActive }) => {
               return {
                 ...baseLinkStyle,
                 ...(isActive ? activeLinkStyle : {}),

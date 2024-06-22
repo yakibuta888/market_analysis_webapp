@@ -1,10 +1,15 @@
 // src/components/Login/Login.tsx
 import React from "react";
-import { Button, TextField, CircularProgress, Typography, Box } from "@mui/material";
+import {
+  Button,
+  TextField,
+  CircularProgress,
+  Typography,
+  Container,
+} from "@mui/material";
 
-import "./Login.scss"
+import "./Login.scss";
 import { LoginViewModel } from "@/viewModels/LoginViewModel";
-
 
 const Login: React.FC = () => {
   const {
@@ -18,39 +23,35 @@ const Login: React.FC = () => {
   } = LoginViewModel();
 
   return (
-    <div className="login">
-      <Box component="div" sx={{ maxWidth: "xs", margin: 'auto', padding: 2, boxShadow: 3, borderRadius: 2 }}>
+    <Container component="main" maxWidth="xs">
+      <div className="login">
         <div className="loginLogo">
           <img src="./phoenix.png" alt="logo" />
         </div>
-        <Typography variant="h4" component="h2" gutterBottom>
+        <Typography variant="h4" component="h1" gutterBottom>
           Login
         </Typography>
         <form onSubmit={handleSubmit}>
-          <Box mb={2}>
-            <TextField
-              label="Email"
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              required
-              fullWidth
-            />
-          </Box>
-          <Box mb={2}>
-            <TextField
-              label="Password"
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              required
-              fullWidth
-            />
-          </Box>
+          <TextField
+            label="Email"
+            type="email"
+            value={email}
+            onChange={handleEmailChange}
+            margin="normal"
+            required
+            fullWidth
+          />
+          <TextField
+            label="Password"
+            type="password"
+            value={password}
+            onChange={handlePasswordChange}
+            margin="normal"
+            required
+            fullWidth
+          />
           {authState.error && (
-            <Box mb={2} color="error.main">
-              <Typography>{authState.error.message}</Typography>
-            </Box>
+            <Typography color="error">{authState.error.message}</Typography>
           )}
           <Button
             type="submit"
@@ -59,22 +60,20 @@ const Login: React.FC = () => {
             disabled={authState.loading}
             fullWidth
           >
-            {authState.loading ? <CircularProgress size={24} /> : 'Login'}
+            {authState.loading ? <CircularProgress size={24} /> : "Login"}
           </Button>
         </form>
-        <Box mt={2}>
-          <Button
-            variant="contained"
-            color="secondary"
-            fullWidth
-            onClick={handleSignUpClick}
-          >
-            Sign Up
-          </Button>
-        </Box>
-      </Box>
-    </div>
+        <Button
+          variant="contained"
+          color="secondary"
+          fullWidth
+          onClick={handleSignUpClick}
+        >
+          Sign Up
+        </Button>
+      </div>
+    </Container>
   );
-}
+};
 
 export default Login;

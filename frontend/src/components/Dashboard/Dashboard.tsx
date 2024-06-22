@@ -9,7 +9,6 @@ import UserProfile from '../UserProfile';
 import TextInput from '../input/TextInput';
 import TradeDatePicker from '../TradeDatePicker/TradeDatePicker';
 import FuturesGraph from '../FuturesGraph/FuturesGraph';
-import DashboardHeader from './DashboardHeader';
 
 const Dashboard: React.FC = () => {
   const {
@@ -33,7 +32,6 @@ const Dashboard: React.FC = () => {
 
   return (
     <div className='dashboard'>
-      <DashboardHeader />
       <h1>{user.name}'s Dashboard</h1>
       <div>
         <label htmlFor="graph-type-select">Select Graph Type: </label>

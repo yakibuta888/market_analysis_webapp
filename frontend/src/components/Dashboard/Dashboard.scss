@@ -1,14 +1,15 @@
 .dashboard {
   color: lightgray;
-  background-color: #2e2e35;
   flex-grow: 1;
 
-  select {
+  select,
+  input {
     background-color: #2e2e35;
-    color: white;
-    border: 1px solid #50505c;
+    color: lightgray;
+    border: 1px solid #60606d;
     border-radius: 5px;
-    padding: 5px;
-    margin: 10px;
+    padding: 0.5em;
+    margin: 1em;
   }
+
 }

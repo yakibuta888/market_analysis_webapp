@@ -8,11 +8,11 @@ import { theme } from '@/theme/theme';
 import { useAppDispatch, useAppSelector } from './store/hooks';
 import { initializeAuth } from './store/modules/auth';
 import Dashboard from './components/Dashboard/Dashboard';
-import Sidebar from './components/Sidebar/Sidebar';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
 import Verify from './components/Verify';
 import AppLayout from './components/Layout/AppLayout';
+import NoMatch from './components/NoMatch';
 import { ThemeProvider } from '@emotion/react';
 import { CssBaseline } from '@mui/material';
 
@@ -47,7 +47,6 @@ const App: React.FC = () => {
             <Route path="/dashboard" element={
               isLoggedIn ? (
                 <>
-                  <Sidebar />
                   <Dashboard />
                 </>
               ) : (
@@ -55,6 +54,7 @@ const App: React.FC = () => {
               )} />
             <Route path="/verify" element={<Verify />} />
             <Route index element={<Navigate to="/login" />} />
+            <Route path='*' element={<NoMatch />} />
           </Route>
         </Routes>
       </div>
