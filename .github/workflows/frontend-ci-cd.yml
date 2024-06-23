@@ -64,6 +64,12 @@ jobs:
         tags: |
           ghcr.io/${{ github.repository }}/frontend:latest
           ghcr.io/${{ github.repository }}/frontend:${{ github.sha }}
+        build-args: |
+          USERNAME=${{ secrets.USER_NAME }}
+          USERID=${{ secrets.USER_ID }}
+          GROUPID=${{ secrets.GROUP_ID }}
+          HOMEDIR=${{ secrets.HOME_DIR }}
+          WORKDIR=${{ secrets.WORK_DIR }}
 
     - name: Verify Published Image
       run: |

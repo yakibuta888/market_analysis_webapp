@@ -1,12 +1,17 @@
-name: Backend CI/CD Build and Push Docker Image to GHCR
+name: Backend CI/CD
 
 on:
   push:
     branches:
-      - main  # mainブランチにプッシュされたときに実行
+      - main
+    paths:
+      - 'backend/**'
   pull_request:
     branches:
-      - main  # mainブランチにプルリクエストが作成されたときに実行
+      - main
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
 
 jobs:
   build-and-push:
