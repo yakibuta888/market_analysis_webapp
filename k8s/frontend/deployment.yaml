@@ -1,0 +1,39 @@
+# k8s/frontend/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend-deployment
+  labels:
+    app: market-analysis-webapp
+    type: frontend
+  annotations:
+    argocd.argoproj.io/sync-wave: "4"
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: market-analysis-webapp
+      type: frontend
+  template:
+    metadata:
+      labels:
+        app: market-analysis-webapp
+        type: frontend
+    spec:
+      containers:
+      - name: frontend-container
+        image: ghcr.io/yakibuta888/market_analysis_webapp/frontend:latest
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 8080
+          initialDelaySeconds: 15
+          periodSeconds: 20

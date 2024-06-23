@@ -1,6 +1,6 @@
 // src/components/UserProfile.tsx
 import React from 'react';
-import { useUserViewModel } from '../viewModels/UserViewModel';
+import { useUserViewModel } from '../../viewModels/UserViewModel';
 
 const UserProfile: React.FC = () => {
   const { user, loading, error } = useUserViewModel();

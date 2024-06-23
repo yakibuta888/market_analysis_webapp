@@ -101,7 +101,7 @@ export interface AuthState {
   error: Error | null;
 }
 
-const initialState: AuthState = {
+export const initialState: AuthState = {
   token: null,
   user: null,
   message: '',

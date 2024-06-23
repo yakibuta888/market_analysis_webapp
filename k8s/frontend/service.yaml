@@ -1,0 +1,17 @@
+# k8s/frontend/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  labels:
+    app: market-analysis-webapp
+    type: frontend
+spec:
+  selector:
+    app: market-analysis-webapp
+    type: frontend
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080
+  type: LoadBalancer

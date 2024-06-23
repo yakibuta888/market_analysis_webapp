@@ -25,7 +25,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "jest"]
   },
   "include": ["src", "vitest-setup.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]

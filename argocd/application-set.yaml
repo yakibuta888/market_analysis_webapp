@@ -13,6 +13,8 @@ spec:
             path: k8s/mysql
           - name: cronjob
             path: k8s/cronjob
+          - name: frontend
+            path: k8s/frontend
   template:
     metadata:
       name: '{{name}}-application'

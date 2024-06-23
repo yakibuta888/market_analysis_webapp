@@ -10,7 +10,7 @@ import { initializeAuth } from './store/modules/auth';
 import Dashboard from './components/Dashboard/Dashboard';
 import Login from './components/Login/Login';
 import Register from './components/Register/Register';
-import Verify from './components/Verify';
+import Verify from './components/Verify/Verify';
 import AppLayout from './components/Layout/AppLayout';
 import NoMatch from './components/NoMatch';
 import { ThemeProvider } from '@emotion/react';

@@ -5,8 +5,7 @@ import './Dashboard.scss';
 import { useDashboardViewModel } from '../../viewModels/DashboardViewModel';
 import ChartDisplay from '../ChartDisplay';
 import ChartSelector from '../ChartSelector';
-import UserProfile from '../UserProfile';
-import TextInput from '../input/TextInput';
+import UserProfile from '../UserProfile/UserProfile';
 import TradeDatePicker from '../TradeDatePicker/TradeDatePicker';
 import FuturesGraph from '../FuturesGraph/FuturesGraph';
 
@@ -73,7 +72,6 @@ const Dashboard: React.FC = () => {
       <ChartSelector selectedChart={selectedChart} onChange={selectChart} />
       {selectedChart && <ChartDisplay chartId={selectedChart} />}
       <UserProfile />
-      <TextInput />
     </div>
   );
 };
