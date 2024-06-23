@@ -47,7 +47,7 @@ export default defineConfig({
     // テスト全体で使用するライブラリをvitest-setup.jsに記載し、インポートする設定
     setupFiles: [resolve(__dirname, "src", "vitest-setup.ts")],
     coverage: {
-      provider: 'c8',
+      provider: 'v8',
       reporter: ['text', 'json-summary', 'json'],
       reportOnFailure: true,
     },
