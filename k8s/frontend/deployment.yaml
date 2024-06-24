@@ -39,4 +39,4 @@ spec:
           periodSeconds: 20
         env:
         - name: VITE_API_URL
-          value: http://backend-service
+          value: http://backend-service:8000
