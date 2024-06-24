@@ -37,3 +37,6 @@ spec:
             port: 80
           initialDelaySeconds: 15
           periodSeconds: 20
+        env:
+        - name: VITE_API_URL
+          value: http://backend-service
