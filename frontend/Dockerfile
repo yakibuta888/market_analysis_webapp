@@ -15,34 +15,19 @@ COPY . .
 RUN npm run build
 
 # Production stage
-FROM node:18.20-bullseye as production
+FROM nginx:alpine as production
 
-ARG WORKDIR
-WORKDIR ${WORKDIR}
-
-# Create the user
-ARG USERNAME
-ARG HOMEDIR
-ARG USERID
-ARG GROUPID
-RUN usermod -u 999 node && groupmod -g 999 node
-RUN <<-EOF
-	echo "Create User = ${USERID}. Group = ${GROUPID}"
-	groupadd -g ${GROUPID} ${USERNAME}
-	useradd -m -s /bin/bash -d ${HOMEDIR} -u ${USERID} -g ${GROUPID} ${USERNAME}
-	mkdir -p /etc/sudoers.d/
-	echo ${USERNAME} ALL=\(root\) NOPASSWD:ALL > /etc/sudoers.d/${USERNAME}
-	chmod 0440 /etc/sudoers.d/${USERNAME}
-EOF
-USER ${USERNAME}
+WORKDIR /usr/share/nginx/html
 
 # Copy built files from the build stage
-COPY --from=builder ${WORKDIR}/dist ./dist
-COPY --from=builder ${WORKDIR}/package.json ./
-COPY --from=builder ${WORKDIR}/node_modules ./node_modules
+ARG WORKDIR
+COPY --from=builder ${WORKDIR}/dist .
+
+# Copy custom Nginx configuration if needed
+COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Expose the port the app runs on
-EXPOSE 8080
+EXPOSE 80
 
-# Start the application
-CMD ["npm", "start"]
+# Start Nginx
+CMD ["nginx", "-g", "daemon off;"]
