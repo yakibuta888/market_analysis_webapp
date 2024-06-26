@@ -28,6 +28,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 	&& apt-get clean \
 	&& rm -rf /var/lib/apt/lists/*
 
+# Xvfbの設定
+RUN mkdir -p /tmp/.X11-unix && chmod 1777 /tmp/.X11-unix
+
 # セキュリティアップデートの適用
 RUN apt-get update && apt-get upgrade -y \
 	&& apt-get install -y --no-install-recommends \
