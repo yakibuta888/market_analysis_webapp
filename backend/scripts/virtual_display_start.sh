@@ -5,6 +5,7 @@ set -euxo pipefail
 if ! pgrep -x Xvfb > /dev/null;
 then
   Xvfb :99 -screen 0 1920x1080x24 -nolisten unix &
+  export DISPLAY=:99
   echo "Xvfb started on display :99."
 else
   echo "Xvfb is already running."
