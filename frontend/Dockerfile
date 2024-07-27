@@ -19,6 +19,13 @@ RUN npm run build
 # Production stage
 FROM nginx:alpine as production
 
+# セキュリティ警告に対応するパッケージをインストール
+RUN apk update && \
+  apk upgrade && \
+  apk add --no-cache \
+  curl=8.7.1-r0 \
+  libcurl=8.7.1-r0
+
 WORKDIR /usr/share/nginx/html
 
 # Copy built files from the build stage
