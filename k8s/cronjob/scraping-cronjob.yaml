@@ -5,8 +5,10 @@ metadata:
   name: settlement-preliminary-scraping-cronjob
 spec:
   schedule: "0 9 * * *"  # AM3時台(CT)、UTCでAM8時台に設定
+  concurrencyPolicy: Forbid
   jobTemplate:
     spec:
+      backoffLimit: 2
       template:
         spec:
           containers:
@@ -29,8 +31,10 @@ metadata:
   name: settlement-final-scraping-cronjob
 spec:
   schedule: "0 16 * * *"  # PM10時台(CT)、UTCでPM15時台に設定
+  concurrencyPolicy: Forbid
   jobTemplate:
     spec:
+      backoffLimit: 2
       template:
         spec:
           containers:
@@ -53,8 +57,10 @@ metadata:
   name: volume-oi-preliminary-scraping-cronjob
 spec:
   schedule: "0 10 * * *"  # AM4時台(CT)、UTCでAM9時台に設定
+  concurrencyPolicy: Forbid
   jobTemplate:
     spec:
+      backoffLimit: 2
       template:
         spec:
           containers:
@@ -77,8 +83,10 @@ metadata:
   name: volume-oi-final-scraping-cronjob
 spec:
   schedule: "0 15 * * *"  # PM9時台(CT)、UTCでPM14時台に設定
+  concurrencyPolicy: Forbid
   jobTemplate:
     spec:
+      backoffLimit: 2
       template:
         spec:
           containers:
