@@ -23,8 +23,8 @@ FROM nginx:alpine as production
 RUN apk update && \
   apk upgrade && \
   apk add --no-cache \
-  curl=8.7.1-r0 \
-  libcurl=8.7.1-r0
+  --repository=https://dl-cdn.alpinelinux.org/alpine/edge/main \
+  curl libcurl
 
 WORKDIR /usr/share/nginx/html
 
