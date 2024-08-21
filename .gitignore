@@ -1,10 +1,59 @@
-# Byte-compiled / optimized / DLL files
+# Python関連
 __pycache__/
 *.py[cod]
 *$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+*.log
 
-# バージョン管理に不要なファイル/ディレクトリ
+# TypeScript関連
+node_modules/
+*.tsbuildinfo
+*.log
 
+# MySQL関連
+*.sql
+
+# Node.js関連
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# 環境設定ファイル
+# *.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Docker関連
+docker-compose.override.yml
+.dockerignore
+
+# Terraform関連
+*.tfstate
+*.tfstate.*
+.terraform/
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+.terraformrc
+terraform.rc
+
+# Redis関連
+dump.rdb
+*.aof
+
+# Kubernetes関連
+kubeconfig
+
+# VSCode関連
+.vscode/
 
 # パッケージングファイル
 *.egg
@@ -28,26 +77,10 @@ wheelhouse/
 .DS_Store
 Thumbs.db
 
-# Node.js関連
-node_modules/
-npm-debug.log
-yarn-error.log
-
 # ログとデータベース
 *.log
 *.sql
 *.sqlite
-
-# 環境設定ファイル
-# *.env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-# Docker関連
-docker-compose.override.yml
-.dockerignore
 
 # その他のファイル
 *.swp
@@ -55,3 +88,5 @@ docker-compose.override.yml
 *.tmp
 temp/
 tmp/
+
+# その他のバージョン管理に不要なファイル/ディレクトリ
