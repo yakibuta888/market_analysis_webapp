@@ -9,6 +9,12 @@ terraform {
       version = "~>5.0"
     }
   }
+  backend "s3" {
+    bucket = "market-analysis-webapp-tfstate-bucket"
+    key = "market-analysis-webapp-production.tfstate"
+    region = "ap-northeast-1"
+    profile = "masanori"
+  }
 }
 
 # ------------------------------------------------

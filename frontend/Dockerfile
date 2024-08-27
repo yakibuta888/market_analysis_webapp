@@ -33,7 +33,8 @@ ARG WORKDIR
 COPY --from=builder ${WORKDIR}/dist .
 
 # Copy custom Nginx configuration if needed
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/conf.d/default.conf
 
 # Expose the port the app runs on
 EXPOSE 80
