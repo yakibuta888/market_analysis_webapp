@@ -12,7 +12,7 @@ spec:
   - host: market-analysis.local
     http:
       paths:
-      - path: /(.*)
+      - path: /app(/|$)(.*)
         pathType: ImplementationSpecific
         backend:
           service:
