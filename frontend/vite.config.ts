@@ -40,6 +40,15 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
+    build: {
+      outDir: 'dist',
+      assetsDir: 'assets',
+      rollupOptions: {
+        output: {
+          manualChunks: undefined,
+        },
+      },
+    },
     base: '/', // 本番環境のベース URL に合わせて修正
     // テスト参考
     // https://vitest.dev/guide/#workspaces-support
