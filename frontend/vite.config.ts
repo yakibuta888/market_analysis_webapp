@@ -40,6 +40,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
+    base: '/', // 本番環境のベース URL に合わせて修正
     // テスト参考
     // https://vitest.dev/guide/#workspaces-support
     // https://testing-library.com/docs/svelte-testing-library/setup/
