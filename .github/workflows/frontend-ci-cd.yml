@@ -81,6 +81,15 @@ jobs:
       with:
         image-ref: 'ghcr.io/${{ github.repository }}/frontend:latest'
         format: 'table'
+        output: 'trivy-results.table'
         exit-code: '1'
         ignore-unfixed: true
-        clear-cache: true
+        vuln-type: 'os,library'
+        severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+        cache-dir: '.trivycache'  # キャッシュディレクトリを指定
+        github-pat: ${{ secrets.GITHUB_TOKEN }}  # GitHubのPATを使用して認証
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
