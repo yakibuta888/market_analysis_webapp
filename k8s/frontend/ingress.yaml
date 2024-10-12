@@ -8,7 +8,7 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-  - host: market-analysis.local
+  - host: dev-ms.sytes.net
     http:
       paths:
       - path: /(.*)
