@@ -10,6 +10,7 @@ RUN apt-get update \
 	gcc \
 	build-essential \
 	sudo \
+	openssh-client \
 	# google-chromeインストール時に必要
 	wget \
 	unzip \

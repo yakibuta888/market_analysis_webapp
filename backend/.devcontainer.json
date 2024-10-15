@@ -13,8 +13,15 @@
         "terminal.integrated.profiles.linux": {
           "bash": {
             "path": "/bin/bash"
+          },
+          "bash (Host)": {
+            "path": "/bin/bash",
+            "args": ["-c", "ssh masanori@host.docker.internal -p 8722 -i /home/client/app/.ssh/id_ed25519"]
           }
         },
+        "runArgs": [
+          "--add-host=host.docker.internal:host-gateway"
+        ],
         "python.pythonPath": "/usr/local/bin/python",
         "python.languageServer": "Default",
         "python.linting.enabled": true,

@@ -23,6 +23,8 @@ services:
     build:
       dockerfile: Dockerfile.dev
       shm_size: 1gb
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ./backend:$WORK_DIR:cached
       - pip-volume:$WORK_DIR/vendor
