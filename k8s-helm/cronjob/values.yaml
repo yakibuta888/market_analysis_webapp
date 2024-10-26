@@ -1,0 +1,46 @@
+applicationName: market-analysis-webapp
+secretName: backend-secrets
+configMapName: backend-config
+imagePullSecretName: ghcr-credentials
+
+cronjobs:
+  - name: settlement-preliminary-scraping-cronjob
+    schedule: "0 9 * * *"
+    container:
+      name: settlement-scraping
+      image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
+      command:
+        - "/usr/local/bin/virtual_display_start.sh"
+        - "python3"
+        - "src/application/background_workers/run_scraping_tasks.py"
+        - "settlement"
+  - name: settlement-final-scraping-cronjob
+    schedule: "0 16 * * *"
+    container:
+      name: settlement-scraping
+      image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
+      command:
+        - "/usr/local/bin/virtual_display_start.sh"
+        - "python3"
+        - "src/application/background_workers/run_scraping_tasks.py"
+        - "settlement"
+  - name: volume-oi-preliminary-scraping-cronjob
+    schedule: "0 10 * * *"
+    container:
+      name: volume-oi-scraping
+      image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
+      command:
+        - "/usr/local/bin/virtual_display_start.sh"
+        - "python3"
+        - "src/application/background_workers/run_scraping_tasks.py"
+        - "volume_oi"
+  - name: volume-oi-final-scraping-cronjob
+    schedule: "0 15 * * *"
+    container:
+      name: volume-oi-scraping
+      image: ghcr.io/yakibuta888/market_analysis_webapp/backend:latest
+      command:
+        - "/usr/local/bin/virtual_display_start.sh"
+        - "python3"
+        - "src/application/background_workers/run_scraping_tasks.py"
+        - "volume_oi"

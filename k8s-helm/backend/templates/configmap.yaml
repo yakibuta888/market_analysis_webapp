@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ if .Values.names.configmap }}
+  {{- .Values.names.configmap }}
+  {{- else }}
+  {{- include "backend.fullname" . }}
+  {{- end }}
+  labels:
+    {{- include "backend.labels" . | nindent 4 }}
+data: {{- with .Values.configmapData }}
+{{- toYaml . | nindent 2 }}
+{{- end }}

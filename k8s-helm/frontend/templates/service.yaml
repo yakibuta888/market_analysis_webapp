@@ -4,10 +4,10 @@ metadata:
   name: {{ if .Values.names.service }}
   {{- .Values.names.service }}
   {{- else }}
-  {{- include "backend.fullname" . }}
+  {{- include "frontend.fullname" . }}
   {{- end }}
   labels:
-    {{- include "backend.labels" . | nindent 4 }}
+    {{- include "frontend.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
@@ -16,4 +16,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "backend.selectorLabels" . | nindent 4 }}
+    {{- include "frontend.selectorLabels" . | nindent 4 }}

@@ -1,0 +1,29 @@
+{{- range $job, $val := .Values.cronjobs }}
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: {{ $val.name }}
+  labels:
+    app: {{ $.Values.applicationName }}
+spec:
+  schedule: {{ $val.schedule | quote }}
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      backoffLimit: 2
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: {{ $val.container.name }}
+              image: {{ $val.container.image }}
+              command: {{ $val.container.command | toYaml | nindent 14 }}
+              envFrom:
+                - secretRef:
+                    name: {{ $.Values.secretName }}
+                - configMapRef:
+                    name: {{ $.Values.configMapName }}
+          imagePullSecrets:
+            - name: {{ $.Values.imagePullSecretName }}
+---
+{{- end }}
