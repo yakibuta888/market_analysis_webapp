@@ -87,6 +87,13 @@ MySQL 8.0 | Redis | SQLAlchemy ORM
 
 ## 🏗️ アーキテクチャ設計
 
+### システム構成図
+<div align="center">
+  <img src="images/market_analysis_webapp_architecture.png" alt="システム構成図" width="800">
+</div>
+
+*AWS上でのクラウドネイティブアーキテクチャ構成*
+
 ### バックエンド構成
 ```
 src/
