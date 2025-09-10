@@ -41,6 +41,8 @@ locals {
   # EKS
   ########################################
   ## EKS ##
+  vpc_id          = module.vpc.vpc_id
+  private_subnets = module.vpc.private_subnets
   cluster_name = "eks-${var.region_tag[var.region]}-${var.env}-${var.app_name}"
 
   eks_tags = {
